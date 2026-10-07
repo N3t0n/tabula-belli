@@ -14,7 +14,7 @@
 
     <!-- Form Errors -->
     {% if form.non_field_errors %}
-        <div class="mb-4 p-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
+        <div role="alert" class="mb-4 p-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
             {{ form.non_field_errors }}
         </div>
     {% endif %}
@@ -29,12 +29,13 @@
                 type="text"
                 name="{{ form.username.name }}"
                 id="{{ form.username.id_for_label }}"
+                {% if form.username.errors %}aria-invalid="true" aria-describedby="{{ form.username.auto_id }}_error"{% endif %}
                 value="{{ form.username.value|default:'' }}"
                 {% if form.username.field.disabled %}disabled{% endif %}
-                class="bg-muted border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground"
+                class="block w-full rounded-lg border border-border bg-input p-2.5 text-foreground focus:ring-2 focus:ring-primary-600 placeholder:text-muted-foreground"
                 placeholder="Enter username">
             {% if form.username.errors %}
-                <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.username.errors.0 }}</p>
+                <p id="{{ form.username.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.username.errors.0 }}</p>
             {% endif %}
         </div>
 
@@ -47,12 +48,13 @@
                 type="text"
                 name="{{ form.first_name.name }}"
                 id="{{ form.first_name.id_for_label }}"
+                {% if form.first_name.errors %}aria-invalid="true" aria-describedby="{{ form.first_name.auto_id }}_error"{% endif %}
                 value="{{ form.first_name.value|default:'' }}"
                 {% if form.first_name.field.disabled %}disabled{% endif %}
-                class="bg-muted border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground"
+                class="block w-full rounded-lg border border-border bg-input p-2.5 text-foreground focus:ring-2 focus:ring-primary-600 placeholder:text-muted-foreground"
                 placeholder="John">
             {% if form.first_name.errors %}
-                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ form.first_name.errors.0 }}</p>
+                <p id="{{ form.first_name.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.first_name.errors.0 }}</p>
             {% endif %}
         </div>
 
@@ -65,12 +67,13 @@
                 type="text"
                 name="{{ form.last_name.name }}"
                 id="{{ form.last_name.id_for_label }}"
+                {% if form.last_name.errors %}aria-invalid="true" aria-describedby="{{ form.last_name.auto_id }}_error"{% endif %}
                 value="{{ form.last_name.value|default:'' }}"
                 {% if form.last_name.field.disabled %}disabled{% endif %}
-                class="bg-muted border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground"
+                class="block w-full rounded-lg border border-border bg-input p-2.5 text-foreground focus:ring-2 focus:ring-primary-600 placeholder:text-muted-foreground"
                 placeholder="Doe">
             {% if form.last_name.errors %}
-                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ form.last_name.errors.0 }}</p>
+                <p id="{{ form.last_name.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.last_name.errors.0 }}</p>
             {% endif %}
         </div>
 
@@ -82,6 +85,7 @@
             <select 
                 name="{{ form.country.name }}"
                 id="{{ form.country.id_for_label }}"
+                {% if form.country.errors %}aria-invalid="true" aria-describedby="{{ form.country.auto_id }}_error"{% endif %}
                 hx-get="{% url 'locations:get_regions' %}"
                 hx-target="#{{ form.region.id_for_label }}"
                 hx-swap="innerHTML"
@@ -89,7 +93,7 @@
                 hx-trigger="change"
                 @htmx:after-request.stop
                 {% if form.country.field.disabled %}disabled{% endif %}
-                class="bg-muted border border-border text-foreground text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-input dark:border-border dark:placeholder-gray-400 dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                class="block w-full rounded-lg border border-border bg-input p-2.5 text-foreground focus:ring-2 focus:ring-primary-600 placeholder:text-muted-foreground">
                 <option value="">Select country</option>
                 {% for value, label in form.country.field.choices %}
                     {% if value %}
@@ -98,7 +102,7 @@
                 {% endfor %}
             </select>
             {% if form.country.errors %}
-                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ form.country.errors.0 }}</p>
+                <p id="{{ form.country.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.country.errors.0 }}</p>
             {% endif %}
         </div>
 
@@ -110,6 +114,7 @@
             <select 
                 name="{{ form.region.name }}"
                 id="{{ form.region.id_for_label }}"
+                {% if form.region.errors %}aria-invalid="true" aria-describedby="{{ form.region.auto_id }}_error"{% endif %}
                 hx-get="{% url 'locations:get_cities' %}"
                 hx-target="#{{ form.city.id_for_label }}"
                 hx-swap="innerHTML"
@@ -117,7 +122,7 @@
                 hx-trigger="change"
                 @htmx:after-request.stop
                 {% if form.region.field.disabled %}disabled{% endif %}
-                class="bg-muted border border-border text-foreground text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 placeholder:text-muted-foreground">
+                class="block w-full rounded-lg border border-border bg-input p-2.5 text-foreground focus:ring-2 focus:ring-primary-600 placeholder:text-muted-foreground">
                 <option value="">Select region</option>
                 {% for value, label in form.region.field.choices %}
                     {% if value %}
@@ -126,7 +131,7 @@
                 {% endfor %}
             </select>
             {% if form.region.errors %}
-                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ form.region.errors.0 }}</p>
+                <p id="{{ form.region.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.region.errors.0 }}</p>
             {% endif %}
         </div>
 
@@ -138,8 +143,9 @@
             <select 
                 name="{{ form.city.name }}"
                 id="{{ form.city.id_for_label }}"
+                {% if form.city.errors %}aria-invalid="true" aria-describedby="{{ form.city.auto_id }}_error"{% endif %}
                 {% if form.city.field.disabled %}disabled{% endif %}
-                class="bg-muted border border-border text-foreground text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 placeholder:text-muted-foreground">
+                class="block w-full rounded-lg border border-border bg-input p-2.5 text-foreground focus:ring-2 focus:ring-primary-600 placeholder:text-muted-foreground">
                 <option value="">Select city</option>
                 {% for value, label in form.city.field.choices %}
                     {% if value %}
@@ -148,7 +154,7 @@
                 {% endfor %}
             </select>
             {% if form.city.errors %}
-                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ form.city.errors.0 }}</p>
+                <p id="{{ form.city.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.city.errors.0 }}</p>
             {% endif %}
         </div>
 
@@ -157,7 +163,7 @@
             <label class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
                 Favorite Games
             </label>
-            <div class="bg-muted border border-border rounded-lg p-3 dark:bg-input dark:border-border max-h-48 overflow-y-auto">
+            <div class="bg-input border border-border rounded-lg p-3 max-h-48 overflow-y-auto">
                 <ul class="space-y-2 list-none">
                     {% for value, label in form.favorite_games.field.choices %}
                     <li>
@@ -180,13 +186,13 @@
             </div>
             <p class="mt-2 text-sm text-muted-foreground dark:text-muted-foreground">Select all your favorite games</p>
             {% if form.favorite_games.errors %}
-                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ form.favorite_games.errors.0 }}</p>
+                <p class="mt-2 text-sm text-destructive">{{ form.favorite_games.errors.0 }}</p>
             {% endif %}
         </div>
     </div>
 
     <!-- Action Buttons -->
-    <div class="flex items-center space-x-4">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <button 
             type="submit"
             {% if is_public_demo_account %}disabled aria-disabled="true"{% endif %}
