@@ -36,7 +36,7 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex flex-wrap gap-3 mt-6 pt-6 border-t border-border dark:border-border">
+      <div class="flex flex-col gap-3 mt-6 pt-6 border-t border-border dark:border-border sm:flex-row sm:flex-wrap">
         <button 
           hx-get="{% url 'accounts:profile' %}"
           hx-target="#modal-content"
