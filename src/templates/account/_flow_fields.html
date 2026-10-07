@@ -5,7 +5,7 @@
   <div>
     <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-medium text-foreground">{{ field.label }}</label>
     {{ field }}
-    {% if field.help_text %}<div class="mt-2 text-sm text-muted-foreground">{{ field.help_text|safe }}</div>{% endif %}
-    {% if field.errors %}<div role="alert" class="mt-2 text-sm text-destructive">{{ field.errors }}</div>{% endif %}
+    {% if field.help_text %}<div id="{{ field.auto_id }}_helptext" class="mt-2 text-sm text-muted-foreground">{{ field.help_text|safe }}</div>{% endif %}
+    {% if field.errors %}<div id="{{ field.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ field.errors }}</div>{% endif %}
   </div>
 {% endfor %}

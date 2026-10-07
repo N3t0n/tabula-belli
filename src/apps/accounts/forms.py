@@ -1,5 +1,8 @@
 from django import forms
-from allauth.account.forms import ResetPasswordForm, UserTokenForm
+from allauth.account.forms import (
+    AddEmailForm, ChangePasswordForm, ResetPasswordForm, SetPasswordForm,
+    UserTokenForm,
+)
 from allauth.account.adapter import get_adapter
 
 from apps.accounts.demo import is_public_demo_user
@@ -87,6 +90,18 @@ class AccountInputStyleMixin:
                     'block w-full rounded-lg border border-border bg-input '
                     'p-2.5 text-foreground focus:ring-2 focus:ring-primary-600'
                 )
+
+
+class StyledAddEmailForm(AccountInputStyleMixin, AddEmailForm):
+    pass
+
+
+class StyledChangePasswordForm(AccountInputStyleMixin, ChangePasswordForm):
+    pass
+
+
+class StyledSetPasswordForm(AccountInputStyleMixin, SetPasswordForm):
+    pass
 
 
 class PublicDemoResetPasswordForm(AccountInputStyleMixin, ResetPasswordForm):

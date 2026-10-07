@@ -11,6 +11,9 @@
 
   <form method="post" action="{% url 'account_email' %}" class="space-y-4">
     {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div role="alert" class="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{{ form.non_field_errors }}</div>
+    {% endif %}
     {% if current_emailaddress %}
       <div>
         <label class="block text-sm font-medium" for="current-email">Current email</label>
@@ -38,9 +41,10 @@
       </div>
     {% endif %}
     <div>
-      <label class="block text-sm font-medium" for="{{ form.email.id_for_label }}">Change to</label>
+      <label class="mb-2 block text-sm font-medium text-foreground" for="{{ form.email.id_for_label }}">Change to</label>
       {{ form.email }}
-      {{ form.email.errors }}
+      {% if form.email.help_text %}<div id="{{ form.email.auto_id }}_helptext" class="mt-2 text-sm text-muted-foreground">{{ form.email.help_text|safe }}</div>{% endif %}
+      {% if form.email.errors %}<div id="{{ form.email.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.email.errors }}</div>{% endif %}
     </div>
     <button type="submit" name="action_add"
             {% if is_public_demo_account %}disabled aria-disabled="true"{% endif %}
