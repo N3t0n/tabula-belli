@@ -11,6 +11,9 @@
 
   <form method="post" action="{% url 'account_email' %}" class="space-y-4">
     {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div role="alert" class="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{{ form.non_field_errors }}</div>
+    {% endif %}
     {% if current_emailaddress %}
       <div>
         <label class="block text-sm font-medium" for="current-email">Current email</label>
@@ -38,13 +41,14 @@
       </div>
     {% endif %}
     <div>
-      <label class="block text-sm font-medium" for="{{ form.email.id_for_label }}">Change to</label>
+      <label class="mb-2 block text-sm font-medium text-foreground" for="{{ form.email.id_for_label }}">Change to</label>
       {{ form.email }}
-      {{ form.email.errors }}
+      {% if form.email.help_text %}<div id="{{ form.email.auto_id }}_helptext" class="mt-2 text-sm text-muted-foreground">{{ form.email.help_text|safe }}</div>{% endif %}
+      {% if form.email.errors %}<div id="{{ form.email.auto_id }}_error" role="alert" class="mt-2 text-sm text-destructive">{{ form.email.errors }}</div>{% endif %}
     </div>
     <button type="submit" name="action_add"
             {% if is_public_demo_account %}disabled aria-disabled="true"{% endif %}
-            class="rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50">
+            class="inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:w-auto">
       Change Email
     </button>
   </form>
