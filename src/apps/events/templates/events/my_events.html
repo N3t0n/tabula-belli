@@ -21,8 +21,8 @@
         class="mb-6"
     >
         {# Tab Buttons + Create Button #}
-        <div class="border-b border-border flex items-center justify-between">
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <div class="border-b border-border flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <nav class="order-2 -mb-px flex gap-4 sm:order-1 sm:gap-8" aria-label="Tabs">
                 {# Organizing Tab #}
                 <a 
                     href="?tab=organizing"
@@ -49,7 +49,7 @@
             </nav>
             
             <a href="{% url 'my_events:create' %}" 
-               class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 transition-colors cursor-pointer">
+               class="order-1 self-center shrink-0 inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 transition-colors cursor-pointer sm:order-2 sm:self-auto">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 20 20">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 5v10m-5-5h10"/>
                 </svg>
@@ -156,4 +156,3 @@
 
 </div>
 {% endblock %}
-
