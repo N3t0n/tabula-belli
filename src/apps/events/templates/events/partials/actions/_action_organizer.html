@@ -1,0 +1,32 @@
+{# events/partials/actions/_action_organizer.html #}
+{# Acciones para el organizador del evento #}
+
+{% if event.is_editable %}
+  <div class="flex items-center justify-end gap-2">
+    {# Editar evento #}
+    <a href="{% url 'my_events:edit' event.slug %}" 
+       class="text-xs text-primary-600 hover:underline dark:text-primary-400">
+      Edit
+    </a>
+    
+    {# Cancel event with HTMX confirmation #}
+    <form
+      method="post"
+      action="{% url 'my_events:cancel' event.slug %}"
+      hx-post="{% url 'my_events:cancel' event.slug %}"
+      hx-target="closest tr"
+      hx-swap="outerHTML"
+      class="inline">
+      {% csrf_token %}
+      <button
+        type="submit"
+        hx-confirm="Are you sure you want to cancel this event? This action cannot be undone."
+        class="text-xs text-destructive hover:underline dark:text-destructive cursor-pointer">
+        Cancel
+      </button>
+    </form>
+  </div>
+{% else %}
+  {# Evento no editable: sin acciones #}
+  <span class="text-xs text-muted-foreground">-</span>
+{% endif %}

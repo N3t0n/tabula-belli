@@ -1,0 +1,197 @@
+{# Partial: events/partials/_my_events_table.html #}
+{# Parameters: page (Page object), role ('organizer'|'participant'), tab ('organizing'|'participating') #}
+
+{% if page.object_list %}
+    <div class="rounded-2xl border border-border bg-card shadow-sm">
+        
+        <div class="flex items-center justify-between p-3">
+            <div class="text-sm text-muted-foreground">
+                {{ page.start_index }}-{{ page.end_index }} of {{ page.paginator.count }} results
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-muted text-muted-foreground">
+                    <tr>
+                        <th class="text-left font-medium px-3 py-2">TYPE</th>
+                        <th class="text-left font-medium px-3 py-2">TITLE</th>
+                        <th class="text-left font-medium px-3 py-2">GAME</th>
+                        <th class="text-left font-medium px-3 py-2">DATE</th>
+                        <th class="text-left font-medium px-3 py-2">LOCATION</th>
+                        <th class="text-right font-medium px-3 py-2">PLAYERS</th>
+                        <th class="text-right font-medium px-3 py-2">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in page.object_list %}
+                    <tr class="border-t border-border hover:bg-muted/60">
+                        <td class="px-3 py-2">
+                            {% if event.event_type == 'TOURNAMENT' %}
+                                <span class="text-xl" title="Tournament">🏆</span>
+                            {% else %}
+                                <span class="text-xl" title="Casual">🎲</span>
+                            {% endif %}
+                        </td>
+                        
+                        <td class="px-3 py-2">
+                            <a href="{% url 'event_detail' event.slug %}" 
+                               class="font-medium text-foreground hover:text-primary-700 hover:underline">
+                                {{ event.title }}
+                            </a>
+                            <div class="text-xs text-muted-foreground">
+                                {% if event.status == 'ACTIVE' %}
+                                    Active
+                                {% elif event.status == 'COMPLETED' %}
+                                    Completed
+                                {% elif event.status == 'CANCELED' %}
+                                    <span class="text-destructive dark:text-destructive">Canceled</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        
+                        <td class="px-3 py-2">
+                            {% include 'partials/game_badge.html' with badge_game=event.game badge_size='sm' only %}
+                        </td>
+                        
+                        <td class="px-3 py-2">
+                            {{ event.start_at|date:"M d, Y H:i" }}
+                        </td>
+                        
+                        <td class="px-3 py-2">
+                            <div class="text-sm">{{ event.city.name }}</div>
+                            <div class="text-xs text-muted-foreground">{{ event.country.name }}</div>
+                        </td>
+                        
+                        <td class="px-3 py-2 text-right">
+                            {% if event.capacity is not None and event.capacity > 0 %}
+                                {{ event.participants_count }}/{{ event.capacity }}
+                            {% else %}
+                                {{ event.participants_count }}/∞
+                            {% endif %}
+                        </td>
+                        
+                        <td class="px-3 py-2 text-right">
+                            {% if role == 'organizer' %}
+                                {% if event.is_editable %}
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="{% url 'my_events:edit' event.slug %}"
+                                           class="text-xs text-primary-600 hover:underline dark:text-primary-400">
+                                            Edit
+                                        </a>
+                                        <form
+                                                method="post"
+                                                action="{% url 'my_events:cancel' event.slug %}"
+                                                hx-post="{% url 'my_events:cancel' event.slug %}"
+                                                hx-target="closest tr"
+                                                hx-swap="outerHTML"
+                                                class="inline">
+                                            {% csrf_token %}
+                                            <button
+                                                    type="submit"
+                                                    hx-confirm="Are you sure you want to cancel this event? This action cannot be undone."
+                                                    class="text-xs text-destructive hover:underline dark:text-destructive cursor-pointer">
+                                                Cancel
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <span class="text-xs text-muted-foreground">-</span>
+                                {% endif %}
+                            {% elif role == 'participant' %}
+                                {% if event.user_registration_status == 'CONFIRMED' and event.is_editable %}
+                                    <form
+                                            method="post"
+                                            action="{% url 'event_cancel_registration' event.slug %}"
+                                            hx-post="{% url 'event_cancel_registration' event.slug %}"
+                                            hx-target="closest tr"
+                                            hx-swap="delete"
+                                            class="inline">
+                                        {% csrf_token %}
+                                        <button
+                                                type="submit"
+                                                hx-confirm="Are you sure you want to cancel your registration?"
+                                                class="text-xs text-red-600 hover:underline dark:text-red-400 cursor-pointer">
+                                            Cancel registration
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-xs text-muted-foreground">-</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page.paginator.num_pages > 1 %}
+        <div class="flex items-center justify-between p-3 text-sm border-t border-border">
+            <div class="text-muted-foreground">
+                Page {{ page.number }} of {{ page.paginator.num_pages }}
+            </div>
+            <div class="flex items-center gap-2">
+                {% if page.has_previous %}
+                    <a href="?tab={{ tab }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.previous_page_number }}{% else %}&part_page={{ page.previous_page_number }}{% endif %}" 
+                       class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted">
+                        Previous
+                    </a>
+                {% else %}
+                    <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+                        Previous
+                    </button>
+                {% endif %}
+                
+                {% if page.has_next %}
+                    <a href="?tab={{ tab }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.next_page_number }}{% else %}&part_page={{ page.next_page_number }}{% endif %}" 
+                       class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted">
+                        Next
+                    </a>
+                {% else %}
+                    <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+                        Next
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+{% else %}
+    <div class="rounded-2xl border border-border bg-card shadow-sm p-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+        </svg>
+        <h3 class="mt-2 text-lg font-medium text-foreground">
+            {% if role == 'organizer' %}
+                No organized events
+            {% else %}
+                No events where you participate
+            {% endif %}
+        </h3>
+        <p class="mt-1 text-sm text-muted-foreground">
+            {% if q or status %}
+                No events found with the applied filters.
+            {% else %}
+                {% if role == 'organizer' %}
+                    Start by creating your first event.
+                {% else %}
+                    Find events and join to see them here.
+                {% endif %}
+            {% endif %}
+        </p>
+        {% if role == 'organizer' and not q and not status %}
+        <div class="mt-6">
+            <a href="{% url 'my_events:create' %}" 
+               class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 hover:underline">
+                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Create event
+            </a>
+        </div>
+        {% endif %}
+    </div>
+{% endif %}
+

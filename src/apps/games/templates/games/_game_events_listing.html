@@ -1,0 +1,93 @@
+<!-- HTMX Partial: Game Events Listing -->
+<form 
+  x-ref="filtersForm"
+  id="game-filters-form"
+  hx-get="{{ request.path }}" 
+  hx-target="#game-events-listing" 
+  hx-swap="innerHTML"
+  hx-trigger="submit"
+  hx-replace-url="true"
+  class="space-y-6">
+  
+  <!-- Hidden input to preserve status pill state -->
+  <input type="hidden" name="status" x-model="status">
+  
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-3 gap-4">
+    <div class="text-center p-4 bg-muted rounded-lg">
+      <div class="text-2xl font-bold text-foreground">{{ total_count }}</div>
+      <div class="text-sm text-muted-foreground">Total</div>
+    </div>
+    <div class="text-center p-4 bg-muted rounded-lg">
+      <div class="text-2xl font-bold text-foreground">{{ upcoming_count }}</div>
+      <div class="text-sm text-muted-foreground">Upcoming</div>
+    </div>
+    <div class="text-center p-4 bg-muted rounded-lg">
+      <div class="text-2xl font-bold text-foreground">{{ completed_count }}</div>
+      <div class="text-sm text-muted-foreground">Completed</div>
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div>
+    <div class="inline-flex rounded-xl bg-muted p-1">
+      <button 
+        type="button"
+        @click="status = ''; submitFilters()"
+        class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+        :class="status === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
+        All
+      </button>
+      <button 
+        type="button"
+        @click="status = 'upcoming'; submitFilters()"
+        class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+        :class="status === 'upcoming' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
+        Upcoming
+      </button>
+      <button 
+        type="button"
+        @click="status = 'completed'; submitFilters()"
+        class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+        :class="status === 'completed' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
+        Completed
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Events Table -->
+{% include 'events/partials/_event_table.html' with events=page_obj action_type='none' show_game=False show_price=True columns_count=6 empty_message="No events found for this game." page_obj=page_obj %}
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
+  <div class="text-sm text-muted-foreground">
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </div>
+  <div class="flex gap-2">
+    {% if page_obj.has_previous %}
+      <button 
+        type="button"
+        hx-get="{{ request.path }}?status={{ status }}&page={{ page_obj.previous_page_number }}"
+        hx-target="#game-events-listing"
+        hx-swap="innerHTML"
+        hx-replace-url="true"
+        class="px-3 py-1.5 rounded-lg border border-border bg-card text-sm hover:bg-muted transition-colors cursor-pointer">
+        Previous
+      </button>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <button 
+        type="button"
+        hx-get="{{ request.path }}?status={{ status }}&page={{ page_obj.next_page_number }}"
+        hx-target="#game-events-listing"
+        hx-swap="innerHTML"
+        hx-replace-url="true"
+        class="px-3 py-1.5 rounded-lg border border-border bg-card text-sm hover:bg-muted transition-colors cursor-pointer">
+        Next
+      </button>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

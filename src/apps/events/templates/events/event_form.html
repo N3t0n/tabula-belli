@@ -1,0 +1,485 @@
+{% extends "base.html" %}
+{% load static %}
+{% load form_helpers %}
+
+{% block title %}{% if object %}Edit Event{% else %}Create Event{% endif %} | Tabula Belli{% endblock %}
+
+{% block content %}
+<div class="py-8">
+  <div class="max-w-4xl px-4 mx-auto">
+    
+    <!-- Page header -->
+    <div class="mb-8">
+      <h1 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+        {% if object %}Edit Event{% else %}Create Event{% endif %}
+        <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+      </h1>
+      <p class="mt-4 text-sm text-muted-foreground text-center">
+        Fill in the event details below.
+      </p>
+    </div>
+    
+    <form
+      id="event-main-form"
+      method="post"
+      action="{% if object %}{% url 'my_events:edit' object.slug %}{% else %}{% url 'my_events:create' %}{% endif %}"
+      class="space-y-6">
+      {% csrf_token %}
+      
+      <!-- Non-field errors -->
+      {% if form.non_field_errors %}
+        <div class="p-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+      
+      <!-- ========================= -->
+      <!-- SECTION 1: BASIC INFO    -->
+      <!-- ========================= -->
+      <section class="p-4 md:p-5 bg-card border border-border rounded-lg space-y-4">
+        <header class="border-b border-border pb-2 mb-2">
+          <h2 class="text-lg font-semibold text-foreground">
+            Basic Information
+          </h2>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Event type, game and a short description.
+          </p>
+        </header>
+        
+        <!-- Event type + Game -->
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.event_type.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Event Type *
+            </label>
+            <select
+              name="{{ form.event_type.name }}"
+              id="{{ form.event_type.id_for_label }}"
+              required
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              {% for value, label in form.event_type.field.choices %}
+                <option value="{{ value }}" {% if form.event_type.value|is_selected:value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            {% if form.event_type.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.event_type.errors.0 }}</p>
+            {% endif %}
+          </div>
+          
+          <div>
+            <label for="{{ form.game.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Game *
+            </label>
+            <select
+              name="{{ form.game.name }}"
+              id="{{ form.game.id_for_label }}"
+              required
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              <option value="">Select game</option>
+              {% for value, label in form.game.field.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.game.value|is_selected:value %}selected{% endif %}>{{ label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% if form.game.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.game.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Title -->
+        <div>
+          <label for="{{ form.title.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            Title *
+          </label>
+          <input
+            type="text"
+            name="{{ form.title.name }}"
+            id="{{ form.title.id_for_label }}"
+            value="{{ form.title.value|default:'' }}"
+            required
+            placeholder="e.g., Warhammer 40K Tournament Spring 2025"
+            class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+          {% if form.title.errors %}
+            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.title.errors.0 }}</p>
+          {% endif %}
+          <p class="mt-1 text-xs text-muted-foreground">
+            Use a short, descriptive name so players instantly know what this is.
+          </p>
+        </div>
+        
+        <!-- Description -->
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            Description <span class="text-muted-foreground text-xs">(optional)</span>
+          </label>
+          <textarea
+            name="{{ form.description.name }}"
+            id="{{ form.description.id_for_label }}"
+            rows="4"
+            placeholder="Describe your event: format, schedule, prizes, rules, etc."
+            class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">{{ form.description.value|default:'' }}</textarea>
+          {% if form.description.errors %}
+            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.description.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </section>
+      
+      <!-- ========================= -->
+      <!-- SECTION 2: LOCATION      -->
+      <!-- ========================= -->
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+        <header class="border-b border-border dark:border-border pb-2 mb-2">
+          <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
+            Location
+          </h2>
+          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+            Where the event will take place.
+          </p>
+        </header>
+        
+        <!-- Country + Region -->
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.country.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Country *
+            </label>
+            <select
+              name="{{ form.country.name }}"
+              id="{{ form.country.id_for_label }}"
+              hx-get="{% url 'locations:get_regions' %}"
+              hx-target="#{{ form.region.id_for_label }}"
+              hx-swap="innerHTML"
+              hx-include="this"
+              hx-trigger="change"
+              required
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              <option value="">Select country</option>
+              {% for value, label in form.country.field.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.country.value|is_selected:value %}selected{% endif %}>{{ label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% if form.country.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.country.errors.0 }}</p>
+            {% endif %}
+          </div>
+          
+          <div>
+            <label for="{{ form.region.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Region / State <span class="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <select
+              name="{{ form.region.name }}"
+              id="{{ form.region.id_for_label }}"
+              hx-get="{% url 'locations:get_cities' %}"
+              hx-target="#{{ form.city.id_for_label }}"
+              hx-swap="innerHTML"
+              hx-include="#{{ form.country.id_for_label }},this"
+              hx-trigger="change"
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              <option value="">Select region</option>
+              {% for value, label in form.region.field.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.region.value|is_selected:value %}selected{% endif %}>{{ label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% if form.region.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.region.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- City + Venue name -->
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.city.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              City *
+            </label>
+            <select
+              name="{{ form.city.name }}"
+              id="{{ form.city.id_for_label }}"
+              required
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              <option value="">Select city</option>
+              {% for value, label in form.city.field.choices %}
+                {% if value %}
+                  <option value="{{ value }}" {% if form.city.value|is_selected:value %}selected{% endif %}>{{ label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            {% if form.city.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.city.errors.0 }}</p>
+            {% endif %}
+          </div>
+          
+          <div>
+            <label for="{{ form.location_name.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Venue Name <span class="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <input
+              type="text"
+              name="{{ form.location_name.name }}"
+              id="{{ form.location_name.id_for_label }}"
+              value="{{ form.location_name.value|default:'' }}"
+              placeholder="e.g., Comic Store Madrid"
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+            {% if form.location_name.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.location_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Address -->
+        <div>
+          <label for="{{ form.location_address.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            Address <span class="text-muted-foreground text-xs">(optional)</span>
+          </label>
+          <input
+            type="text"
+            name="{{ form.location_address.name }}"
+            id="{{ form.location_address.id_for_label }}"
+            value="{{ form.location_address.value|default:'' }}"
+            placeholder="e.g., Calle Gran Vía 28, 2nd floor"
+            class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+          {% if form.location_address.errors %}
+            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.location_address.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- ========================= -->
+      <!-- SECTION 3: DATE & TIME   -->
+      <!-- ========================= -->
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+        <header class="border-b border-border dark:border-border pb-2 mb-2">
+          <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
+            Date & Time
+          </h2>
+          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+            Event schedule and registration window.
+          </p>
+        </header>
+        
+        <!-- Start + End -->
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.start_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Start Date & Time *
+            </label>
+            <input
+              type="datetime-local"
+              name="{{ form.start_at.name }}"
+              id="{{ form.start_at.id_for_label }}"
+              value="{{ form.start_at.value|date:'Y-m-d\TH:i'|default:form.start_at.value|default:'' }}"
+              required
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            {% if form.start_at.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.start_at.errors.0 }}</p>
+            {% endif %}
+          </div>
+          
+          <div>
+            <label for="{{ form.end_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              End Date & Time *
+            </label>
+            <input
+              type="datetime-local"
+              name="{{ form.end_at.name }}"
+              id="{{ form.end_at.id_for_label }}"
+              value="{{ form.end_at.value|date:'Y-m-d\TH:i'|default:form.end_at.value|default:'' }}"
+              required
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            {% if form.end_at.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.end_at.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Registration opens/closes -->
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.registration_opens_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Registration Opens <span class="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <input
+              type="datetime-local"
+              name="{{ form.registration_opens_at.name }}"
+              id="{{ form.registration_opens_at.id_for_label }}"
+              value="{{ form.registration_opens_at.value|date:'Y-m-d\TH:i'|default:form.registration_opens_at.value|default:'' }}"
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            {% if form.registration_opens_at.errors %}
+              <p class="mt-2 text-sm text-destructive">{{ form.registration_opens_at.errors.0 }}</p>
+            {% endif %}
+            <p class="mt-1 text-xs text-muted-foreground">
+              If empty, the system will use its default opening time.
+            </p>
+          </div>
+          
+          <div>
+            <label for="{{ form.registration_closes_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Registration Closes <span class="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <input
+              type="datetime-local"
+              name="{{ form.registration_closes_at.name }}"
+              id="{{ form.registration_closes_at.id_for_label }}"
+              value="{{ form.registration_closes_at.value|date:'Y-m-d\TH:i'|default:form.registration_closes_at.value|default:'' }}"
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            {% if form.registration_closes_at.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.registration_closes_at.errors.0 }}</p>
+            {% endif %}
+            <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+              If empty, the system will use its default closing time.
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- ========================= -->
+      <!-- SECTION 4: CAPACITY      -->
+      <!-- ========================= -->
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+        <header class="border-b border-border dark:border-border pb-2 mb-2">
+          <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
+            Capacity & Pricing
+          </h2>
+          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+            How many players and the entry fee.
+          </p>
+        </header>
+        
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.capacity.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Capacity *
+            </label>
+            <input
+              type="number"
+              name="{{ form.capacity.name }}"
+              id="{{ form.capacity.id_for_label }}"
+              value="{{ form.capacity.value|default:'' }}"
+              min="1"
+              max="10000"
+              required
+              placeholder="50"
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+            {% if form.capacity.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.capacity.errors.0 }}</p>
+            {% endif %}
+            <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+              Maximum participants (1–10,000).
+            </p>
+          </div>
+          
+          <div>
+            <label for="{{ form.price.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+              Price (€) <span class="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <input
+              type="number"
+              name="{{ form.price.name }}"
+              id="{{ form.price.id_for_label }}"
+              value="{{ form.price.value|default:'' }}"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+            {% if form.price.errors %}
+              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.price.errors.0 }}</p>
+            {% endif %}
+            <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+              Leave empty or 0 for free events.
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- ============================== -->
+      <!-- SECTION 5: CONTACT INFORMATION -->
+      <!-- ============================== -->
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+        <header class="border-b border-border dark:border-border pb-2 mb-2">
+          <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
+            Contact Information
+          </h2>
+          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+            How players can reach you about this event. This email will be displayed on the event detail page.
+          </p>
+        </header>
+
+        <div>
+          <label for="{{ form.contact_email.id_for_label }}" 
+                 class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            Contact Email
+            <span class="text-destructive dark:text-destructive">*</span>
+          </label>
+          
+          <input
+            type="email"
+            name="{{ form.contact_email.name }}"
+            id="{{ form.contact_email.id_for_label }}"
+            value="{{ form.contact_email.value|default:'' }}"
+            required
+            placeholder="organizer@example.com"
+            class="bg-input border border-border text-foreground text-sm rounded-lg 
+                   focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 
+                   placeholder:text-muted-foreground dark:bg-input dark:border-border 
+                   dark:text-foreground dark:placeholder:text-muted-foreground 
+                   dark:focus:ring-primary-500 dark:focus:border-primary-500">
+          
+          {% if form.contact_email.errors %}
+            <p class="mt-2 text-sm text-destructive dark:text-destructive">
+              {{ form.contact_email.errors.0 }}
+            </p>
+          {% endif %}
+          
+          <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+            💡 Defaults to your account email. You can customize it for this event.
+          </p>
+        </div>
+      </section>
+    </form>
+
+      <!-- ========================= -->
+      <!-- ACTIONS                  -->
+      <!-- ========================= -->
+      <div class="flex items-center justify-between pt-6 border-t border-border dark:border-border">
+        <div class="flex items-center space-x-4">
+          <button
+            type="submit"
+            form="event-main-form"
+            class="inline-flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors cursor-pointer dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            {% if object %}Update Event{% else %}Create Event{% endif %}
+          </button>
+          <a
+            href="{% url 'my_events:index' %}"
+            class="inline-flex items-center justify-center text-foreground bg-card border border-border hover:bg-muted focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors cursor-pointer">
+            Cancel
+          </a>
+        </div>
+        
+        {% if object and object.is_editable %}
+        <form
+          method="post"
+          action="{% url 'my_events:cancel' object.slug %}"
+          hx-post="{% url 'my_events:cancel' object.slug %}"
+          hx-target="body"
+          hx-swap="none"
+          class="inline ml-auto">
+          {% csrf_token %}
+          <button
+            type="submit"
+            hx-confirm="Are you sure you want to cancel this event? This action cannot be undone."
+            class="inline-flex items-center justify-center text-white bg-destructive-600 hover:bg-destructive-700 focus:ring-4 focus:outline-none focus:ring-destructive-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors cursor-pointer">
+            Cancel Event
+          </button>
+        </form>
+        {% endif %}
+      </div>
+  </div>
+</div>
+{% endblock %}

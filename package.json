@@ -1,0 +1,37 @@
+{
+  "name": "tabula_belli",
+  "version": "1.0.0",
+  "description": "Board game events platform",
+  "scripts": {
+    "build:css": "tailwindcss -i src/static/css/input.css -o src/static/css/output.css",
+    "build:js": "node scripts/copy-deps.js",
+    "build": "npm run build:css && npm run build:js",
+    "watch:css": "tailwindcss -i src/static/css/input.css -o src/static/css/output.css --watch",
+    "dev": "npm run build && echo Frontend built! Now run: python manage.py runserver"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/N3t0n/tabula-belli.git"
+  },
+  "keywords": [
+    "django",
+    "tailwind",
+    "board-games"
+  ],
+  "author": "N3t0n",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/N3t0n/tabula-belli/issues"
+  },
+  "homepage": "https://github.com/N3t0n/tabula-belli#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.1.16"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.16",
+    "flowbite": "^3.1.2",
+    "htmx.org": "1.9.10",
+    "alpinejs": "3.14.1"
+  }
+}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About | Tabula Belli{% endblock %}
+
+{% block content %}
+
+<section class="bg-background py-8 antialiased dark:bg-background md:py-16">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <div class="mx-auto max-w-5xl">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+          About Tabula Belli
+          <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+        </h1>
+      </div>
+
+      <div class="mx-auto max-w-3xl space-y-6">
+        <p class="text-base text-muted-foreground dark:text-muted-foreground">
+          Tabula Belli is a web application for tabletop communities. It brings together wargames,
+          role-playing games and trading card games events in a single place, so players and
+          organisers do not have to jump between scattered groups and outdated websites to know
+          what is happening.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-foreground dark:text-foreground pt-6 mb-3">Why Tabula Belli exists</h2>
+        <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
+          In most cities, tabletop events are announced across many different channels: 
+          WhatsApp groups, Discord servers, Facebook communities…
+        </p>
+        <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
+          Information is easy to miss, hard to search and difficult to compare.
+        </p>
+        <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
+          Tabula Belli focuses on one clear goal: give players and organisers a modern, central place
+          to publish and discover events, with real locations, real games and clear rules for
+          registrations.
+        </p>
+      </div>
+
+      <div class="my-8 xl:mb-12 xl:mt-12 mx-auto max-w-3xl">
+        <img class="w-full rounded-lg shadow-md" src="{% static 'images/ttrpg-about.webp' %}" alt="Tabletop RPG gaming session" />
+        <p class="text-center text-sm text-muted-foreground dark:text-muted-foreground mt-3">TTRPG sessions: one-shots, campaigns and narrative play.</p>
+      </div>
+
+      <div class="mx-auto max-w-3xl space-y-6">
+        <h2 class="text-2xl font-semibold text-foreground dark:text-foreground mb-3">Who Tabula Belli is for</h2>
+        <ul class="list-disc list-inside mb-4 space-y-1 text-base text-muted-foreground dark:text-muted-foreground">
+          <li>
+            <strong class="text-foreground dark:text-foreground">Local game stores and clubs</strong> that run regular tournaments, leagues,
+            narrative campaigns or demo days and want a simple way to show everything they offer.
+          </li>
+          <li>
+            <strong class="text-foreground dark:text-foreground">Players</strong> who want to quickly see what is scheduled near them, filter by
+            game or format and register without sending dozens of messages back and forth.
+          </li>
+          <li>
+            <strong class="text-foreground dark:text-foreground">Independent organisers</strong> who need a tool to publish events,
+            control capacity and keep track of registrations.
+          </li>
+        </ul>
+      </div>
+
+      <div class="my-8 xl:mb-12 xl:mt-12 mx-auto max-w-3xl">
+        <img class="w-full rounded-lg shadow-md" src="{% static 'images/tcg-about.webp' %}" alt="Trading Card Game tournament" />
+        <p class="text-center text-sm text-muted-foreground dark:text-muted-foreground mt-3">Trading Card Game events: drafts, constructed and casual play.</p>
+      </div>
+
+      <div class="mx-auto max-w-3xl space-y-6">
+        <h2 class="text-2xl font-semibold text-foreground dark:text-foreground mb-3">What Tabula Belli does today</h2>
+        <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
+          The current version of Tabula Belli offers a focused set of features that cover the basics of
+          event discovery and management:
+        </p>
+        <ul class="list-disc list-inside mb-4 space-y-1 text-base text-muted-foreground dark:text-muted-foreground">
+          <li>
+            <strong class="text-foreground dark:text-foreground">Public events catalogue</strong> with filters by game, category (TCG, TTRPG,
+            wargame), type (casual or tournament), status and location (country, region, city).
+          </li>
+          <li>
+            <strong class="text-foreground dark:text-foreground">Player accounts</strong> with registration, login and a personal "My Events"
+            area to see upcoming events, registrations and events organised by the user.
+          </li>
+          <li>
+            <strong class="text-foreground dark:text-foreground">Event management for organisers</strong>: create, edit and cancel events with
+            clear rules about dates, capacity and visibility.
+          </li>
+          <li>
+            <strong class="text-foreground dark:text-foreground">European location database</strong>: 44 countries with their regions and thousands of cities
+            across the continent.
+          </li>
+          <li>
+            <strong class="text-foreground dark:text-foreground">Game catalogue</strong>: over 120 games across TCGs, TTRPGs and wargames.
+            Missing your favourite game? <a href="{% url 'contact' %}" class="text-primary-600 hover:underline dark:text-primary-500">Contact us</a>.
+          </li>
+        </ul>
+      </div>
+
+      <div class="my-8 xl:mb-12 xl:mt-12 mx-auto max-w-3xl">
+        <img class="w-full rounded-lg shadow-md" src="{% static 'images/wargame-about.webp' %}" alt="Warhammer 40K tabletop gaming event" />
+        <p class="text-center text-sm text-muted-foreground dark:text-muted-foreground mt-3">Wargames and miniatures: tournaments and friendly battles.</p>
+      </div>
+
+      <div class="mx-auto max-w-3xl space-y-6 mb-12">
+        <h2 class="text-2xl font-semibold text-foreground dark:text-foreground mb-3">Where Tabula Belli is heading</h2>
+        <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
+          The roadmap for Tabula Belli includes features such as email notifications for
+          registrations and cancellations, better tools for tournament management (rounds,
+          standings, pairings), online payments for tickets and full internationalisation for multiple
+          languages.
+        </p>
+        <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
+          In the long run, the goal is to make Tabula Belli a reliable everyday tool for the people who organise
+          and attend tabletop gaming events across Europe.
+        </p>
+      </div>
+
+      <div class="text-center bg-card dark:bg-card border border-border dark:border-border rounded-lg p-8">
+        {% include 'partials/cta_signup.html' %}
+      </div>
+    </div>
+  </div>
+</section>
+  
+{% endblock %}  

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile | Tabula Belli{% endblock %}
+
+{% block content %}
+<div class="py-8 antialiased md:py-8">
+  <div class="mx-auto max-w-screen-lg px-4 2xl:px-0">
+    
+    <!-- Page Header -->
+    <div class="mb-6 text-center">
+      <h1 class="mb-4 text-4xl tracking-tight font-extrabold text-foreground inline-flex flex-col items-center w-full mx-auto">
+          {{ user.username }}'s Profile
+          <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+      </h1>
+      <p class="font-light text-center text-muted-foreground md:text-lg">Manage your account settings</p>
+    </div>
+
+    {% if is_public_demo_account %}
+      {% include "account/_demo_account_notice.html" %}
+    {% endif %}
+
+    <!-- Profile Card -->
+    <div>
+      
+      <!-- Profile Info Section (swapped by HTMX after edit) -->
+      {% if form.errors %}
+        {% include "accounts/profile_form.html" %}
+      {% endif %}
+
+      <div id="profile-info"
+           hx-get="{% url 'accounts:profile' %}"
+           hx-trigger="profileUpdated from:body"
+           hx-swap="innerHTML">
+        {% include "accounts/profile_info.html" %}
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-3 mt-6 pt-6 border-t border-border dark:border-border">
+        <button 
+          hx-get="{% url 'accounts:profile' %}"
+          hx-target="#modal-content"
+          hx-swap="innerHTML"
+          onclick="setTimeout(() => window.dispatchEvent(new CustomEvent('modal-open', { bubbles: true, composed: true })), 100)"
+          class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors cursor-pointer dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+          <svg class="-ms-0.5 me-1.5 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"></path>
+          </svg>
+          Edit Profile
+        </button>
+
+        <a href="{% url 'account_email' %}"
+           class="inline-flex items-center justify-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted">
+          Email Settings
+        </a>
+
+        <a href="{% url 'account_change_password' %}"
+           class="inline-flex items-center justify-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted">
+          Password Settings
+        </a>
+
+        {% if not is_public_demo_account %}
+        <a href="{% url 'accounts:delete' %}"
+           class="inline-flex items-center justify-center rounded-lg bg-destructive-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-destructive-700">
+          Delete Account
+        </a>
+        {% else %}
+        <button type="button" disabled aria-disabled="true" class="rounded-lg bg-destructive-600 px-5 py-2.5 text-sm font-medium text-white opacity-50 cursor-not-allowed">Delete Account</button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Generic Modals -->
+    {% include "components/edit.html" %}
+    {% include "components/confirmation.html" %}
+
+  </div>
+</div>
+
+<!-- Alpine.js cloaking style -->
+<style>
+    [x-cloak] { display: none !important; }
+</style>
+{% endblock %}

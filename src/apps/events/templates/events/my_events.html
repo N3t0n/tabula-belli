@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Events | Tabula Belli{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    
+    {# Header #}
+    <div class="mb-6">
+        <h1 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+            My Events
+            <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+        </h1>
+        <p class="font-light text-center text-muted-foreground md:text-lg mt-4">Manage the events you organize and those where you participate</p>
+    </div>
+
+    {# Tabs Navigation (Alpine.js for visual feedback only) #}
+    <div 
+        x-data="{ activeTab: '{{ active_tab }}' }" 
+        class="mb-6"
+    >
+        {# Tab Buttons + Create Button #}
+        <div class="border-b border-border flex items-center justify-between">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                {# Organizing Tab #}
+                <a 
+                    href="?tab=organizing"
+                    @click="activeTab = 'organizing'"
+                    :class="activeTab === 'organizing' ? 
+                        'border-primary-600 text-primary-600' : 
+                        'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+                >
+                    Organizing ({{ organizing_page.paginator.count }})
+                </a>
+
+                {# Registered Tab #}
+                <a 
+                    href="?tab=registered"
+                    @click="activeTab = 'registered'"
+                    :class="activeTab === 'registered' ? 
+                        'border-primary-600 text-primary-600' : 
+                        'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+                >
+                    Registered ({{ participating_page.paginator.count }})
+                </a>
+            </nav>
+            
+            <a href="{% url 'my_events:create' %}" 
+               class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 transition-colors cursor-pointer">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 5v10m-5-5h10"/>
+                </svg>
+                Create Event
+            </a>
+        </div>
+
+        {# Tab Content: Organizing #}
+        <div x-show="activeTab === 'organizing'" class="mt-6">
+            
+            {# Status Pills + Search #}
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                {# Status Pills #}
+                <div class="inline-flex rounded-xl bg-muted p-1">
+                    <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        All
+                    </a>
+                    <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Active
+                    </a>
+                    <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Completed
+                    </a>
+                    <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Canceled
+                    </a>
+                </div>
+                
+                {# Search #}
+                <form method="get" action="{% url 'my_events:index' %}" class="w-full sm:w-auto">
+                    <input type="hidden" name="tab" value="organizing">
+                    {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <input 
+                            type="search" 
+                            name="q" 
+                            value="{{ q }}"
+                            placeholder="Search events..." 
+                            class="w-full sm:w-64 pl-10 pr-3 py-2 rounded-lg border border-border bg-input text-sm"
+                        >
+                    </div>
+                </form>
+            </div>
+
+            {# Table: Organizing #}
+            {% include 'events/partials/_my_events_table.html' with events=organizing_page.object_list page=organizing_page tab='organizing' role='organizer' show_game=True show_price=True columns_count=8 q=q status=status empty_message="You are not organizing any events yet." %}
+        </div>
+
+        {# Tab Content: Registered #}
+        <div x-show="activeTab === 'registered'" class="mt-6">
+            
+            {# Status Pills + Search #}
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                {# Status Pills #}
+                <div class="inline-flex rounded-xl bg-muted dark:bg-muted p-1">
+                    <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        All
+                    </a>
+                    <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Active
+                    </a>
+                    <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Completed
+                    </a>
+                    <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
+                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Canceled
+                    </a>
+                </div>
+                
+                {# Search #}
+                <form method="get" action="{% url 'my_events:index' %}" class="w-full sm:w-auto">
+                    <input type="hidden" name="tab" value="registered">
+                    {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <input 
+                            type="search" 
+                            name="q" 
+                            value="{{ q }}"
+                            placeholder="Search events..." 
+                            class="w-full sm:w-64 pl-10 pr-3 py-2 rounded-lg border border-border bg-input text-sm"
+                        >
+                    </div>
+                </form>
+            </div>
+
+            {# Table: Registered #}
+            {% include 'events/partials/_my_events_table.html' with events=participating_page.object_list page=participating_page tab='registered' role='participant' show_game=True show_price=True columns_count=8 q=q status=status empty_message="You are not registered for any events." %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+

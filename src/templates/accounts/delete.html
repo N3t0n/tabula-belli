@@ -1,0 +1,38 @@
+{% extends "account/flow_base.html" %}
+{% block head_title %}Delete your account{% endblock %}
+{% block flow_title %}Delete your account{% endblock %}
+{% block flow_content %}
+<p>You are deleting <strong class="text-foreground">{{ user.username }}</strong>'s account. This is permanent.</p>
+{% if is_public_demo_account %}
+  {% include "account/_demo_account_notice.html" %}
+{% elif user.is_superuser %}
+  <p role="alert" class="text-destructive">{{ superuser_error }}</p>
+{% elif review.in_progress %}
+  <p role="alert" class="text-destructive">{{ in_progress_error }}</p>
+  <ul class="list-disc space-y-2 pl-5">
+    {% for event in review.in_progress %}
+      <li><a href="{% url 'event_detail' event.slug %}" class="font-medium text-primary-600 hover:underline">{{ event.title }}</a> — ends {{ event.end_at|date:"d M Y, H:i T" }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="rounded-lg border border-border bg-muted p-4">
+    <p><strong>{{ review.future_events|length }}</strong> upcoming event{{ review.future_events|length|pluralize }} you organize will be cancelled, including all confirmed participants' registrations.</p>
+    <p class="mt-3"><strong>{{ review.pending_registrations|length }}</strong> current or upcoming registration{{ review.pending_registrations|length|pluralize }} of yours will be cancelled, freeing your places.</p>
+  </div>
+  {% if review.future_events %}
+    <ul class="list-disc space-y-2 pl-5">
+      {% for event in review.future_events %}<li>{{ event.title }} — {{ event.start_at|date:"d M Y, H:i T" }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+  <p>Past events and participation records will be kept as <strong>Deleted account</strong>, without a link to your account. Your organizer contact email will be removed. Other participants' accounts and past registrations will stay intact.</p>
+  <p>Your profile, sign-in details and email settings will be deleted. You will be signed out.</p>
+  <form method="post" action="{% url 'accounts:delete' %}">
+    {% csrf_token %}
+    <input type="hidden" name="confirmation" value="{{ confirmation }}">
+    <button type="submit" class="inline-flex w-full items-center justify-center rounded-lg bg-destructive-600 px-5 py-3 text-sm font-medium text-white hover:bg-destructive-700 focus:outline-none focus:ring-4 focus:ring-destructive-300">
+      {% if review.has_pending %}Cancel pending items and delete my account{% else %}Delete my account permanently{% endif %}
+    </button>
+  </form>
+{% endif %}
+<p class="text-center"><a href="{% url 'accounts:profile' %}" class="font-medium text-primary-600 hover:underline">Keep my account</a></p>
+{% endblock %}

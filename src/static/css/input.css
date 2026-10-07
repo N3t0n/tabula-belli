@@ -1,0 +1,174 @@
+@import "tailwindcss" source(none);
+@plugin "flowbite/plugin";
+
+@source "../../templates";
+@source "../../apps";
+@source "../../../node_modules/flowbite";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ===========================
+     VERDIGRIS TABULA BELLI - PALETA OFICIAL
+     Light Mode: Elegante y profesional sin blanco nuclear
+     =========================== */
+  
+  /* Primary scale (Teal) - Verdigris signature */
+  --color-primary-50: #F2FEFF;
+  --color-primary-100: #E6F5F5;
+  --color-primary-200: #D6ECEC;
+  --color-primary-300: #A1C2C2;
+  --color-primary-400: #6B9999;
+  --color-primary-500: #0FA3B1;          /* Brand color - main teal */
+  --color-primary-600: #0C8694;
+  --color-primary-700: #096977;
+  --color-primary-800: #064C5A;
+  --color-primary-900: #032F3D;
+  --color-primary-950: #061415;
+  
+  /* Destructive scale (Red) - for delete/cancel actions */
+  --color-destructive-50: #FEF2F2;
+  --color-destructive-100: #FEE2E2;
+  --color-destructive-200: #FECACA;
+  --color-destructive-300: #FCA5A5;
+  --color-destructive-400: #F87171;
+  --color-destructive-500: #EF4444;
+  --color-destructive-600: #C94B4B;      /* Light mode base */
+  --color-destructive-700: #B91C1C;
+  --color-destructive-800: #991B1B;
+  --color-destructive-900: #7F1D1D;
+  --color-destructive-950: #450A0A;
+  
+  /* ===========================
+     SEMANTIC COLORS
+     =========================== */
+  
+  /* Backgrounds */
+  --color-background: #F1FAFA;           /* Page background - suave verdoso */
+  --color-card: #FFFFFF;                 /* Cards - blanco limpio */
+  --color-surface: #FFFFFF;              /* Alias for card */
+  --color-input: #EDF5F5;                /* Input fields - tinte teal sutil */
+  --color-muted: #E6F5F5;                /* Pills/badges - muted verdoso */
+  
+  /* Foreground (Text) */
+  --color-foreground: #112020;           /* Primary text - oscuro verdoso */
+  --color-muted-foreground: #476666;     /* Secondary text - teal medio */
+  
+  /* Borders */
+  --color-border: #D6ECEC;               /* Standard borders - suave teal */
+  --color-input-border: #D6ECEC;         /* Input field borders */
+  
+  /* Accent - Antique Gold */
+  --color-accent: #C79B2D;               /* Oro viejo - premium y visible */
+  --color-accent-foreground: #1E1204;    /* Text on accent - oscuro */
+  
+  /* States - use destructive scale above */
+  --color-destructive: #C94B4B;          /* Maps to destructive-600 */
+  --color-destructive-foreground: #FFFFFF;
+  --color-success: #2BA84A;              /* Success - verde equilibrado */
+  --color-success-foreground: #FFFFFF;
+  --color-warning: #E6A336;              /* Warning - amarillo cálido */
+  --color-warning-foreground: #FFFFFF;
+  
+  /* Focus */
+  --color-ring: #0FA3B1;                 /* Focus ring (teal) */
+}
+
+/* ===========================
+   VERDIGRIS TABULA BELLI - DARK MODE
+   Elegante sin reventar los ojos, mantiene identidad teal
+   =========================== */
+:is(.dark *) {
+  /* Destructive scale dark mode override */
+  --color-destructive-600: #FF6F6F;      /* Dark mode base - softer red */
+  --color-destructive-700: #E66060;      /* Darker hover state */
+  /* Backgrounds */
+  --color-background: #0A1111;           /* Negro verdoso - profundidad */
+  --color-card: #101818;                 /* Cards elevadas - teal oscuro */
+  --color-surface: #101818;
+  --color-input: #152121;                /* Input fields - teal más claro */
+  --color-muted: #152121;                /* Badges/pills - mismo tono */
+  
+  /* Foreground (Text) */
+  --color-foreground: #E6F7F7;           /* Texto principal - blanco verdoso */
+  --color-muted-foreground: #A1C2C2;     /* Texto secundario - teal suave */
+  
+  /* Borders */
+  --color-border: #223232;               /* Bordes - teal oscuro discreto */
+  --color-input-border: #223232;
+  
+  /* Accent - Antique Gold (dark) */
+  --color-accent: #EAB84A;               /* Oro más brillante para dark */
+  --color-accent-foreground: #1E1204;    /* Text on accent */
+  
+  /* States */
+  --color-destructive: #FF6F6F;          /* Red suave - no agresivo */
+  --color-destructive-foreground: #1E0505;
+  --color-success: #3DD06B;              /* Green vibrante - visible */
+  --color-success-foreground: #FFFFFF;
+  --color-warning: #FFC36A;              /* Amarillo cálido - amigable */
+  --color-warning-foreground: #FFFFFF;
+  
+  /* Focus */
+  --color-ring: #28C4D2;                 /* Focus más brillante en dark */
+}
+
+/* ===========================
+   SEMANTIC UTILITY CLASSES
+   =========================== */
+
+/* Background utilities */
+.bg-background { background-color: var(--color-background); }
+.bg-card { background-color: var(--color-card); }
+.bg-surface { background-color: var(--color-surface); }
+.bg-input { background-color: var(--color-input); }
+.bg-muted { background-color: var(--color-muted); }
+.bg-accent { background-color: var(--color-accent); }
+.bg-destructive { background-color: var(--color-destructive); }
+.bg-success { background-color: var(--color-success); }
+.bg-warning { background-color: var(--color-warning); }
+
+/* Text utilities */
+.text-foreground { color: var(--color-foreground); }
+.text-muted-foreground { color: var(--color-muted-foreground); }
+.text-accent-foreground { color: var(--color-accent-foreground); }
+.text-destructive { color: var(--color-destructive); }
+.text-destructive-foreground { color: var(--color-destructive-foreground); }
+.text-success { color: var(--color-success); }
+.text-success-foreground { color: var(--color-success-foreground); }
+.text-warning { color: var(--color-warning); }
+.text-warning-foreground { color: var(--color-warning-foreground); }
+
+/* Border utilities */
+.border-border { border-color: var(--color-border); }
+.border-input { border-color: var(--color-input-border); }
+.border-destructive { border-color: var(--color-destructive); }
+
+/* Ring utilities */
+.ring-ring { --tw-ring-color: var(--color-ring); }
+.ring-destructive { --tw-ring-color: var(--color-destructive); }
+
+/* Hover variants */
+.hover\:bg-muted:hover { background-color: var(--color-muted); }
+.hover\:bg-accent:hover { background-color: var(--color-accent); }
+.hover\:bg-destructive:hover { background-color: var(--color-destructive); }
+
+/* Dark mode variants - these inherit from @theme dark mode */
+.dark .dark\:bg-background { background-color: var(--color-background); }
+.dark .dark\:bg-card { background-color: var(--color-card); }
+.dark .dark\:bg-input { background-color: var(--color-input); }
+.dark .dark\:bg-muted { background-color: var(--color-muted); }
+.dark .dark\:bg-destructive { background-color: var(--color-destructive); }
+.dark .dark\:text-foreground { color: var(--color-foreground); }
+.dark .dark\:text-muted-foreground { color: var(--color-muted-foreground); }
+.dark .dark\:border-border { border-color: var(--color-border); }
+
+/* Hide scrollbar for horizontal carousel */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

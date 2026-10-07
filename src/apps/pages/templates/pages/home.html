@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home | Tabula Belli{% endblock %}
+{% block content %}
+<!-- Hero Section - uses bg-background from body -->
+<div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6">
+        <div class="font-light text-muted-foreground sm:text-lg">
+            <h1 class="mb-4 text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+                Welcome to Tabula Belli
+                <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+            </h1>
+            <p class="mb-4 text-center">Tabula Belli is a platform to create, discover, and join Wargames, TTRPGs, and TCGs events across Europe. </p>
+            <p class="mb-4 text-center">From demos, narrative events, and casual game nights to the most competitive tournaments on the continent, we've got you covered.</p>
+
+            <div class="flex justify-center">
+            <a href="{% url 'about' %}" class="inline-flex items-center justify-center px-4 py-2.5 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900 transition-colors cursor-pointer">
+                    Learn More
+            </a>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-8">
+            <img class="w-full rounded-lg" src="{% static 'images/40k_game.webp' %}" alt="Wargaming event">
+            <img class="mt-4 w-full lg:mt-10 rounded-lg" src="{% static 'images/vampire_game.webp' %}" alt="Tabletop gaming event">
+        </div>
+    </div>
+</div>
+
+<div class="border-t border-border bg-card">
+  <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-6">
+      <dl class="grid max-w-screen-md gap-8 mx-auto text-foreground sm:grid-cols-3">
+          <div class="flex flex-col items-center justify-center">
+              <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ total_events }}</dt>
+              <dd class="font-light text-muted-foreground">Events</dd>
+          </div>
+          <div class="flex flex-col items-center justify-center">
+              <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ total_cities }}</dt>
+              <dd class="font-light text-muted-foreground">Cities</dd>
+          </div>
+          <div class="flex flex-col items-center justify-center">
+              <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ total_players }}</dt>
+              <dd class="font-light text-muted-foreground">Players</dd>
+          </div>
+      </dl>
+  </div>
+</div>
+
+<!-- How It Works Section - bg-background for rhythm -->
+<div class="border-t border-border bg-background">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+      <h2 class="mb-8 lg:mb-16 text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+          How It Works
+          <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+      </h2>
+      <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
+          <div class="flex flex-col items-center">
+              <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+                  <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+              </div>
+              <h3 class="mb-2 text-xl font-bold text-center">Discover</h3>
+              <p class="text-muted-foreground text-center">Explore competitive or casual Wargames, TTRPGs, and TCGs events for your favourite games across Europe.</p>
+          </div>
+          <div class="flex flex-col items-center">
+              <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+                  <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 100 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 100-4V6z"></path></svg>
+              </div>
+              <h3 class="mb-2 text-xl font-bold text-center">Join</h3>
+              <p class="text-muted-foreground text-center">Already found an event you’re interested in? Register now to secure your place.</p>
+          </div>
+          <div class="flex flex-col items-center">
+              <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-primary-100 lg:h-12 lg:w-12 dark:bg-primary-900">
+                  <svg class="w-5 h-5 text-primary-600 lg:w-6 lg:h-6 dark:text-primary-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd"></path></svg>
+              </div>
+              <h3 class="mb-2 text-xl font-bold text-center">Create</h3>
+              <p class="text-muted-foreground text-center">From gaming nights with friends to cut-throat tournaments, create your own bespoke events.</p>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Upcoming Events Section -->
+<div class="border-t border-border bg-card">
+    <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <div class="text-center mb-8">
+            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-foreground inline-flex flex-col items-center w-full">
+                Upcoming Events
+                <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+            </h2>
+            <p class="font-light text-muted-foreground md:text-lg">Join the next tabletop gaming events across Europe</p>
+        </div>
+
+        <!-- Carousel Container -->
+        <div class="relative" x-data="{ 
+            scrollContainer: null,
+            atStart: true,
+            atEnd: false,
+            checkScroll() {
+                this.atStart = this.scrollContainer.scrollLeft <= 0;
+                this.atEnd = this.scrollContainer.scrollLeft + this.scrollContainer.clientWidth >= this.scrollContainer.scrollWidth - 1;
+            }
+        }" x-init="scrollContainer = $refs.container; checkScroll()">
+            <!-- Previous Button -->
+            <button 
+                @click="scrollContainer.scrollBy({ left: -400, behavior: 'smooth' }); setTimeout(() => checkScroll(), 300)"
+                :disabled="atStart"
+                :class="atStart ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer'"
+                class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 z-10 bg-card text-foreground p-2 md:p-3 rounded-full shadow-lg transition-colors">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+
+            <!-- Scrollable Container -->
+            <div 
+                x-ref="container"
+                @scroll="checkScroll()"
+                class="flex gap-4 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+                style="scrollbar-width: none; -ms-overflow-style: none;">
+                
+                {% if upcoming_events %}
+                {% for event in upcoming_events %}
+                <div class="flex-shrink-0 w-[85%] sm:w-[400px] snap-start">
+                    <a href="{% url 'event_detail' event.slug %}" 
+                       class="block h-full bg-card border border-border rounded-lg hover:shadow-lg transition-shadow duration-200">
+                        <div class="p-5">
+                            <!-- Date Badge -->
+                            <div class="flex items-start gap-4 mb-3">
+                                <div class="flex-shrink-0 text-center bg-primary-700 dark:bg-primary-600 text-white rounded-lg p-2.5 min-w-[60px]">
+                                    <div class="text-xl font-bold">{{ event.start_at|date:"d" }}</div>
+                                    <div class="text-xs uppercase">{{ event.start_at|date:"M" }}</div>
+                                </div>
+                                
+                                <!-- Event Title -->
+                                <div class="flex-grow min-w-0">
+                                    <h3 class="text-lg font-semibold text-foreground mb-2 line-clamp-2">
+                                        {{ event.title }}
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <!-- Event Details -->
+                            <div class="space-y-2 text-sm text-muted-foreground">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>{{ event.start_at|date:"H:i" }}</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="truncate">{{ event.city.name }}</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span class="inline-flex items-center gap-1 rounded-full font-medium px-2 py-0.5 text-xs bg-accent text-accent-foreground dark:bg-accent dark:text-accent-foreground">
+                                        {{ event.game.name }}
+                                    </span>
+                                </div>
+
+                                {% if event.current_participants_count %}
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                    </svg>
+                                    <span>{{ event.current_participants_count }}/{{ event.capacity }} players</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- View Details Link -->
+                            <div class="mt-4 pt-4 border-t border-border">
+                                <span class="text-primary-700 dark:text-primary-400 text-sm font-medium hover:underline">
+                                    View Details →
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- Empty State -->
+                <div class="w-full text-center py-16">
+                    <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-foreground">No upcoming events</h3>
+                    <p class="mt-2 text-sm text-muted-foreground">Check back soon for new events or browse all past events.</p>
+                    <div class="mt-6">
+                        <a href="{% url 'events' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900 dark:text-primary-300">
+                            Browse All Events
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Next Button -->
+            <button 
+                @click="scrollContainer.scrollBy({ left: 400, behavior: 'smooth' }); setTimeout(() => checkScroll(), 300)"
+                :disabled="atEnd"
+                :class="atEnd ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer'"
+                class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 z-10 bg-card text-foreground p-2 md:p-3 rounded-full shadow-lg transition-colors">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- View All Button -->
+        {% if upcoming_events %}
+        <div class="mt-8 text-center">
+            <a href="{% url 'events' %}" 
+               class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                View All Events
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- CTA Section - bg-background to maintain alternating pattern -->
+<div class="border-t border-border bg-background">
+    <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <div class="mx-auto max-w-screen-sm text-center">
+            {% include 'partials/cta_signup.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

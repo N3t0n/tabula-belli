@@ -1,0 +1,10 @@
+{% extends "account/flow_base.html" %}
+{% block head_title %}Check your inbox{% endblock %}
+{% block flow_title %}Check your inbox{% endblock %}
+{% block flow_content %}
+
+<p>We have sent you a link to confirm your email address. Open the email from Tabula Belli and select <strong>Confirm my email</strong> to finish creating your account.</p>
+<p>Not in your inbox? Check your spam folder. If it still has not arrived after a few minutes, sign in again to request another verification email.</p>
+<a href="{% url 'account_login' %}" class="inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 cursor-pointer">Back to sign in</a>
+
+{% endblock %}

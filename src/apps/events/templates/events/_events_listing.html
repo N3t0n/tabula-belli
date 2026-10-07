@@ -1,0 +1,281 @@
+{% load events_tags %}
+
+<!-- UNIFIED FORM: Compact single-line layout -->
+<form 
+  x-ref="filtersForm"
+  id="filters-form"
+  hx-get="{% url 'events' %}" 
+  hx-target="#events-listing" 
+  hx-swap="innerHTML"
+  hx-trigger="submit"
+  hx-replace-url="true"
+  class="sticky top-0 z-10 bg-background/80 dark:bg-background/80 backdrop-blur shadow-sm pb-3">
+  
+  <!-- Hidden inputs to preserve pills state -->
+  <input type="hidden" name="status" x-model="status">
+  <input type="hidden" name="event_type" x-model="eventType">
+  
+  <!-- Single line: Pills + Search + Filters -->
+  <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+    
+    <!-- Left: Pills (stack on mobile, inline on desktop) -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      <!-- Status Pills -->
+      <div class="inline-flex rounded-xl bg-muted p-1">
+        <button 
+          type="button"
+          @click="status=''; submitFilters()"
+          :class="status === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
+          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          All
+        </button>
+        <button 
+          type="button"
+          @click="status='upcoming'; submitFilters()"
+          :class="status === 'upcoming' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
+          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          Upcoming
+        </button>
+        <button 
+          type="button"
+          @click="status='completed'; submitFilters()"
+          :class="status === 'completed' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
+          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          Completed
+        </button>
+      </div>
+      
+      <!-- Event Type Pills -->
+      <div class="inline-flex rounded-xl bg-muted p-1">
+        <button 
+          type="button"
+          @click="eventType=''; submitFilters()"
+          :class="eventType === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
+          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          All Events
+        </button>
+        <button 
+          type="button"
+          @click="eventType='CASUAL'; submitFilters()"
+          :class="eventType === 'CASUAL' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
+          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          Casual
+        </button>
+        <button 
+          type="button"
+          @click="eventType='TOURNAMENT'; submitFilters()"
+          :class="eventType === 'TOURNAMENT' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
+          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          Tournaments
+        </button>
+      </div>
+      
+      <!-- Clear all button -->
+      <button 
+        x-show="activeFiltersCount > 0"
+        x-cloak
+        type="button"
+        @click="clearAllFilters()" 
+        class="px-2.5 py-1.5 rounded-lg text-xs text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-1 shrink-0 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+        Clear
+      </button>
+    </div>
+
+    <!-- Right: Search + Filters button -->
+    <div class="flex items-center gap-2 lg:ml-auto">
+      <!-- Search -->
+      <div class="relative flex-1 lg:w-64">
+        <label class="sr-only" for="global-search">Search</label>
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <svg aria-hidden="true" class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        </div>
+        <input 
+          id="global-search" 
+          name="q" 
+          type="search" 
+          value="{{ current_q }}"
+          placeholder="Search events…"
+          @input.debounce.400ms="submitFilters()"
+          class="w-full pl-10 pr-3 py-2 rounded-lg border border-border bg-input text-sm placeholder:text-muted-foreground" />
+      </div>
+
+      <!-- Filters button -->
+      <div class="relative shrink-0" @keydown.escape.window="filtersOpen=false">
+        <button 
+          type="button"
+          @click="filtersOpen=!filtersOpen" 
+          class="px-3 py-2 rounded-lg border border-border bg-card text-sm flex items-center gap-2 whitespace-nowrap cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-4 w-4 text-muted-foreground" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
+          Filters
+          <svg class="w-5 h-5 text-muted-foreground hidden lg:block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path clip-rule="evenodd" fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+        </button>
+    
+    <!-- Panel responsive: fullscreen mobile, dropdown desktop -->
+    <div x-cloak x-show="filtersOpen" @click.outside="filtersOpen=false" 
+         class="fixed inset-0 z-40 bg-card 
+                sm:absolute sm:inset-auto sm:right-0 sm:mt-2 sm:w-[24rem] 
+                sm:rounded-xl sm:shadow-lg sm:border sm:border-border sm:dark:border-border
+                p-4 sm:p-3 overflow-auto">
+      
+      <!-- Header (mobile only) -->
+      <div class="flex items-center justify-between mb-4 sm:hidden">
+        <h2 class="text-lg font-medium text-foreground">Filters</h2>
+        <button @click="filtersOpen=false" class="text-2xl text-muted-foreground hover:text-foreground cursor-pointer">×</button>
+      </div>
+
+      <!-- Filters content (responsive grid) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Category -->
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-medium text-foreground mb-1">Category</label>
+          <select name="category" @change="submitFilters()" class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
+            <option value="">All</option>
+            <option value="WARGAME" {% if current_category == 'WARGAME' %}selected{% endif %}>Wargame</option>
+            <option value="TCG" {% if current_category == 'TCG' %}selected{% endif %}>TCG</option>
+            <option value="TTRPG" {% if current_category == 'TTRPG' %}selected{% endif %}>TTRPG</option>
+          </select>
+        </div>
+
+        <!-- Game -->
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-medium text-foreground mb-1">Game</label>
+          <select name="game_id" @change="submitFilters()" class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
+            <option value="">All</option>
+            {% for game in games %}
+              <option value="{{ game.id }}" 
+                      {% if current_game_id == game.id %}selected{% endif %}
+                      {% if game.id not in available_games %}class="text-muted-foreground"{% endif %}>
+                {{ game.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Country -->
+        <div>
+          <label class="block text-xs font-medium text-foreground mb-1">Country</label>
+          <select 
+            name="country"
+            @change="submitFilters()"
+            class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
+            <option value="">All</option>
+            {% for c in countries %}
+              <option value="{{ c.code2 }}" 
+                      {% if current_country == c.code2 %}selected{% endif %}
+                      {% if c.code2 not in available_countries %}class="text-muted-foreground"{% endif %}>
+                {{ c.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Region -->
+        <div>
+          <label class="block text-xs font-medium text-foreground mb-1">Region</label>
+          <select 
+            name="region"
+            @change="submitFilters()"
+            {% if not current_country %}disabled{% endif %}
+            class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm disabled:opacity-50">
+            <option value="">All</option>
+            {% for r in regions %}
+              <option value="{{ r.geoname_id }}" 
+                      {% if current_region == r.geoname_id|stringformat:"s" %}selected{% endif %}
+                      {% if r.geoname_id not in available_regions %}class="text-muted-foreground"{% endif %}>
+                {{ r.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- City -->
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-medium text-foreground mb-1">City</label>
+          <select 
+            name="city"
+            @change="submitFilters()"
+            {% if not current_region %}disabled{% endif %}
+            class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm disabled:opacity-50">
+            <option value="">All</option>
+            {% for ct in cities %}
+              <option value="{{ ct.id }}" 
+                      {% if current_city == ct.id|stringformat:"s" %}selected{% endif %}
+                      {% if ct.id not in available_cities %}class="text-muted-foreground"{% endif %}>
+                {{ ct.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex items-center justify-between mt-3 pt-3 border-t border-border">
+        <button 
+          type="button" 
+          @click="clearPanelFilters()" 
+          class="text-xs text-muted-foreground hover:underline cursor-pointer">
+          Clear filters
+        </button>
+        <button 
+          type="button"
+          @click="filtersOpen=false" 
+          class="px-3 py-1.5 rounded-lg bg-foreground text-background dark:bg-foreground dark:text-background text-xs">
+          Close
+        </button>
+      </div>
+    </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Events table -->
+<div class="mt-5">
+  {% include 'events/partials/_event_table.html' with events=page_obj action_type='public' show_game=True show_price=True columns_count=8 page_obj=page_obj empty_message="No events found" %}
+</div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    <div class="flex items-center justify-between p-3 text-sm border-t border-border">
+      <div class="text-muted-foreground">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </div>
+      <div class="flex items-center gap-2">
+        {% if page_obj.has_previous %}
+          <button 
+            hx-get="{% pagination_url page_obj.previous_page_number %}" 
+            hx-target="#events-listing" 
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted cursor-pointer">
+            Previous
+          </button>
+        {% else %}
+          <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+            Previous
+          </button>
+        {% endif %}
+        
+        {% if page_obj.has_next %}
+          <button 
+            hx-get="{% pagination_url page_obj.next_page_number %}" 
+            hx-target="#events-listing" 
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted cursor-pointer">
+            Next
+          </button>
+        {% else %}
+          <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+            Next
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+

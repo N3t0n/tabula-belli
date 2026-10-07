@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Access denied | Tabula Belli{% endblock %}
+
+{% block content %}
+<section class="mx-auto flex min-h-[55vh] max-w-3xl flex-col items-center justify-center px-4 py-12 text-center">
+  <p class="mb-3 text-sm font-semibold text-primary-700 dark:text-primary-300">Error 403</p>
+  <h1 class="mb-4 text-3xl font-bold text-foreground">Access denied</h1>
+  <p class="mb-8 text-muted-foreground">You do not have permission to access this page.</p>
+  <a href="{% url 'home' %}" class="font-medium text-primary-700 hover:underline dark:text-primary-300">Return home</a>
+</section>
+{% endblock %}

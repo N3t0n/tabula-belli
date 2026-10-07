@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact | Tabula Belli{% endblock %}
+
+{% block content %}
+<div class="py-8 px-4 mx-auto max-w-screen-md">
+      <h2 class="mb-6 text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+          Contact Us
+          <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+      </h2>
+      <p class="mb-8 font-light text-center text-muted-foreground md:text-lg">Any technical issues? Suggestions? Want to hire the developer and pay him good money? Let us know.</p>
+      
+      {% if not formspree_form_id %}
+          <div class="mb-6 p-4 rounded-lg bg-yellow-100 text-yellow-900 border border-yellow-300">
+              Contact is not configured yet.
+          </div>
+      {% endif %}
+      
+      <form
+          {% if formspree_action %}action="{{ formspree_action }}"{% endif %}
+          method="post"
+          class="space-y-8"
+          data-contact-form
+      >
+          <div>
+              <label for="contact-email" class="block mb-2 text-sm font-medium text-foreground">Your email</label>
+              <input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  maxlength="254"
+                  required
+                  placeholder="your@email.com"
+                  class="shadow-sm bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 placeholder:text-muted-foreground"
+              >
+          </div>
+          
+          <div>
+              <label for="contact-subject" class="block mb-2 text-sm font-medium text-foreground">Subject</label>
+              <input
+                  id="contact-subject"
+                  name="subject"
+                  type="text"
+                  maxlength="200"
+                  required
+                  placeholder="Let us know how we can help you"
+                  class="block p-3 w-full text-sm text-foreground bg-input rounded-lg border border-border shadow-sm focus:ring-primary-500 focus:border-primary-500 placeholder:text-muted-foreground"
+              >
+          </div>
+          
+          <div class="sm:col-span-2">
+              <label for="contact-message" class="block mb-2 text-sm font-medium text-foreground">Your message</label>
+              <textarea
+                  id="contact-message"
+                  name="message"
+                  rows="6"
+                  required
+                  placeholder="Leave a comment..."
+                  class="block p-2.5 w-full text-sm text-foreground bg-input rounded-lg shadow-sm border border-border focus:ring-primary-500 focus:border-primary-500 placeholder:text-muted-foreground"
+              ></textarea>
+          </div>
+          
+          <p
+              role="status" aria-live="polite" aria-atomic="true"
+              data-contact-status class="empty:hidden"
+              data-sending-class="border border-border bg-muted text-foreground p-4 text-sm rounded-lg"
+              data-success-class="border border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400 p-4 text-sm rounded-lg"
+              data-error-class="border border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 p-4 text-sm rounded-lg"
+          ></p>
+
+          <button
+              type="submit"
+              data-contact-submit
+              {% if not formspree_form_id %}disabled aria-disabled="true"{% endif %}
+              class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          >
+              Send message
+          </button>
+      </form>
+  </div>
+  {% if formspree_form_id %}
+      <script defer src="{% static 'js/contact.js' %}"></script>
+  {% endif %}
+{% endblock %}

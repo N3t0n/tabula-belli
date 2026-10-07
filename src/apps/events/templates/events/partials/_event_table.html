@@ -1,0 +1,123 @@
+<div class="rounded-2xl border border-border bg-card shadow-sm">
+  
+  {% if page_obj %}
+  <div class="flex items-center justify-between p-3">
+    <div class="text-sm text-muted-foreground">
+      {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} results
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      
+      <thead class="bg-muted text-muted-foreground">
+        <tr>
+          <th class="text-left font-medium px-3 py-2">TYPE</th>
+          <th class="text-left font-medium px-3 py-2">TITLE</th>
+          {% if show_game %}
+            <th class="text-left font-medium px-3 py-2">GAME</th>
+          {% endif %}
+          <th class="text-left font-medium px-3 py-2">DATE</th>
+          <th class="text-left font-medium px-3 py-2">LOCATION</th>
+          <th class="text-right font-medium px-3 py-2">PLAYERS</th>
+          {% if show_price %}
+            <th class="text-right font-medium px-3 py-2">PRICE</th>
+          {% endif %}
+          {% if action_type != 'none' %}
+            <th class="text-right font-medium px-3 py-2">REGISTRATION</th>
+          {% endif %}
+        </tr>
+      </thead>
+      
+      <tbody>
+        {% for event in events %}
+        <tr class="border-t border-border hover:bg-muted transition-colors">
+          
+          <td class="px-3 py-2">
+            {% if event.event_type == 'TOURNAMENT' %}
+              <span class="text-xl text-warning dark:text-warning" title="Tournament">🏆</span>
+            {% else %}
+              <span class="text-xl text-indigo-600 dark:text-indigo-400" title="Casual">🎲</span>
+            {% endif %}
+          </td>
+          
+          <td class="px-3 py-2">
+            <a href="{% url 'event_detail' event.slug %}" 
+               class="font-medium text-foreground hover:text-primary-700 dark:hover:text-primary-400 hover:underline">
+              {{ event.title }}
+            </a>
+            <div class="text-xs">
+              {% if event.status == 'ACTIVE' %}
+                <span class="text-success dark:text-success">Active</span>
+              {% elif event.status == 'COMPLETED' %}
+                <span class="text-warning dark:text-warning">Completed</span>
+              {% elif event.status == 'CANCELED' %}
+                <span class="text-destructive dark:text-destructive">Canceled</span>
+              {% endif %}
+            </div>
+          </td>
+          
+          {% if show_game %}
+            <td class="px-3 py-2">
+              {% include 'partials/game_badge.html' with badge_game=event.game badge_size='sm' only %}
+            </td>
+          {% endif %}
+          
+          <td class="px-3 py-2">
+            {{ event.start_at|date:"M d, Y H:i" }}
+          </td>
+          
+          <td class="px-3 py-2">
+            <div class="text-sm">{{ event.city.name }}</div>
+            <div class="text-xs text-muted-foreground">{{ event.country.name }}</div>
+          </td>
+          
+          <td class="px-3 py-2 text-right">
+            {% if event.capacity is not None and event.capacity > 0 %}
+              {{ event.participants_count }}/{{ event.capacity }}
+            {% else %}
+              {{ event.participants_count }}/∞
+            {% endif %}
+          </td>
+          
+          {% if show_price %}
+            <td class="px-3 py-2 text-right">
+              {% if event.price %}
+                {{ event.price }} €
+              {% else %}
+                Free
+              {% endif %}
+            </td>
+          {% endif %}
+          
+          {% if action_type != 'none' %}
+            <td class="px-3 py-2 text-right">
+              {% if action_type == 'public' %}
+                {% include 'events/partials/actions/_action_public.html' %}
+              {% elif action_type == 'organizer' %}
+                {% include 'events/partials/actions/_action_organizer.html' %}
+              {% elif action_type == 'participant' %}
+                {% include 'events/partials/actions/_action_participant.html' %}
+              {% endif %}
+            </td>
+          {% endif %}
+          
+        </tr>
+        {% empty %}
+        
+        <tr>
+          <td colspan="{{ columns_count }}" class="px-3 py-8 text-center text-muted-foreground">
+            <svg class="mx-auto h-12 w-12 text-muted-foreground mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <p class="text-lg font-medium">{{ empty_message }}</p>
+          </td>
+        </tr>
+        
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+</div>

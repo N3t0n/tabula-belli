@@ -1,0 +1,11 @@
+{# events/partials/actions/_action_participant.html #}
+{# Acciones para un participante registrado #}
+{# Cancelación solo disponible en /my-events y vista detalle #}
+
+{% if event.user_registration_status == 'CONFIRMED' %}
+  <span class="text-xs text-success dark:text-success">Registered</span>
+{% elif event.user_registration_status == 'CANCELLED' %}
+  <span class="text-xs text-muted-foreground">Cancelled</span>
+{% else %}
+  <span class="text-xs text-muted-foreground">-</span>
+{% endif %}

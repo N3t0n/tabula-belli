@@ -1,0 +1,13 @@
+{% with g=badge_game s=badge_size c=badge_show_category %}
+<a href="{% url 'games:game_detail' g.slug %}" 
+   class="inline-flex items-center gap-1 rounded-full font-medium transition-colors
+          bg-accent text-accent-foreground hover:bg-accent/90 
+          dark:bg-accent dark:text-accent-foreground dark:hover:bg-accent/90
+          {% if s == 'sm' %}px-2 py-0.5 text-xs{% else %}px-3 py-1 text-sm{% endif %}">
+  {{ g.name }}
+  {% if c %}
+    <span class="opacity-60">• {{ g.get_category_display }}</span>
+  {% endif %}
+</a>
+{% endwith %}
+

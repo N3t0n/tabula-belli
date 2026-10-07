@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Events | Tabula Belli{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="text-center">
+      <h1 class="mb-4 text-4xl tracking-tight font-extrabold text-foreground inline-flex flex-col items-center w-full mx-auto">
+          Events
+          <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+      </h1>
+      <p class="font-light text-center text-muted-foreground md:text-lg">Find and join tabletop gaming events</p>
+    </div>
+  </div>
+
+  <!-- Events Listing (Bloque Único: Pills + Filters + Table + Pagination) -->
+  <div x-data="{
+         status: '{{ current_status|default:'upcoming' }}',
+         eventType: '{{ current_event_type|default:'' }}',
+         filtersOpen: false,
+         get activeFiltersCount() {
+           let count = 0;
+           const form = document.querySelector('#filters-form');
+           if (!form) return 0;
+           if (form.querySelector('[name=q]')?.value) count++;
+           if (form.querySelector('[name=category]')?.value) count++;
+           if (form.querySelector('[name=game_id]')?.value) count++;
+           if (form.querySelector('[name=country]')?.value) count++;
+           if (form.querySelector('[name=region]')?.value) count++;
+           if (form.querySelector('[name=city]')?.value) count++;
+           return count;
+         },
+         submitFilters() {
+           this.$nextTick(() => {
+             htmx.trigger('#filters-form', 'submit');
+           });
+         },
+         clearAllFilters() {
+           const form = document.querySelector('#filters-form');
+           if (!form) return;
+           this.status = '';
+           this.eventType = '';
+           ['q', 'category', 'game_id', 'country', 'region', 'city'].forEach(name => {
+             const el = form.querySelector(`[name=${name}]`);
+             if (el) el.value = '';
+           });
+           this.submitFilters();
+         },
+         clearPanelFilters() {
+           const form = document.querySelector('#filters-form');
+           if (!form) return;
+           
+           const countrySelect = form.querySelector('[name=country]');
+           const regionSelect = form.querySelector('[name=region]');
+           const citySelect = form.querySelector('[name=city]');
+           const categorySelect = form.querySelector('[name=category]');
+           const gameSelect = form.querySelector('[name=game_id]');
+           
+           if (countrySelect) countrySelect.value = '';
+           if (regionSelect) regionSelect.value = '';
+           if (citySelect) citySelect.value = '';
+           if (categorySelect) categorySelect.value = '';
+           if (gameSelect) gameSelect.value = '';
+           
+           this.submitFilters();
+         }
+       }">
+    <div id="events-listing">
+      {% include "events/_events_listing.html" %}
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="htmx-indicator fixed top-4 right-4 bg-primary-600 text-white px-4 py-2 rounded-lg shadow-lg">
+    Loading...
+  </div>
+</div>
+
+{% endblock %}

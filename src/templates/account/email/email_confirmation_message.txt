@@ -1,0 +1,9 @@
+{% extends "account/email/base_message.txt" %}
+{% block content %}
+Welcome to Tabula Belli!
+
+Confirm your email address to finish creating your account:
+{{ activate_url }}
+
+If you did not request this email, you can ignore it.
+{% endblock %}

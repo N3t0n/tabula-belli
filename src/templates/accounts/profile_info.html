@@ -1,0 +1,53 @@
+<div class="bg-card dark:bg-card rounded-lg shadow-md border border-border dark:border-border">
+    <div class="p-6">
+        <div class="grid gap-6 sm:grid-cols-2">
+            
+            <!-- Left Column -->
+            <div class="space-y-5">
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">Email</dt>
+                    <dd class="text-muted-foreground dark:text-muted-foreground">{{ user.email }}</dd>
+                </dl>
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">Username</dt>
+                    <dd class="text-muted-foreground dark:text-muted-foreground">{{ user.username }}</dd>
+                </dl>
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">First Name</dt>
+                    <dd class="text-muted-foreground dark:text-muted-foreground">{{ user.first_name|default:"—" }}</dd>
+                </dl>
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">Last Name</dt>
+                    <dd class="text-muted-foreground dark:text-muted-foreground">{{ user.last_name|default:"—" }}</dd>
+                </dl>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="space-y-5">
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">Country</dt>
+                    <dd class="text-muted-foreground dark:text-muted-foreground">{{ user.country.name|default:"—" }}</dd>
+                </dl>
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">City</dt>
+                    <dd class="text-muted-foreground dark:text-muted-foreground">{{ user.city.name|default:"—" }}</dd>
+                </dl>
+                <dl>
+                    <dt class="font-bold text-foreground dark:text-foreground">Favourite Games</dt>
+                    <dd class="flex flex-wrap gap-2">
+                        {% if user.favorite_games.all %}
+                            {% for game in user.favorite_games.all %}
+                                {% include 'partials/game_badge.html' with badge_game=game only %}
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted-foreground dark:text-muted-foreground">—</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+

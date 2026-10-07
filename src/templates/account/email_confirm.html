@@ -1,0 +1,21 @@
+{% extends "account/flow_base.html" %}
+{% block head_title %}Confirm your email{% endblock %}
+{% block flow_title %}Confirm your email{% endblock %}
+{% block flow_content %}
+
+{% if confirmation and can_confirm %}
+  <p>Confirm that <strong class="break-words text-foreground">{{ confirmation.email_address.email }}</strong> belongs to your Tabula Belli account.</p>
+  <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+    {% csrf_token %}
+    {{ redirect_field }}
+    <button type="submit" class="inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 cursor-pointer">Confirm my email</button>
+  </form>
+{% elif confirmation %}
+  <p>This email address is already confirmed by another account. Sign in with your existing account or use a different email address.</p>
+  <a href="{% url 'account_login' %}" class="font-medium text-primary-600 hover:underline">Back to sign in</a>
+{% else %}
+  <p>This confirmation link has expired or is invalid. Sign in to request a new verification email.</p>
+  <a href="{% url 'account_login' %}" class="inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 cursor-pointer">Request a new verification email</a>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.title }} | Tabula Belli{% endblock %}
+
+{% block content %}
+<div class="py-8 md:py-16 antialiased">
+  <div class="max-w-4xl px-4 mx-auto 2xl:px-0 space-y-6">
+    
+    <!-- 1. Navigation and management actions -->
+    <div class="flex items-center justify-between gap-3">
+      <a href="{{ return_url }}" class="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to events
+      </a>
+
+      {% if can_manage_event and event.is_editable %}
+      <div class="flex items-center gap-3">
+        <a href="{% url 'my_events:edit' event.slug %}"
+           class="text-sm font-medium text-primary-700 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">
+          Edit
+        </a>
+        <form
+          method="post"
+          action="{% url 'my_events:cancel' event.slug %}"
+          hx-post="{% url 'my_events:cancel' event.slug %}"
+          hx-swap="none"
+          class="inline">
+          {% csrf_token %}
+          <button
+            type="submit"
+            hx-confirm="Are you sure you want to cancel this event? This action cannot be undone."
+            class="text-sm font-medium text-destructive hover:underline cursor-pointer">
+            Cancel Event
+          </button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- 2. Title -->
+    <h2 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+      {{ event.title }}
+      <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
+    </h2>
+
+    <!-- 3. Badges: Game, Type, Status, Participants -->
+    <div class="flex flex-wrap items-center gap-2">
+      {% include 'partials/game_badge.html' with badge_game=event.game only %}
+
+      {% if event.event_type == 'TOURNAMENT' %}
+        <span class="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground dark:bg-accent dark:text-accent-foreground">
+          🏆 Tournament
+        </span>
+      {% else %}
+        <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground dark:bg-card dark:text-muted-foreground">
+          🎲 Casual Event
+        </span>
+      {% endif %}
+
+      {% if event.status == 'ACTIVE' %}
+        <span class="inline-flex items-center rounded-full bg-success/10 px-3 py-1 text-xs font-medium text-success dark:bg-success/20 dark:text-success">
+          {{ event_status_display }}
+        </span>
+      {% elif event.status == 'COMPLETED' %}
+        <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground dark:bg-card dark:text-muted-foreground">
+          {{ event_status_display }}
+        </span>
+      {% elif event.status == 'CANCELED' %}
+        <span class="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive dark:bg-destructive/20 dark:text-destructive">
+          {{ event_status_display }}
+        </span>
+      {% endif %}
+
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground dark:bg-card dark:text-muted-foreground">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+        </svg>
+        <span id="participants-badge-count">{{ event.participants_count }}/{{ event.capacity }}</span>
+      </span>
+    </div>
+
+    <!-- 4. Event Information - CARD -->
+    <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Overview</h3>
+      
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        
+        {% if event.start_at|date:"d/m/Y" == event.end_at|date:"d/m/Y" %}
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Date</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">{{ event.start_at|date:"d/m/Y H:i" }} - {{ event.end_at|date:"H:i" }}</dd>
+        </dl>
+        {% else %}
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Starting Date</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">{{ event.start_at|date:"d/m/Y H:i" }}</dd>
+        </dl>
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">End Date</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">{{ event.end_at|date:"d/m/Y H:i" }}</dd>
+        </dl>
+        {% endif %}
+        
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Location</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">{{ event.city.name }}, {{ event.country.name }}</dd>
+        </dl>
+        
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Ticket Price</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">
+            {% if event.price %}€{{ event.price }}{% else %}Free{% endif %}
+          </dd>
+        </dl>
+        
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Organizer</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">
+            {{ event.organizer_display }}
+          </dd>
+        </dl>
+        
+        {% if event.contact_email and event.organizer_id %}
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Contact Organizer</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">
+            <a href="mailto:{{ event.contact_email }}" class="text-primary-700 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">
+              {{ event.contact_email }}
+            </a>
+          </dd>
+        </dl>
+        {% endif %}
+        
+      </div>
+    </div>
+
+    <!-- 5. Registration - CARD -->
+    {% if event.registration_opens_at or event.registration_closes_at %}
+    <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Registration</h3>
+      
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        
+        {% if event.registration_opens_at %}
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Registration Opens</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">{{ event.registration_opens_at|date:"d/m/Y H:i" }}</dd>
+        </dl>
+        {% endif %}
+        
+        {% if event.registration_closes_at %}
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Registration Closes</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground">{{ event.registration_closes_at|date:"d/m/Y H:i" }}</dd>
+        </dl>
+        {% endif %}
+        
+        <dl>
+          <dt class="font-bold text-foreground dark:text-foreground">Participants</dt>
+          <dd class="text-muted-foreground dark:text-muted-foreground"><span id="participants-detail-count">{{ event.participants_count }}/{{ event.capacity }} players</span></dd>
+        </dl>
+        
+      </div>
+
+      <!-- Registration Button (HTMX) -->
+      <div class="mt-6 pt-6 border-t border-border dark:border-border">
+        <div id="registration-button-container">
+          {% include 'events/partials/registration_button.html' %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 5b. Private participants list for event managers -->
+    {% if can_manage_event and event.participants_count > 0 %}
+    <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6" x-data="{ expanded: false }">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground">
+          Participants List
+        </h3>
+        <div class="flex items-center gap-3">
+          <span 
+            id="participants-list-badge"
+            class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+          >
+            {{ event.participants_count }}/{{ event.capacity }}
+          </span>
+          <button 
+            @click="expanded = !expanded"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary-700 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950 rounded-lg transition-colors cursor-pointer"
+          >
+            <span x-show="!expanded">Show</span>
+            <span x-show="expanded" x-cloak>Hide</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+                 :class="expanded ? 'rotate-180' : ''" style="transition: transform 0.2s">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div x-show="expanded" x-cloak class="space-y-3">
+        {# List of participants #}
+        <div class="space-y-2">
+          {% for reg in confirmed_registrations %}
+            <div 
+              id="participant-{{ reg.id }}"
+              class="flex items-center justify-between p-3 rounded-lg border border-border bg-background dark:bg-background hover:bg-muted/30 dark:hover:bg-muted/30 transition-colors"
+            >
+              <div class="flex items-center gap-3">
+                {# Avatar with initial #}
+                <div class="shrink-0 w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                  <span class="text-sm font-bold text-primary-800 dark:text-primary-200">
+                    {{ reg.player_display|slice:":1"|upper }}
+                  </span>
+                </div>
+                
+                {# Player info #}
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-foreground dark:text-foreground truncate">
+                    {{ reg.player_display }}
+                  </p>
+                  {% if reg.player_id %}
+                  <p class="text-xs text-muted-foreground dark:text-muted-foreground truncate">
+                    {{ reg.player.email }}
+                  </p>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                {# Registration date #}
+                <div class="shrink-0 text-right">
+                  <p class="text-xs text-muted-foreground dark:text-muted-foreground">
+                    Registered
+                  </p>
+                  <p class="text-xs font-medium text-foreground dark:text-foreground">
+                    {{ reg.created_at|date:"d M, H:i" }}
+                  </p>
+                </div>
+                
+                {# Remove button (only if event is editable) #}
+                {% if event.is_editable and reg.player_id %}
+                <form
+                  method="post"
+                  action="{% url 'my_events:remove_participant' event.slug reg.id %}"
+                  hx-post="{% url 'my_events:remove_participant' event.slug reg.id %}"
+                  hx-swap="none"
+                  class="inline">
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    hx-confirm="Are you sure you want to remove {{ reg.player.username }} from this event?"
+                    class="shrink-0 px-3 py-1.5 text-xs font-medium text-destructive-600 hover:text-white border border-destructive-600 hover:bg-destructive-600 rounded-lg transition-colors cursor-pointer"
+                    title="Remove {{ reg.player.username }} from event">
+                    Remove
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 6. Event Details - CARD -->
+    {% if event.description %}
+    <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Info</h3>
+      <div class="text-muted-foreground dark:text-muted-foreground">
+        {{ event.description|linebreaks }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 7. Location (with map) - CARD -->
+    <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Location</h3>
+      
+      <div class="space-y-2 text-muted-foreground dark:text-muted-foreground mb-4">
+        <p>{{ event.city.name }}{% if event.region %}, {{ event.region.name }}{% endif %}, {{ event.country.name }}</p>
+        
+        {% if event.location_name %}
+        <p><span class="font-medium text-foreground dark:text-foreground">Venue:</span> {{ event.location_name }}</p>
+        {% endif %}
+        
+        {% if event.location_address %}
+        <p><span class="font-medium text-foreground dark:text-foreground">Address:</span> {{ event.location_address }}</p>
+        {% endif %}
+      </div>
+
+      {% if lat and lng %}
+      <div class="space-y-3">
+        <div id="map" class="w-full h-56 rounded-lg border border-border dark:border-border" 
+             data-lat="{{ lat }}" data-lng="{{ lng }}" data-city="{{ event.city.name }}">
+        </div>
+        
+        {% if event.location_address %}
+        <a href="https://www.google.com/maps/search/?api=1&query={{ event.location_address|urlencode }},{{ event.city.name|urlencode }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+          </svg>
+          Open in Google Maps
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- Leaflet.js for map -->
+{% if lat and lng %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mapDiv = document.getElementById('map');
+    if (!mapDiv) return;
+    
+    const lat = parseFloat(mapDiv.dataset.lat);
+    const lng = parseFloat(mapDiv.dataset.lng);
+    const cityName = mapDiv.dataset.city;
+
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    const map = L.map('map', {
+      scrollWheelZoom: false
+    }).setView([lat, lng], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+      .bindPopup(`<b>${cityName}</b>`)
+      .openPopup();
+  });
+</script>
+{% endif %}
+{% endblock %}

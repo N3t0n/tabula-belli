@@ -1,0 +1,19 @@
+{# Remove participant item via OOB delete #}
+<div id="participant-{{ reg_id }}" hx-swap-oob="delete"></div>
+
+{# Update participant counters via OOB swap #}
+<span 
+  id="participants-list-badge" 
+  hx-swap-oob="true"
+  class="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-800 dark:bg-primary-900 dark:text-primary-200"
+>
+  {{ confirmed_count }}/{{ event.capacity }}
+</span>
+
+<span id="participants-badge-count" hx-swap-oob="true">
+  {{ confirmed_count }}/{{ event.capacity }}
+</span>
+
+<span id="participants-detail-count" hx-swap-oob="true">
+  {{ confirmed_count }}/{{ event.capacity }} players
+</span>

@@ -1,0 +1,57 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {# Load HTMX for dynamic cascading location selects #}
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+    <style>
+        /* Visual feedback while loading options */
+        select[hx-get].htmx-request {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+{% endblock %}
+
+{% block field_sets %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const countryField = document.getElementById('id_country');
+        const regionField = document.getElementById('id_region');
+        const cityField = document.getElementById('id_city');
+        
+        if (countryField && regionField && cityField) {
+            // Attach HTMX attributes to make the admin selects cascade without full reloads
+            
+            // Country → Region cascade
+            countryField.setAttribute('hx-get', '/locations/regions/');
+            countryField.setAttribute('hx-target', '#id_region');
+            countryField.setAttribute('hx-swap', 'innerHTML');
+            countryField.setAttribute('hx-include', '[name=country]');
+            countryField.setAttribute('hx-trigger', 'change');
+            
+            // Reset city when country changes
+            countryField.addEventListener('change', function() {
+                cityField.innerHTML = '<option value="">---------</option>';
+            });
+            
+            // Region → City cascade
+            regionField.setAttribute('hx-get', '/locations/cities/');
+            regionField.setAttribute('hx-target', '#id_city');
+            regionField.setAttribute('hx-swap', 'innerHTML');
+            regionField.setAttribute('hx-include', '[name=country],[name=region]');
+            regionField.setAttribute('hx-trigger', 'change');
+            
+            // Activate HTMX on these elements
+            htmx.process(countryField);
+            htmx.process(regionField);
+            
+            console.log('HTMX cascade initialized for Event location fields');
+        }
+    });
+    </script>
+    
+    {{ block.super }}
+{% endblock %}
+

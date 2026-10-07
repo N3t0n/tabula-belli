@@ -1,0 +1,88 @@
+{
+  "downloaded_at_utc": "2026-10-06T15:06:28.491473+00:00",
+  "sources": [
+    {
+      "url": "https://download.geonames.org/export/dump/countryInfo.txt",
+      "last_modified": "Tue, 06 Oct 2026 02:17:01 GMT",
+      "bytes": 31678,
+      "sha256": "93bafc525813f22e4711ff9ed6d626343094ce48c26388dc7c49189b3d7d5512"
+    },
+    {
+      "url": "https://download.geonames.org/export/dump/admin1CodesASCII.txt",
+      "last_modified": "Tue, 06 Oct 2026 02:11:22 GMT",
+      "bytes": 151583,
+      "sha256": "1da92a6323a5fec3176f3f743bf4cf4040fd56a876da55e46fbca23c863aa60a"
+    },
+    {
+      "url": "https://download.geonames.org/export/dump/cities1000.zip",
+      "last_modified": "Tue, 06 Oct 2026 02:11:22 GMT",
+      "bytes": 11056591,
+      "sha256": "b9dc76210b91fd407b51346266abb56dacac8a43efe299c36ac2f5763ad8ea2b"
+    }
+  ],
+  "catalog_version": "2026-10-06",
+  "fixture": "europe-2026-10-06.json.gz",
+  "fixture_sha256": "4745f0ce120cbd6b306c4a6b85d3a2eb10283742fa5782c14c131f69bccf76c4",
+  "fixture_bytes": 2154352,
+  "records": {
+    "cities_light.country": 43,
+    "cities_light.region": 948,
+    "cities_light.city": 57945
+  },
+  "license": "CC BY 4.0",
+  "attribution": "GeoNames — https://www.geonames.org/",
+  "filter": {
+    "feature_class": "P",
+    "population_minimum": 1000,
+    "countries": [
+      "AD",
+      "AL",
+      "AT",
+      "BA",
+      "BE",
+      "BG",
+      "BY",
+      "CH",
+      "CZ",
+      "DE",
+      "DK",
+      "EE",
+      "ES",
+      "FI",
+      "FR",
+      "GB",
+      "GR",
+      "HR",
+      "HU",
+      "IE",
+      "IS",
+      "IT",
+      "LI",
+      "LT",
+      "LU",
+      "LV",
+      "MC",
+      "MD",
+      "ME",
+      "MK",
+      "MT",
+      "NL",
+      "NO",
+      "PL",
+      "PT",
+      "RO",
+      "RS",
+      "SE",
+      "SI",
+      "SK",
+      "SM",
+      "UA",
+      "VA"
+    ]
+  },
+  "compatibility": {
+    "django": "5.2.17",
+    "django_cities_light": "3.10.2",
+    "project_commit": "ff0009d8f0fd6f32f3f14a52dfbec96cc2aa4295"
+  }
+}

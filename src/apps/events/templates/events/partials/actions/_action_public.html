@@ -1,0 +1,38 @@
+{# events/partials/actions/_action_public.html #}
+{# Muestra estado de registro del evento en listado público #}
+
+{% load tz %}
+
+{% if user.is_authenticated and event.user_registration_status == 'CONFIRMED' %}
+  {# Usuario autenticado CON inscripción confirmada #}
+  {% if event.status == 'ACTIVE' %}
+    <span class="text-xs text-success dark:text-success">Registered</span>
+  {% elif event.status == 'COMPLETED' %}
+    <span class="text-xs text-muted-foreground">Finished</span>
+  {% elif event.status == 'CANCELED' %}
+    <span class="text-xs text-destructive dark:text-destructive">Canceled</span>
+  {% endif %}
+
+{% else %}
+  {# Usuario SIN inscripción (no autenticado / sin registro / cancelado) #}
+  {% if event.status == 'ACTIVE' %}
+    {# Use model helper to get registration status #}
+    {% with reg_status=event.get_registration_status %}
+      {% if reg_status == 'NOT_OPEN' %}
+        <span class="text-xs text-muted-foreground">Not open</span>
+      {% elif reg_status == 'CLOSED' %}
+        <span class="text-xs text-muted-foreground">Closed</span>
+      {% elif reg_status == 'FULL' %}
+        <span class="text-xs text-warning dark:text-warning">Full</span>
+      {% elif reg_status == 'OPEN' %}
+        <span class="text-xs text-success dark:text-success">Open</span>
+      {% elif reg_status == 'CANCELED' %}
+        <span class="text-xs text-destructive dark:text-destructive">Canceled</span>
+      {% endif %}
+    {% endwith %}
+  {% elif event.status == 'COMPLETED' %}
+    <span class="text-xs text-muted-foreground">Finished</span>
+  {% elif event.status == 'CANCELED' %}
+    <span class="text-xs text-destructive dark:text-destructive">Canceled</span>
+  {% endif %}
+{% endif %}

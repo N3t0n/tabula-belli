@@ -1,0 +1,48 @@
+<!-- Generic Edit Modal - Reusable across the app -->
+<div 
+  x-data="{ open: false }" 
+  @modal-open.window="open = true"
+  @modal-close.window="open = false"
+  x-cloak>
+  
+  <div 
+    x-show="open"
+    class="fixed left-0 right-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50 md:inset-0">
+    
+    <div 
+      @click.away="open = false"
+      class="relative max-h-full w-full max-w-2xl p-4">
+      
+      <!-- Modal content -->
+      <div class="relative rounded-lg bg-card shadow dark:bg-card">
+        
+        <!-- Modal header -->
+        <div class="flex items-center justify-between rounded-t border-b border-border p-4 dark:border-border md:p-5">
+          <h3 class="text-lg font-semibold text-foreground dark:text-foreground" id="modal-title">
+            Edit
+          </h3>
+          <button 
+            type="button" 
+            @click="open = false"
+            class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-muted-foreground hover:bg-muted hover:text-foreground dark:hover:bg-muted dark:hover:text-foreground cursor-pointer">
+            <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        
+        <!-- Modal body - Dynamic content injected by HTMX -->
+        <div id="modal-content">
+          <!-- Form will be loaded here via HTMX -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  [x-cloak] { display: none !important; }
+</style>
+
