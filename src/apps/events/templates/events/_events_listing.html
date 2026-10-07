@@ -9,7 +9,7 @@
   hx-swap="innerHTML"
   hx-trigger="submit"
   hx-replace-url="true"
-  class="sticky top-0 z-10 bg-background/80 dark:bg-background/80 backdrop-blur shadow-sm pb-3">
+  class="sticky top-0 z-10 bg-background sm:bg-background/80 sm:backdrop-blur shadow-sm pb-3">
   
   <!-- Hidden inputs to preserve pills state -->
   <input type="hidden" name="status" x-model="status">
@@ -103,10 +103,14 @@
       </div>
 
       <!-- Filters button -->
-      <div class="relative shrink-0" @keydown.escape.window="filtersOpen=false">
+      <div class="relative shrink-0"
+           @keydown.escape.window="if (filtersOpen) { filtersOpen=false; $refs.filtersToggle.focus() }">
         <button 
           type="button"
-          @click="filtersOpen=!filtersOpen" 
+          @click="filtersOpen=!filtersOpen"
+          x-ref="filtersToggle"
+          :aria-expanded="filtersOpen"
+          aria-controls="event-filters-panel"
           class="px-3 py-2 rounded-lg border border-border bg-card text-sm flex items-center gap-2 whitespace-nowrap cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-4 w-4 text-muted-foreground" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
           Filters
@@ -114,24 +118,27 @@
         </button>
     
     <!-- Panel responsive: fullscreen mobile, dropdown desktop -->
-    <div x-cloak x-show="filtersOpen" @click.outside="filtersOpen=false" 
+    <div id="event-filters-panel" role="region" aria-label="Event filters"
+         x-cloak x-show="filtersOpen" @click.outside="filtersOpen=false"
          class="fixed inset-0 z-40 bg-card 
                 sm:absolute sm:inset-auto sm:right-0 sm:mt-2 sm:w-[24rem] 
                 sm:rounded-xl sm:shadow-lg sm:border sm:border-border sm:dark:border-border
-                p-4 sm:p-3 overflow-auto">
+                p-4 sm:p-3 overflow-auto overscroll-contain">
       
       <!-- Header (mobile only) -->
       <div class="flex items-center justify-between mb-4 sm:hidden">
         <h2 class="text-lg font-medium text-foreground">Filters</h2>
-        <button @click="filtersOpen=false" class="text-2xl text-muted-foreground hover:text-foreground cursor-pointer">×</button>
+        <button type="button" aria-label="Close filters"
+                @click="filtersOpen=false; $refs.filtersToggle.focus()"
+                class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-2xl text-muted-foreground hover:text-foreground cursor-pointer">×</button>
       </div>
 
       <!-- Filters content (responsive grid) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <!-- Category -->
         <div class="sm:col-span-2">
-          <label class="block text-xs font-medium text-foreground mb-1">Category</label>
-          <select name="category" @change="submitFilters()" class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
+          <label for="filter-category" class="block text-xs font-medium text-foreground mb-1">Category</label>
+          <select id="filter-category" name="category" @change="submitFilters()" class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
             <option value="">All</option>
             <option value="WARGAME" {% if current_category == 'WARGAME' %}selected{% endif %}>Wargame</option>
             <option value="TCG" {% if current_category == 'TCG' %}selected{% endif %}>TCG</option>
@@ -141,8 +148,8 @@
 
         <!-- Game -->
         <div class="sm:col-span-2">
-          <label class="block text-xs font-medium text-foreground mb-1">Game</label>
-          <select name="game_id" @change="submitFilters()" class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
+          <label for="filter-game_id" class="block text-xs font-medium text-foreground mb-1">Game</label>
+          <select id="filter-game_id" name="game_id" @change="submitFilters()" class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
             <option value="">All</option>
             {% for game in games %}
               <option value="{{ game.id }}" 
@@ -156,8 +163,9 @@
 
         <!-- Country -->
         <div>
-          <label class="block text-xs font-medium text-foreground mb-1">Country</label>
-          <select 
+          <label for="filter-country" class="block text-xs font-medium text-foreground mb-1">Country</label>
+          <select
+            id="filter-country"
             name="country"
             @change="submitFilters()"
             class="w-full px-3 py-2 rounded-lg border border-border bg-input text-sm">
@@ -174,8 +182,9 @@
 
         <!-- Region -->
         <div>
-          <label class="block text-xs font-medium text-foreground mb-1">Region</label>
-          <select 
+          <label for="filter-region" class="block text-xs font-medium text-foreground mb-1">Region</label>
+          <select
+            id="filter-region"
             name="region"
             @change="submitFilters()"
             {% if not current_country %}disabled{% endif %}
@@ -193,8 +202,9 @@
 
         <!-- City -->
         <div class="sm:col-span-2">
-          <label class="block text-xs font-medium text-foreground mb-1">City</label>
-          <select 
+          <label for="filter-city" class="block text-xs font-medium text-foreground mb-1">City</label>
+          <select
+            id="filter-city"
             name="city"
             @change="submitFilters()"
             {% if not current_region %}disabled{% endif %}
@@ -221,7 +231,7 @@
         </button>
         <button 
           type="button"
-          @click="filtersOpen=false" 
+          @click="filtersOpen=false; $refs.filtersToggle.focus()"
           class="px-3 py-1.5 rounded-lg bg-foreground text-background dark:bg-foreground dark:text-background text-xs">
           Close
         </button>
