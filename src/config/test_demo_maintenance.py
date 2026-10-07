@@ -1,4 +1,5 @@
 from threading import Event as ThreadEvent, Thread
+from time import monotonic, sleep
 from unittest.mock import Mock
 
 from django.core.management.base import CommandError
@@ -28,6 +29,17 @@ class DemoMaintenanceTest(TransactionTestCase):
         with self.other.cursor() as cursor:
             cursor.execute(f'SELECT {function}(%s, %s)', [LOCK_NAMESPACE, key])
             return cursor.fetchone()[0]
+
+    def assert_access_recovers(self, timeout=5):
+        # Closing the client does not wait for the server to clean up its session.
+        deadline = monotonic() + timeout
+        while True:
+            with application_access() as admitted:
+                if admitted:
+                    return
+            if monotonic() >= deadline:
+                self.fail('Application access did not recover after connection closure')
+            sleep(0.02)
 
     def test_maintenance_blocks_get_post_and_admin_without_running_view(self):
         self.assertTrue(self.other_lock(RESET_INTENT))
@@ -102,6 +114,7 @@ class DemoMaintenanceTest(TransactionTestCase):
         self.assertTrue(self.other_lock(RESET_INTENT, shared=True))
         self.assertTrue(self.other_lock(APP_ACTIVITY))
         self.other.close()
+        self.assert_access_recovers()
         response = DemoMaintenanceMiddleware(lambda request: HttpResponse('normal'))(
             self.factory.get('/'),
         )
@@ -140,5 +153,4 @@ class DemoMaintenanceTest(TransactionTestCase):
         with application_access() as admitted:
             self.assertFalse(admitted)
         self.other.close()
-        with application_access() as admitted:
-            self.assertTrue(admitted)
+        self.assert_access_recovers()
