@@ -2,7 +2,7 @@
         class="fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-lg border border-border bg-card p-5 text-center text-foreground shadow-xl backdrop:bg-black/50">
   <div class="flex justify-end">
     <button type="button" data-modal-close aria-label="Close modal"
-            class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary-600 cursor-pointer">
+            class="btn btn-icon">
       <svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 14 14" fill="none">
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
       </svg>
@@ -12,11 +12,11 @@
   <p id="confirmation-message" data-confirm-message class="mb-5 text-muted-foreground"></p>
   <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
     <button type="button" data-modal-close autofocus
-            class="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-input px-4 py-2.5 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary-600 cursor-pointer">
+            class="btn btn-secondary">
       No, cancel
     </button>
     <button type="button" data-modal-confirm
-            class="inline-flex min-h-11 items-center justify-center rounded-lg bg-destructive-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-destructive-700 focus:outline-none focus:ring-2 focus:ring-destructive-300 cursor-pointer">
+            class="btn btn-danger">
       Yes, I'm sure
     </button>
   </div>

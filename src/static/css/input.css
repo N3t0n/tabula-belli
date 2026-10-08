@@ -192,3 +192,35 @@
     @apply mt-2 text-sm text-destructive;
   }
 }
+
+/* Public actions: variants share sizing; templates retain contextual layout. */
+@layer components {
+  .btn {
+    @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium leading-5 transition-colors cursor-pointer;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-primary-700 text-white enabled:hover:bg-primary-800;
+  }
+  a.btn-primary:hover { @apply bg-primary-800; }
+  .btn-secondary {
+    @apply border border-border bg-card text-foreground enabled:hover:bg-muted;
+  }
+  a.btn-secondary:hover { @apply bg-muted; }
+  .btn-danger {
+    @apply bg-destructive-600 text-destructive-foreground enabled:hover:bg-destructive-700 focus-visible:outline-destructive;
+  }
+  a.btn-danger:hover { @apply bg-destructive-700; }
+  .btn-icon {
+    @apply h-11 min-h-11 w-11 shrink-0 p-0 text-muted-foreground enabled:hover:bg-muted enabled:hover:text-foreground;
+  }
+  .btn-text-primary {
+    @apply min-h-11 px-3 py-2 text-primary-700 enabled:hover:bg-muted dark:text-primary-300;
+  }
+  .btn-text-danger {
+    @apply min-h-11 px-3 py-2 text-destructive enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
+  }
+  .btn-demo {
+    @apply border border-accent/60 text-foreground enabled:hover:bg-accent/15 focus-visible:outline-accent;
+  }
+}

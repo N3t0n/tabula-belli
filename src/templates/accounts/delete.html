@@ -29,7 +29,7 @@
   <form method="post" action="{% url 'accounts:delete' %}">
     {% csrf_token %}
     <input type="hidden" name="confirmation" value="{{ confirmation }}">
-    <button type="submit" class="inline-flex w-full items-center justify-center rounded-lg bg-destructive-600 px-5 py-3 text-sm font-medium text-white hover:bg-destructive-700 focus:outline-none focus:ring-4 focus:ring-destructive-300">
+    <button type="submit" class="btn btn-danger w-full">
       {% if review.has_pending %}Cancel pending items and delete my account{% else %}Delete my account permanently{% endif %}
     </button>
   </form>
