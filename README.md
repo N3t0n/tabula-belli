@@ -1,199 +1,145 @@
 # Tabula Belli
 
-Tabula Belli is a Django platform for discovering, publishing, and managing
-European tabletop gaming events: trading card games, role-playing games,
-wargames, and board game meetups.
+**Discover, organize, and join tabletop gaming events across Europe.**
 
-The project started as an academic web application and was later reviewed,
-hardened, and prepared as a portfolio project with reproducible setup,
-PostgreSQL-backed tests, deterministic demo data, and deployment-oriented
-configuration.
+Tabula Belli is a full-stack Django application for wargames, tabletop RPGs, and trading card games. Players can find events by game and location, reserve a place, and manage the events they organize or attend.
 
-## Features
+Originally developed as an academic project, it has been extended into a deployed portfolio application, with tested account flows, PostgreSQL-backed tests, reproducible demo data, and automated maintenance.
 
-- Event discovery with search, filters, sorting, pagination, and HTMX updates.
-- Event creation, editing, and cancellation for verified users.
-- Registration lifecycle with capacity checks and cancellation support.
-- Organizer tools for participant management.
-- My Events dashboard for events a user organizes or attends.
-- Public signup with mandatory email verification through django-allauth.
-- Login by username or email, native password reset/change, and native email
-  change flow.
-- Public read-only demo account support for portfolio evaluation.
-- Account deletion reviews and cancels upcoming organized events and pending registrations in one transaction. Past event and participation records retain a “Deleted account” label; organizer contact emails are removed. An organized event in progress blocks deletion until it ends. Demo and superuser accounts remain protected.
-- Event lifecycle command for completing past events.
-- Health endpoint, production logging, and custom 403/404/500 pages.
+> **Portfolio demonstration:** The included events, players, and registrations are fictional and intended for testing. They do not represent real activities. Visitors can also create test accounts and content.
 
-## Engineering Highlights
+**[Try the live application](https://tabula-belli.n3t0n.com/)** · [User guide](docs/user-guide.md) · [Installation guide](docs/installation.md)
 
-- Django monolith with a custom `Player` user model and domain-focused apps.
-- PostgreSQL-only runtime; there is no automatic SQLite fallback.
-- HTMX + Alpine.js + Tailwind CSS + Flowbite for a server-rendered interactive UI.
-- django-allauth handles account flows; demo-account restrictions are small
-  server-side guards around approved sensitive operations.
-- Authorization rules protect event management and participant data from IDOR.
-- Registration and event mutations are tested for concurrency and consistency.
-- Deterministic, idempotent seeds build a reproducible synthetic demo dataset.
-- `reset_demo` safely rebuilds disposable demo data behind explicit production
-  safeguards.
-- CI validates Python, PostgreSQL, dependency health, tests, frontend assets,
-  `collectstatic`, and deployment checks.
+## Try it
 
-## Tech Stack
+Browse events without an account, use the shared demo account, or create your own account with email verification.
 
-- Python 3.12
-- Django 5.2
-- PostgreSQL 17
-- django-allauth
-- django-anymail with Resend for production transactional email
-- django-cities-light / GeoNames
-- HTMX 1.9, Alpine.js 3.14, Tailwind CSS 4, Flowbite 3
-- Gunicorn and WhiteNoise for the production runtime
-- GitHub Actions for CI
+| Demo username | Demo password |
+| --- | --- |
+| `horus_lupercal` | `TestPass123!` |
 
-Runtime versions are declared in `.python-version`, `.node-version`,
-`requirements.txt`, and `package-lock.json`.
+Select **Fill demo credentials** on the login page, then **Sign in**.
 
-## Local Setup
+The demo is interactive: you can create and edit your own events, join other events, and cancel registrations. Its profile, email, password, and account deletion are protected so the shared account remains available to other visitors. Everyone using the demo shares the same identity and activity.
 
-The detailed setup is documented in
-[MANUAL_DE_INSTALACION.md](MANUAL_DE_INSTALACION.md). The short version is:
+The published application contains synthetic data alongside accounts and content created by visitors. It is a portfolio demonstration, not a service for arranging real events. Every two months, the dataset is rebuilt and visitor accounts, events, and registrations are removed. Event organizers can access participant email addresses, and an event's organizer contact address is visible on its detail page. Creating your own account requires an email address you can access to complete verification.
 
-1. Install Python 3.12, PostgreSQL 17, and Node.js 24.
-2. Copy `.env.example` to `.env`.
-3. Generate a local `SECRET_KEY` and replace the PostgreSQL placeholders.
-4. Create and activate `.venv`.
-5. Install Python dependencies:
+## What you can do
 
-   ```bash
-   python -m pip install -r requirements.txt
-   ```
+- **Discover events:** search, filter by game and location, sort results, and navigate paginated listings.
+- **Join events:** register within the registration window and capacity limits, or cancel your place.
+- **Organize events:** create, edit, and cancel events, and manage their participants.
+- **Track your activity:** use My Events to find events you organize or attend.
+- **Manage your account:** verify your email, update your profile, change account details, and recover your password.
+- **Delete your account:** review the consequences before confirming; future commitments are canceled while past event history retains a Deleted account label. An organized event in progress must finish before deletion.
 
-6. Install and build frontend assets:
+The interface includes light and dark themes. HTMX updates listings and event actions without requiring a separate frontend application.
 
-   ```bash
-   npm ci
-   npm run build
-   ```
+## Technology
 
-7. Prepare the database:
+| Area | Technologies |
+| --- | --- |
+| Backend | Python 3.12, Django 5.2, django-allauth |
+| Database | PostgreSQL 17 |
+| Frontend | Django templates, HTMX, Alpine.js, Tailwind CSS, Flowbite |
+| Static files and application server | WhiteNoise, Gunicorn |
+| Transactional email | Resend through django-anymail |
+| Contact messages | Formspree |
+| Location catalogue | django-cities-light and a versioned GeoNames extract |
+| Deployment | Northflank, with DNS managed through Cloudflare |
+| Continuous integration | GitHub Actions |
 
-   ```bash
-   python src/manage.py migrate
-   python src/manage.py loaddata fixtures/locations/europe-2026-10-06.json.gz
-   python src/manage.py seed_games
-   python src/manage.py seed_users
-   python src/manage.py seed_events
-   python src/manage.py seed_registrations
-   ```
+Python dependencies are pinned in `requirements.txt`; frontend dependencies are resolved in `package-lock.json`. Supported Python and Node versions are recorded in `.python-version` and `.node-version`.
 
-8. Start the development server:
+## Architecture and decisions
 
-   ```bash
-   python src/manage.py runserver
-   ```
+The application is a Django monolith with server-rendered pages. Domain apps separate accounts, players, games, events, locations, and general pages. PostgreSQL stores both application data and the location catalogue.
 
-9. Open `http://localhost:8000`.
-
-New empty databases load the fixed GeoNames catalogue from `fixtures/locations/`; no network is needed for this step. See its README and manifest for provenance, integrity and scope. Do not load the fixture over an existing catalogue. `load_cities` remains available for deliberate catalogue refreshes in a separate empty database.
-
-## Demo Data
-
-The demo dataset is synthetic.
-
-- `seed_users` creates 18 synthetic users.
-- `horus_lupercal` is the intended public demo account.
-- The other 17 seed users have unusable passwords after the seed repair policy.
-- Events and registrations are synthetic and deterministic.
-- `reset_demo --confirm` can rebuild the disposable demo dataset, preserving
-  Locations and recreating Games, Users, Events, Registrations, and the private
-  admin in the approved order.
-
-Try the [live app](https://tabula-belli.n3t0n.com/) with `horus_lupercal` /
-`TestPass123!`, or create your own account. The login form can fill these public
-credentials. For your own local administrator, run
-`python src/manage.py createsuperuser`; never reuse production credentials.
-
-During a reset, PostgreSQL locks drain in-flight requests, show a temporary
-maintenance page, and skip event completion until the next scheduled run. Locks
-release after success, rollback, or connection termination. Connect directly to
-PostgreSQL, without transaction pooling. Keep reset credentials and permission
-restricted to the reset job. See the operations manual for scheduler setup and
-failure handling.
-
-## Testing
-
-Run the Django suite and checks against PostgreSQL:
-
-```bash
-env DEBUG=False .venv/bin/python src/manage.py test
-env DEBUG=False .venv/bin/python src/manage.py check
-env DEBUG=False .venv/bin/python src/manage.py makemigrations --check --dry-run
-.venv/bin/python -m pip check
+```mermaid
+flowchart LR
+    Browser[Browser] --> Django[Django templates and views]
+    Django --> DB[(PostgreSQL)]
+    Django --> Email[Resend: account emails]
+    Browser --> Contact[Formspree: contact messages]
+    Jobs[Scheduled Django commands] --> DB
 ```
 
-Build and validate frontend assets:
+- **Server-rendered interaction:** HTMX requests reuse Django views and templates; Alpine.js handles local UI behavior. The frontend is served by the same Django application.
+- **Consistent event changes:** authorization policies, database transactions, constraints, and concurrency tests support event management and registration capacity rules.
+- **Account lifecycle:** django-allauth supplies verification and recovery flows. Application-specific rules protect the shared demo identity and define account deletion behavior.
+- **Reproducible reference data:** a fixed location fixture avoids downloading a changing external catalogue during installation. Demo events use dates relative to the seed execution date.
+- **Automated maintenance:** scheduled commands complete past events and rebuild disposable demo data. PostgreSQL locks coordinate resets with application activity; visitors see a temporary maintenance page during the reset.
 
-```bash
-npm ci
-npm ls
-npm audit
+## Run locally
+
+Follow the [Installation guide](docs/installation.md) to create a local PostgreSQL database, configure `.env`, install dependencies, build frontend assets, apply migrations, and load the catalogue and demo seeds.
+
+Local evaluation does **not** require Northflank, Cloudflare, Resend, or Formspree accounts. Verification and password recovery emails are printed in the development terminal. The contact form remains disabled unless a Formspree endpoint is configured.
+
+PostgreSQL is required; SQLite is not a supported installation target. Create your own local administrator with Django's `createsuperuser` command if you want to inspect the admin interface.
+
+## Tests and CI
+
+With the local environment and PostgreSQL configured, run from the repository root:
+
+```sh
+DEBUG=False python src/manage.py test
+python src/manage.py check
+python src/manage.py makemigrations --check --dry-run
 npm run build
+node --test scripts/tests/*.test.cjs
 ```
 
-## CI
+The installation guide covers test database permissions, configuration and the equivalent PowerShell command.
 
-GitHub Actions is defined in `.github/workflows/ci.yml`. It validates:
+The test suite covers account flows, authorization, event lifecycle rules, registrations, demo restrictions, account deletion, and concurrent maintenance behavior.
 
-- Python dependency installation and `pip check`;
-- Python dependency audit;
-- Django checks, migrations, and PostgreSQL-backed tests with coverage;
-- frontend dependency install/audit;
-- frontend build;
-- `collectstatic`;
-- production deployment checks;
-- repository cleanliness after generated assets are rebuilt.
+GitHub Actions checks dependencies and vulnerabilities, runs tests against PostgreSQL, verifies migrations, builds frontend assets, collects static files, and runs production configuration checks. See [the CI workflow](.github/workflows/ci.yml).
 
-No badge is included yet because the final public repository URL has not been
-created.
+## Published deployment
 
-## Deployment Readiness
+The live application runs on Northflank with PostgreSQL, Gunicorn, and WhiteNoise. Cloudflare manages the domain's DNS; Resend delivers account verification and password recovery emails.
 
-The application is deployed at [tabula-belli.n3t0n.com](https://tabula-belli.n3t0n.com/).
+Two scheduled Django commands provide maintenance:
 
-The current production strategy is:
+- `complete_past_events`: every five minutes, marks ended active events as completed.
+- `reset_demo`: every two months, rebuilds the disposable dataset with fresh relative dates. A temporary maintenance page is shown while the reset runs.
 
-- PostgreSQL as the only database backend;
-- Gunicorn as the application server;
-- WhiteNoise for collected static files;
-- Resend via django-anymail for django-allauth transactional email;
-- Formspree for the public Contact form;
-- `/health/` as a minimal healthcheck endpoint;
-- scheduled `complete_past_events`;
-- scheduled `reset_demo --confirm` for disposable demo refreshes.
+The Contact page sends messages through Formspree, independently of the account emails delivered by Resend.
 
-The event completion job runs every five minutes. Enable periodic demo resets
-only after deploying the maintenance protection to the web and both jobs; see
-[the operations manual](MANUAL_DE_INSTALACION.md) for the safeguards.
+The installation guide targets local development. Hosting your own instance requires your own production configuration, email/contact services where needed, and scheduling of the maintenance commands.
 
-## Project Structure
+## Repository layout
 
 ```text
-tabula_belli/
-├── .github/workflows/ci.yml        # CI pipeline
-├── fixtures/                       # Demo fixtures and game datasets
-├── MANUAL_DE_INSTALACION.md        # Detailed setup and operations manual
-├── package.json                    # Frontend build scripts and dependencies
-├── requirements.in                 # Direct Python dependencies
-├── requirements.txt                # Fully pinned Python environment
-└── src/
-    ├── apps/                       # Domain apps
-    ├── config/                     # Django settings and URL configuration
-    ├── static/                     # Static sources and versioned assets
-    └── templates/                  # Shared templates
+tabula-belli/
+├── .github/workflows/ci.yml
+├── docs/
+│   ├── installation.md
+│   └── user-guide.md
+├── fixtures/
+│   ├── locations/
+│   └── ...                    # Game data and event templates
+├── scripts/                   # Frontend dependency copying
+├── src/
+│   ├── apps/                  # Domain models, views, services and tests
+│   ├── config/                # Settings, URLs and maintenance coordination
+│   ├── static/                # Frontend source files and generated assets
+│   └── templates/             # Shared layouts and account templates
+├── .env.example
+├── package.json
+├── package-lock.json
+├── requirements.in
+└── requirements.txt
 ```
 
-## Publication Notes
+## Demo data and sources
 
-Screenshots and the final publication review remain pending. Private credentials
-belong in local environment files or provider secrets, never in this repository.
+The initial dataset combines real reference information with fictional activity:
+
+- **Locations:** real European countries, administrative regions, and cities from [GeoNames](https://www.geonames.org/), under CC BY 4.0. See [catalogue provenance](fixtures/locations/README.md).
+- **Games:** real wargames, tabletop RPGs, and trading card games listed in the project's seed catalogues.
+- **Events and registrations:** synthetic records created for demonstration; they do not represent real scheduled activities or bookings.
+- **Players and organizers:** fictional demo profiles inspired by the Primarchs from Warhammer's Horus Heresy setting.
+
+On the published application, these initial records can coexist with test accounts, events, and registrations created by visitors. The periodic reset replaces this activity with a fresh demo dataset.
