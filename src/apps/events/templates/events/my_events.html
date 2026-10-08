@@ -30,7 +30,7 @@
                     :class="activeTab === 'organizing' ? 
                         'border-primary-600 text-primary-600' : 
                         'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300"
                 >
                     Organizing ({{ organizing_page.paginator.count }})
                 </a>
@@ -42,15 +42,15 @@
                     :class="activeTab === 'registered' ? 
                         'border-primary-600 text-primary-600' : 
                         'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
-                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300"
                 >
                     Registered ({{ participating_page.paginator.count }})
                 </a>
             </nav>
             
             <a href="{% url 'my_events:create' %}" 
-               class="order-1 self-center shrink-0 inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 transition-colors cursor-pointer sm:order-2 sm:self-auto">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+               class="btn btn-primary order-1 self-center shrink-0 sm:order-2 sm:self-auto">
+                <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 5v10m-5-5h10"/>
                 </svg>
                 Create Event
@@ -61,23 +61,23 @@
         <div x-show="activeTab === 'organizing'" class="mt-6">
             
             {# Status Pills + Search #}
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
                 {# Status Pills #}
-                <div class="inline-flex rounded-xl bg-muted p-1">
+                <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
                     <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         All
                     </a>
                     <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Active
                     </a>
                     <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Completed
                     </a>
                     <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Canceled
                     </a>
                 </div>
@@ -110,23 +110,23 @@
         <div x-show="activeTab === 'registered'" class="mt-6">
             
             {# Status Pills + Search #}
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
                 {# Status Pills #}
-                <div class="inline-flex rounded-xl bg-muted dark:bg-muted p-1">
+                <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted dark:bg-muted p-1">
                     <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         All
                     </a>
                     <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Active
                     </a>
                     <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Completed
                     </a>
                     <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
-                       class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                       class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Canceled
                     </a>
                 </div>

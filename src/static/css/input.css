@@ -236,3 +236,7 @@
     @apply border border-destructive text-destructive enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
   }
 }
+
+@layer components {
+  .btn-nav { @apply min-h-11 px-2 py-2 sm:px-4 lg:px-5 lg:py-2.5; }
+}

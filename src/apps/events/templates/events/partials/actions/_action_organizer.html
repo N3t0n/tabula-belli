@@ -2,10 +2,10 @@
 {# Acciones para el organizador del evento #}
 
 {% if event.is_editable %}
-  <div class="flex items-center justify-end gap-2">
+  <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
     {# Editar evento #}
     <a href="{% url 'my_events:edit' event.slug %}" 
-       class="text-xs text-primary-600 hover:underline dark:text-primary-400">
+       class="btn btn-text-primary">
       Edit
     </a>
     
@@ -21,7 +21,7 @@
       {% csrf_token %}
       <button
         type="submit"
-        class="text-xs text-destructive hover:underline dark:text-destructive cursor-pointer">
+        class="btn btn-text-danger">
         Cancel
       </button>
     </form>
