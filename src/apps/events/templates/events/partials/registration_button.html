@@ -3,7 +3,7 @@
 {% if not registration_open %}
     {% if registration_status == 'FULL' %}
         <div class="inline-flex w-full items-center justify-center rounded-lg bg-muted px-5 py-2.5 text-sm font-medium text-muted-foreground dark:bg-input dark:text-muted-foreground">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
             Event is full ({{ confirmed_count }}/{{ event.capacity }})
@@ -20,28 +20,28 @@
                 {% csrf_token %}
                 <button
                     type="submit"
-                    class="inline-flex w-full items-center justify-center rounded-lg bg-destructive-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-destructive-700 focus:outline-none focus:ring-4 focus:ring-destructive-300 transition-colors cursor-pointer">
+                    class="btn btn-danger w-full">
                     Cancel Registration
                 </button>
             </form>
         {% endif %}
     {% elif registration_status == 'NOT_OPEN' %}
         <div class="inline-flex w-full items-center justify-center rounded-lg bg-muted px-5 py-2.5 text-sm font-medium text-muted-foreground dark:bg-input dark:text-muted-foreground">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             Registration opens {{ event.registration_opens_at|date:"M d, Y H:i" }}
         </div>
     {% elif registration_status == 'CLOSED' %}
         <div class="inline-flex w-full items-center justify-center rounded-lg bg-muted px-5 py-2.5 text-sm font-medium text-muted-foreground dark:bg-input dark:text-muted-foreground">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
             </svg>
             Registration closed
         </div>
     {% elif registration_status == 'CANCELED' %}
         <div class="inline-flex w-full items-center justify-center rounded-lg bg-muted px-5 py-2.5 text-sm font-medium text-muted-foreground dark:bg-input dark:text-muted-foreground">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
             Event canceled
@@ -64,9 +64,9 @@
             {% csrf_token %}
             <button 
                 type="submit"
-                class="inline-flex w-full items-center justify-center rounded-lg bg-destructive-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-destructive-700 focus:outline-none focus:ring-4 focus:ring-destructive-300 transition-colors cursor-pointer"
+                class="btn btn-danger w-full"
             >
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
                 Cancel Registration
@@ -82,9 +82,9 @@
             {% csrf_token %}
             <button 
                 type="submit"
-                class="inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors cursor-pointer dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                class="btn btn-primary w-full"
             >
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                 </svg>
                 Register for Event
@@ -95,9 +95,9 @@
 {% else %}
     <a 
         href="{% url 'account_login' %}?next={{ request.path }}"
-        class="inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors cursor-pointer dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+        class="btn btn-primary w-full"
     >
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
         </svg>
         Login to Register

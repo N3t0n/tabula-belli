@@ -224,3 +224,15 @@
     @apply border border-accent/60 text-foreground enabled:hover:bg-accent/15 focus-visible:outline-accent;
   }
 }
+
+@layer components {
+  .btn-compact { @apply min-h-11 px-3 py-2; }
+  .btn-text-secondary {
+    @apply min-h-11 px-3 py-2 text-muted-foreground enabled:hover:bg-muted enabled:hover:text-foreground;
+  }
+  a.btn-text-secondary:hover { @apply bg-muted text-foreground; }
+  a.btn-text-primary:hover { @apply bg-muted; }
+  .btn-outline-danger {
+    @apply border border-destructive text-destructive enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
+  }
+}
