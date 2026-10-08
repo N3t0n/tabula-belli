@@ -61,11 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!button || button.disabled) return;
         const request = requests.get(button.closest('[data-listing-feedback]'));
         if (!request) return;
-        // Retry only the failed GET; never replay registrations, cancellations or saves.
+        // Retry the failed GET using its source swap policy, including settle timing.
         htmx.ajax('GET', request.path, {
             source: request.source,
             target: request.listing,
-            swap: 'innerHTML',
             values: request.parameters,
         }).catch(() => {}); // HTMX lifecycle events display transport failures.
     });

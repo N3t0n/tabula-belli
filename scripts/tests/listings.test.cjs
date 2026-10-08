@@ -109,7 +109,7 @@ test('manual retry preserves the failed page and filters and cannot run while bu
     assert.equal(options.target, ui.listing);
     assert.equal(options.values.status, 'completed');
     assert.equal(options.values.page, '2');
-    assert.equal(options.swap, 'innerHTML');
+    assert.equal(options.swap, undefined); // Inherit the source's swap and settle policy.
 });
 
 test('superseded requests cannot overwrite or clear a newer loading state', () => {

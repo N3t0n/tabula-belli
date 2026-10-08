@@ -1,12 +1,12 @@
 {% load events_tags %}
 
-<!-- UNIFIED FORM: Compact single-line layout -->
+<!-- Settle before Alpine initializes visibility in the replaced listing. -->
 <form 
   x-ref="filtersForm"
   id="filters-form"
   hx-get="{% url 'events' %}" 
   hx-target="#events-listing" 
-  hx-swap="innerHTML"
+  hx-swap="innerHTML settle:0ms"
   hx-trigger="submit"
   hx-replace-url="true"
   class="sticky top-0 z-10 bg-background sm:bg-background/80 sm:backdrop-blur shadow-sm pb-3">
@@ -270,7 +270,7 @@
           <button 
             hx-get="{% pagination_url page_obj.previous_page_number %}" 
             hx-target="#events-listing" 
-            hx-swap="innerHTML"
+            hx-swap="innerHTML settle:0ms"
             hx-push-url="true"
             class="btn btn-secondary btn-compact">
             Previous
@@ -285,7 +285,7 @@
           <button 
             hx-get="{% pagination_url page_obj.next_page_number %}" 
             hx-target="#events-listing" 
-            hx-swap="innerHTML"
+            hx-swap="innerHTML settle:0ms"
             hx-push-url="true"
             class="btn btn-secondary btn-compact">
             Next
