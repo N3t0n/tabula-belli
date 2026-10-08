@@ -35,13 +35,15 @@
         {% include "accounts/profile_info.html" %}
       </div>
 
+      <p id="profile-load-status" role="status" hidden class="mt-4 text-sm text-muted-foreground">Loading profile…</p>
+      <p id="profile-load-error" role="alert" hidden class="mt-4 text-sm text-destructive">We couldn't load your profile. Please try again.</p>
       <!-- Action Buttons -->
       <div class="flex flex-col gap-3 mt-6 pt-6 border-t border-border dark:border-border sm:flex-row sm:flex-wrap">
         <button 
           hx-get="{% url 'accounts:profile' %}"
           hx-target="#modal-content"
           hx-swap="innerHTML"
-          onclick="setTimeout(() => window.dispatchEvent(new CustomEvent('modal-open', { bubbles: true, composed: true })), 100)"
+          type="button" data-profile-edit aria-controls="edit-dialog" aria-haspopup="dialog"
           class="inline-flex items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-colors cursor-pointer dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
           <svg class="-ms-0.5 me-1.5 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"></path>
@@ -72,13 +74,9 @@
 
     <!-- Generic Modals -->
     {% include "components/edit.html" %}
-    {% include "components/confirmation.html" %}
+
 
   </div>
 </div>
 
-<!-- Alpine.js cloaking style -->
-<style>
-    [x-cloak] { display: none !important; }
-</style>
 {% endblock %}

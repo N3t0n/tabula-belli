@@ -92,8 +92,8 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
-      - name: Test contact submission lifecycle without network requests
-        run: node --test scripts/tests/contact.test.cjs
+      - name: Test frontend interactions without network requests
+        run: node --test scripts/tests/*.test.cjs
 
       - name: Collect production static files
         env:

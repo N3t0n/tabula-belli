@@ -1,4 +1,5 @@
 import re
+from html.parser import HTMLParser
 from urllib.parse import urlsplit
 
 from allauth.account.models import EmailAddress
@@ -8,6 +9,24 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from apps.players.models import Player
+
+
+class FormMarkupParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.fields = {}
+        self.ids = set()
+        self.duplicate_ids = set()
+
+    def handle_starttag(self, tag, attrs):
+        attributes = dict(attrs)
+        identifier = attributes.get('id')
+        if identifier:
+            if identifier in self.ids:
+                self.duplicate_ids.add(identifier)
+            self.ids.add(identifier)
+        if tag == 'input' and attributes.get('name'):
+            self.fields[attributes['name']] = attributes
 
 
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -92,3 +111,38 @@ class AccountFlowTest(TestCase):
             response = self.client.post(reverse('account_reset_password'), {'email': email}, follow=True)
             outcomes.append((response.status_code, response.content))
         self.assertEqual(outcomes[0], outcomes[1])
+
+    def test_invalid_login_preserves_identifier_and_remember_but_not_password(self):
+        response = self.client.post(reverse('account_login'), {
+            'login': 'portfolio-reader', 'password': 'InvalidEnteredPassword123!',
+            'remember': 'on',
+        })
+        self.assertEqual(response.status_code, 200)
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        self.assertEqual(parser.fields['login']['value'], 'portfolio-reader')
+        self.assertIn('checked', parser.fields['remember'])
+        self.assertNotIn('value', parser.fields['password'])
+        self.assertFalse(get_user(self.client).is_authenticated)
+
+    def test_invalid_signup_preserves_public_fields_and_links_password_error(self):
+        response = self.client.post(reverse('account_signup'), {
+            'username': 'portfolio-reader', 'email': 'reader@accounts.test',
+            'password1': self.password, 'password2': 'DifferentPassword456!',
+        })
+        self.assertEqual(response.status_code, 200)
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        self.assertEqual(parser.fields['username']['value'], 'portfolio-reader')
+        self.assertEqual(parser.fields['email']['value'], 'reader@accounts.test')
+        self.assertFalse(parser.duplicate_ids)
+        for name in ('password1', 'password2'):
+            self.assertEqual(parser.fields[name]['id'], f'id_{name}')
+            self.assertNotIn('value', parser.fields[name])
+        invalid = [field for field in parser.fields.values() if field.get('aria-invalid') == 'true']
+        self.assertTrue(invalid)
+        for field in invalid:
+            for reference in field['aria-describedby'].split():
+                self.assertIn(reference, parser.ids)
+        self.assertFalse(Player.objects.filter(username='portfolio-reader').exists())
+        self.assertEqual(len(mail.outbox), 0)

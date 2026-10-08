@@ -20,24 +20,25 @@
       <form
           {% if formspree_action %}action="{{ formspree_action }}"{% endif %}
           method="post"
-          class="space-y-8"
+          class="space-y-6"
           data-contact-form
       >
           <div>
-              <label for="contact-email" class="block mb-2 text-sm font-medium text-foreground">Your email</label>
+              <label for="contact-email" class="form-label">Your email</label>
               <input
                   id="contact-email"
+                  autocomplete="email"
                   name="email"
                   type="email"
                   maxlength="254"
                   required
                   placeholder="your@email.com"
-                  class="shadow-sm bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 placeholder:text-muted-foreground"
+                  class="form-control"
               >
           </div>
           
           <div>
-              <label for="contact-subject" class="block mb-2 text-sm font-medium text-foreground">Subject</label>
+              <label for="contact-subject" class="form-label">Subject</label>
               <input
                   id="contact-subject"
                   name="subject"
@@ -45,19 +46,19 @@
                   maxlength="200"
                   required
                   placeholder="Let us know how we can help you"
-                  class="block p-3 w-full text-sm text-foreground bg-input rounded-lg border border-border shadow-sm focus:ring-primary-500 focus:border-primary-500 placeholder:text-muted-foreground"
+                  class="form-control"
               >
           </div>
           
           <div class="sm:col-span-2">
-              <label for="contact-message" class="block mb-2 text-sm font-medium text-foreground">Your message</label>
+              <label for="contact-message" class="form-label">Your message</label>
               <textarea
                   id="contact-message"
                   name="message"
                   rows="6"
                   required
                   placeholder="Leave a comment..."
-                  class="block p-2.5 w-full text-sm text-foreground bg-input rounded-lg shadow-sm border border-border focus:ring-primary-500 focus:border-primary-500 placeholder:text-muted-foreground"
+                  class="form-control"
               ></textarea>
           </div>
           

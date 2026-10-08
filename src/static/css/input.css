@@ -172,3 +172,23 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Shared public form fields; checkbox/radio and admin widgets keep their own styles. */
+@layer components {
+  .form-control {
+    @apply block w-full min-w-0 min-h-[46px] rounded-lg border border-border bg-input px-3 py-2.5 text-base leading-6 text-foreground placeholder:text-muted-foreground;
+    @apply focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-600 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .form-control-search {
+    @apply pl-10;
+  }
+  .form-label {
+    @apply mb-2 block text-sm font-medium text-foreground;
+  }
+  .form-help {
+    @apply mt-2 text-sm text-muted-foreground;
+  }
+  .form-error {
+    @apply mt-2 text-sm text-destructive;
+  }
+}

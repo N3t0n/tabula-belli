@@ -86,10 +86,7 @@ class AccountInputStyleMixin:
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             if not isinstance(field.widget, forms.HiddenInput):
-                field.widget.attrs['class'] = (
-                    'block w-full rounded-lg border border-border bg-input '
-                    'p-2.5 text-foreground focus:ring-2 focus:ring-primary-600'
-                )
+                field.widget.attrs['class'] = 'form-control'
 
 
 class StyledAddEmailForm(AccountInputStyleMixin, AddEmailForm):
