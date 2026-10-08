@@ -86,8 +86,8 @@
             clear rules about dates, capacity and visibility.
           </li>
           <li>
-            <strong class="text-foreground dark:text-foreground">European location database</strong>: 44 countries with their regions and thousands of cities
-            across the continent.
+            <strong class="text-foreground dark:text-foreground">European location catalogue</strong>: 43 countries with their regions and thousands of cities
+            to help you find the right place to play.
           </li>
           <li>
             <strong class="text-foreground dark:text-foreground">Game catalogue</strong>: over 120 games across TCGs, TTRPGs and wargames.
@@ -102,18 +102,31 @@
       </div>
 
       <div class="mx-auto max-w-3xl space-y-6 mb-12">
-        <h2 class="text-2xl font-semibold text-foreground dark:text-foreground mb-3">Where Tabula Belli is heading</h2>
+        <h2 class="text-2xl font-semibold text-foreground dark:text-foreground mb-3">More time playing, less time planning</h2>
         <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
-          The roadmap for Tabula Belli includes features such as email notifications for
-          registrations and cancellations, better tools for tournament management (rounds,
-          standings, pairings), online payments for tickets and full internationalisation for multiple
-          languages.
+          Whether you are looking for a casual game night or organising a tournament,
+          Tabula Belli keeps the essentials together: the game, the place, the date and the available spots.
+          Discover your next event, join a table or bring your own community together.
         </p>
         <p class="text-base text-muted-foreground dark:text-muted-foreground mb-4">
-          In the long run, the goal is to make Tabula Belli a reliable everyday tool for the people who organise
-          and attend tabletop gaming events across Europe.
+          Your personal My Events area gives you one place to manage the events you organise
+          and the ones you have joined, with clear registration windows and capacity limits.
         </p>
       </div>
+
+      <aside aria-labelledby="demo-notice-title" class="mx-auto max-w-3xl mb-8 rounded-lg border border-accent/60 border-l-4 bg-card p-5 sm:p-6 text-sm text-muted-foreground leading-relaxed">
+        <h2 id="demo-notice-title" class="mb-3 text-lg font-semibold text-foreground">Well, actually…</h2>
+        <p>
+          This public site is an interactive portfolio demo. The reference locations come from
+          <a href="https://www.geonames.org/" class="text-primary-700 hover:underline dark:text-primary-300">GeoNames</a>
+          and the games are real; the initial events and player profiles are fictional.
+          Visitors can explore the shared demo account or create their own account with an email they can verify.
+          Listings and registrations are for testing, not real bookings. Visitor activity is cleared during
+          the demo refresh every two months. See our
+          <a href="{% url 'privacy' %}" class="text-primary-700 hover:underline dark:text-primary-300">Privacy Policy</a>
+          for details.
+        </p>
+      </aside>
 
       <div class="text-center bg-card dark:bg-card border border-border dark:border-border rounded-lg p-8">
         {% include 'partials/cta_signup.html' %}
