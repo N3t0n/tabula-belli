@@ -15,7 +15,7 @@ python src/manage.py migrate --noinput
 python src/manage.py loaddata fixtures/locations/europe-2026-10-06.json.gz
 ```
 
-Then seed games, users, events and registrations using the existing commands, or use `reset_demo --confirm` with its explicit disposable-database and private-admin settings. Configure the Django Site separately for the deployment domain.
+Continue with the seeds and Django Site configuration in the [Installation guide](../../docs/installation.md). Initial setup does not require the destructive demo reset command.
 
 Loading this fixture requires no GeoNames download. Check the fixture SHA-256 against `manifest.json` before using it. Do not load it on top of an existing location catalogue: fixture primary keys belong to this export and can conflict with existing event/profile references. Migrating a running deployment to a new catalogue must be treated separately, using stable GeoNames identifiers and checked relations.
 
@@ -23,7 +23,7 @@ Loading this fixture requires no GeoNames download. Check the fixture SHA-256 ag
 
 The existing `reset_demo` command preserves locations and the Django Site. It rebuilds games, demo users, events with relative dates, registrations and the private administrator. It requires `DEMO_RESET_ALLOWED`, the exact `DEMO_RESET_DATABASE_NAME`, `DEMO_ADMIN_USERNAME`, `DEMO_ADMIN_EMAIL`, `DEMO_ADMIN_PASSWORD`, and explicit `--confirm`.
 
-Keep real admin credentials outside Git. This work does not activate a production reset job or create periodic backups.
+Keep real admin credentials outside Git. Loading the catalogue does not configure a maintenance schedule or create backups.
 
 ## Refresh the catalogue deliberately
 
