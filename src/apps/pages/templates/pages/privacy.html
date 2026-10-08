@@ -8,280 +8,99 @@
         Privacy Policy
         <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
     </h1>
-    <p class="mb-8 font-light text-center text-muted-foreground md:text-lg">Last updated: December 2025</p>
+    <p class="mb-8 font-light text-center text-muted-foreground md:text-lg">Last updated: 8 October 2026</p>
 
     <div class="space-y-8 text-foreground">
-        <!-- Introduction -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">1. Introduction</h2>
-            <p class="text-muted-foreground leading-relaxed">
-                This Privacy Policy describes how Tabula Belli collects, uses, stores, and protects personal data when you access or use our platform.
+            <h2 class="text-2xl font-bold mb-4">1. About this policy</h2>
+            <p class="text-muted-foreground leading-relaxed mb-4">
+                Tabula Belli is an interactive portfolio project operated by the <a href="https://github.com/N3t0n" class="text-primary-700 hover:underline dark:text-primary-300">n3t0n</a>. This policy explains how personal data is used on the published demo. For privacy questions or requests, use the <a href="{% url 'contact' %}" class="text-primary-700 hover:underline dark:text-primary-300">Contact page</a>.
             </p>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                We are committed to handling your information in a lawful, fair, and transparent way, in line with applicable data protection regulations, including the General Data Protection Regulation (GDPR).
-            </p>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                By using Tabula Belli, creating an account, or participating in events through the platform, you acknowledge that you have read this Privacy Policy and understand how your personal data is processed.
+            <p class="text-muted-foreground leading-relaxed mb-4">
+                The initial events and player profiles are fictional. Visitors may also create accounts and test activity. These accounts and records are real data even though the events are demonstrations.
             </p>
         </section>
 
-        <!-- Data Controller -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">2. Data Controller</h2>
-            <p class="text-muted-foreground leading-relaxed">
-                The data controller responsible for your personal data in connection with Tabula Belli is the operator of the platform.
-            </p>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                If you have any questions about this Privacy Policy or about how we process your data, you can contact us via the 
-                <a href="{% url 'contact' %}" class="text-primary-700 hover:underline dark:text-primary-300">Contact page</a>
-                available on the website.
+            <h2 class="text-2xl font-bold mb-4">2. Data we use and why</h2>
+            <ul class="list-disc pl-5 space-y-2 text-muted-foreground">
+                <li><strong>Account details:</strong> your username, email address and password hash, used to create your account, sign you in and support email verification and account recovery. A working email address is required for verification.</li>
+                <li><strong>Optional profile details:</strong> first and last name, country, region, city and favourite games, if you choose to add them. You can edit or remove these details from your profile; real names are not required.</li>
+                <li><strong>Event and registration details:</strong> the listings you create, event contact email, dates, location, game, capacity and your registration status, used to display events and manage participation.</li>
+                <li><strong>Contact messages:</strong> the email address, subject and message you send through the Contact form, used to read and respond to your enquiry.</li>
+                <li><strong>Technical data:</strong> session and security information, request details and operational logs used to run the website, diagnose faults and prevent misuse. Hosting and other service providers may process IP addresses and browser information when receiving requests.</li>
+            </ul>
+            <p class="text-muted-foreground leading-relaxed mb-4">
+                Account and event data is processed to provide the features you request. Contact handling, site maintenance and security are based on the legitimate interests of operating the project and responding to enquiries. Where a legal obligation applies, information may also be processed to meet that obligation. The project does not send marketing newsletters.
             </p>
         </section>
 
-        <!-- What Data We Collect -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">3. Personal Data We Collect</h2>
+            <h2 class="text-2xl font-bold mb-4">3. Who can see your information</h2>
+            <ul class="list-disc pl-5 space-y-2 text-muted-foreground">
+                <li><strong>Public event information:</strong> event listings, the organiser's username and the contact email supplied for the event are public. That contact email can be different from the email used for your account.</li>
+                <li><strong>Participant information:</strong> the event organiser can see confirmed participants' usernames and account emails. The participant list is not public. The same access applies when an event is organised through the shared demo account.</li>
+                <li><strong>Your profile:</strong> your optional profile details and favourite games are shown in your own account area, rather than on a public player profile.</li>
+                <li><strong>Administration:</strong> the project operator can access stored records where needed to maintain the application or handle a request. Passwords are stored as hashes, not as readable passwords.</li>
+            </ul>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                The type of information we collect depends on how you interact with the platform.
-            </p>
-
-            <h3 class="text-xl font-semibold mb-3 mt-6">3.1 Account Information</h3>
-            <p class="text-muted-foreground leading-relaxed mb-2">
-                When you create and use an account on Tabula Belli, we may process:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Username</strong> – your chosen display name on the platform</li>
-                <li><strong>Email address</strong> – used to identify your account, to help you recover access if needed, and to contact you regarding important issues related to your account or events. This email address is not automatically made public</li>
-                <li><strong>Password</strong> – stored only in hashed or encrypted form; we never store or see your password in plain text</li>
-                <li><strong>First and last name (optional)</strong> – if you choose to add them to your profile</li>
-                <li><strong>Location information (optional)</strong> – such as country, region, or city, if you decide to provide it to help discover local events</li>
-                <li><strong>Favorite games (optional)</strong> – a list of games or systems you are interested in, if you choose to add this information to your profile</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold mb-3 mt-6">3.2 Event Data</h3>
-            <p class="text-muted-foreground leading-relaxed mb-2">
-                When you create, manage, or participate in events on Tabula Belli, we may process:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Event details</strong> – including title, description, dates, location, capacity, game or system type, and any other information you choose to include in the event listing</li>
-                <li><strong>Registration information</strong> – records of which events you register for, when you register, and changes to your registration status (for example, confirmation or cancellation)</li>
-                <li><strong>Organizer contact email for the event</strong> – an email address that an organizer is required to provide as a contact point for that specific event. This email is shown on the event page so interested users can reach the organizer. It can be the same as or different from the email used for the organizer's account</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold mb-3 mt-6">3.3 Technical and Usage Data</h3>
-            <p class="text-muted-foreground leading-relaxed mb-2">
-                To operate and secure the platform, we automatically collect certain technical data, such as:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Session cookies</strong> – small files that enable basic functions such as staying logged in while you move between pages</li>
-                <li><strong>Security tokens (for example, CSRF tokens)</strong> – used to help prevent malicious actions and protect your account</li>
-                <li><strong>Timestamps and logs</strong> – records of key actions (for example, account creation, logins, event creation or updates) to help maintain security, diagnose issues, and improve the service</li>
-            </ul>
-        </section>
-
-        <!-- How We Use Your Data -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4">4. How We Use Your Data</h2>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                We use your personal data for the following purposes:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Account management</strong> – to create, maintain, and manage your user account</li>
-                <li><strong>Authentication</strong> – to verify your identity when you log in and to help protect your account from unauthorized access</li>
-                <li><strong>Event functionality</strong> – to allow you to create events, display event information, manage registrations, and let other users discover and join events</li>
-                <li><strong>Registration management</strong> – to keep track of which users have registered for which events, and to allow organizers to manage attendance and capacity</li>
-                <li><strong>Service-related communication</strong> – to send essential information related to your account or events in which you are involved (for example, confirmations, important changes, or security notifications). We do not use your data to send marketing newsletters or advertising campaigns</li>
-                <li><strong>Location-based features (optional)</strong> – to suggest or display events that are geographically relevant to you, if you have provided location data</li>
-                <li><strong>Platform maintenance and improvement</strong> – to understand how the platform is used, to fix bugs, enhance performance, and plan new features</li>
-                <li><strong>Security and misuse prevention</strong> – to monitor, detect, and prevent fraudulent or abusive activity, and to protect the rights, property, and safety of users and the platform</li>
-            </ul>
-        </section>
-
-        <!-- Legal Basis -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4">5. Legal Bases for Processing (Under GDPR)</h2>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                Under the GDPR, we rely on several legal bases to process your personal data:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Performance of a contract</strong> – when processing is necessary to provide the services you request (for example, managing your account, enabling you to create or join events)</li>
-                <li><strong>Consent</strong> – when you voluntarily provide optional data (such as location or favorite games) or choose to use specific features that require additional information. You can withdraw your consent at any time without affecting the lawfulness of processing carried out before withdrawal</li>
-                <li><strong>Legitimate interests</strong> – when we have a legitimate interest in operating, improving, and securing the platform (for example, preventing abuse or analyzing how features are used), provided that these interests do not override your rights and freedoms</li>
-                <li><strong>Compliance with legal obligations</strong> – when we need to retain or disclose certain information to comply with laws or regulatory requirements</li>
-            </ul>
-        </section>
-
-        <!-- Cookies -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4">6. Cookies and Similar Technologies</h2>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                Tabula Belli uses only cookies and similar technologies that are strictly necessary for the core functionality of the platform. These are required to provide the service you request and therefore do not require your prior consent under GDPR.
-            </p>
-
-            <h3 class="text-xl font-semibold mb-3 mt-6">Examples of cookies we may use include:</h3>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Session cookies</strong> (such as a session identifier) that keep you logged in as you navigate the site and that are typically deleted when you close your browser</li>
-                <li><strong>CSRF or security cookies</strong> that store tokens used to protect forms and actions from cross-site request forgery and similar attacks</li>
-            </ul>
-
-            <p class="text-muted-foreground leading-relaxed mt-6">
-                We do <strong>not</strong> use:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4 mt-2">
-                <li>Advertising or profiling cookies</li>
-                <li>Analytics cookies (such as Google Analytics)</li>
-                <li>Social media tracking pixels</li>
-                <li>Third-party cookies that track your behavior across different websites</li>
-            </ul>
-
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                You can configure your browser to block or delete cookies, but doing so may affect the basic functionality of the platform (for example, you might not be able to stay logged in or use certain features).
+                Do not include personal information about other people in public event descriptions or addresses.
             </p>
         </section>
 
-        <!-- Data Sharing -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">7. Who We Share Your Data With</h2>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                We do not sell, rent, or trade your personal data to third parties. However, certain information is visible to other users as part of the platform's functionality:
-            </p>
-
-            <h3 class="text-xl font-semibold mb-3 mt-6">7.1 Public Information</h3>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Your username</strong> – Visible to all users when you create events or register for them</li>
-                <li><strong>Event details</strong> – If you organize an event, its details (title, description, location, date) are publicly visible</li>
-                <li><strong>Organizer contact email</strong> – The contact email that event organizers are required to provide appears on the event page for anyone viewing the event</li>
-                <li><strong>Location</strong> – Only if you've chosen to display it in your profile</li>
+            <h2 class="text-2xl font-bold mb-4">4. Services used by the website</h2>
+            <ul class="list-disc pl-5 space-y-2 text-muted-foreground">
+                <li><strong>Northflank:</strong> hosts the application and its PostgreSQL database. The deployment region currently used is London, United Kingdom.</li>
+                <li><strong>Resend:</strong> delivers transactional account emails, such as verification and password recovery messages. See <a href="https://resend.com/legal/privacy-policy" class="text-primary-700 hover:underline dark:text-primary-300">Resend's Privacy Policy</a>.</li>
+                <li><strong>Formspree:</strong> receives contact submissions directly from your browser and forwards them to the project operator's inbox. The message may be retained in Formspree and in that inbox. See <a href="https://formspree.io/legal/privacy-policy/" class="text-primary-700 hover:underline dark:text-primary-300">Formspree's Privacy Policy</a>.</li>
+                <li><strong>Maps:</strong> event pages with a map load Leaflet resources from UNPKG and map tiles from OpenStreetMap. These services receive technical connection data when your browser loads their resources. See <a href="https://osmfoundation.org/wiki/Privacy_Policy" class="text-primary-700 hover:underline dark:text-primary-300">OpenStreetMap's Privacy Policy</a>. The optional Google Maps link opens an external service only when you select it.</li>
             </ul>
-
-            <h3 class="text-xl font-semibold mb-3 mt-6">7.2 What Stays Private</h3>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li>Your password (encrypted and never visible to anyone, including us)</li>
-                <li>Your registration history (only you and event organizers can see who registered for an event)</li>
-            </ul>
-        </section>
-
-        <!-- Data Storage -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4">8. Data Storage and Security</h2>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                Your data is stored in secure systems operated by us or by carefully selected service providers.
-            </p>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                We implement appropriate technical and organizational measures to protect your personal data, including:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Password hashing</strong> – passwords are transformed using industry-standard hashing algorithms before storage</li>
-                <li><strong>Access controls</strong> – restricting access to databases and systems to those who need it for operational purposes</li>
-                <li><strong>Security protections</strong> – such as CSRF protection, secure session handling, and regular updates to the platform's software components</li>
-                <li><strong>Monitoring and maintenance</strong> – using logs and technical data to detect unusual behavior, troubleshoot issues, and keep the service stable and secure</li>
-            </ul>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                Despite our efforts, no method of storage or transmission over the internet is completely secure. We cannot guarantee absolute security, but we strive to protect your data to a reasonable and appropriate degree. You are responsible for choosing a strong password and for keeping your login credentials confidential.
-            </p>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                Where possible, we aim to store and process data within the European Union or the European Economic Area (EEA). If data is ever transferred outside the EEA, we will take measures to ensure an adequate level of protection, for example by relying on standard contractual clauses or equivalent safeguards.
+                Some providers may process information outside the EU or EEA. Their processing locations, safeguards and retention practices are described in their service documentation and privacy policies. The map uses the event city's coordinates; the application does not request your device's GPS location. GeoNames supplies the bundled location catalogue and is not queried as you browse.
             </p>
         </section>
 
-        <!-- Data Retention -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">9. Data Retention</h2>
+            <h2 class="text-2xl font-bold mb-4">5. Cookies and browser storage</h2>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                We retain personal data only for as long as it is reasonably necessary for the purposes described in this Privacy Policy or as required by law.
+                The application uses session cookies to keep you signed in and CSRF cookies to protect forms. Selecting Remember me allows the login session to persist beyond closing the browser. Your light or dark theme preference is saved in your browser's local storage.
             </p>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                In particular:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Active accounts</strong> – we keep account-related data for as long as your account remains active</li>
-                <li><strong>Events and registrations</strong> – information about events and registrations may be retained as part of the platform's history and for organizers to manage their records</li>
-                <li><strong>Cancelled registrations</strong> – we may keep records of cancelled registrations for administrative, security, or audit purposes</li>
-            </ul>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                If you request deletion of your account, we will remove or anonymize personal data that is no longer needed. Some limited information may remain in backups or logs for a period of time, or may be retained where necessary to comply with legal obligations or to protect our legitimate interests (for example, in case of disputes or misuse).
+                Tabula Belli does not include advertising cookies, tracking pixels or an analytics service. External services have their own privacy practices. Blocking required cookies may prevent login or form actions; you can clear cookies and the saved theme through your browser settings.
             </p>
         </section>
 
-        <!-- Your Rights -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">10. Your Rights Under GDPR</h2>
+            <h2 class="text-2xl font-bold mb-4">6. Retention, account deletion and demo refreshes</h2>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                If you are located in the European Union or in another jurisdiction with similar data protection rules, you have several rights regarding your personal data. These include:
+                The published demo is refreshed every two calendar months. Visitor accounts, events and registrations are removed and replaced with fresh demonstration data. The reference location catalogue is retained. Do not use this demo as permanent storage or to arrange real bookings.
             </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li><strong>Right of access</strong> – to request confirmation of whether we process your data and to obtain a copy of the personal data we hold about you</li>
-                <li><strong>Right to rectification</strong> – to request correction of inaccurate or incomplete data. Many details can also be updated directly from your account settings</li>
-                <li><strong>Right to erasure ("right to be forgotten")</strong> – to request deletion of your personal data in certain circumstances, for example when it is no longer needed for the purposes for which it was collected</li>
-                <li><strong>Right to restriction of processing</strong> – to ask us to limit the use of your data while a complaint or request is being examined, or in other specific situations</li>
-                <li><strong>Right to data portability</strong> – to receive your personal data in a structured, commonly used, machine-readable format and to have it transmitted to another controller where technically feasible</li>
-                <li><strong>Right to object</strong> – to object to certain types of processing based on our legitimate interests, in which case we will stop processing unless we have compelling legitimate grounds</li>
-                <li><strong>Right to withdraw consent</strong> – where the processing is based on your consent, you can withdraw that consent at any time without affecting the lawfulness of processing based on consent before its withdrawal</li>
-            </ul>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                To exercise any of these rights, please contact us through the 
-                <a href="{% url 'contact' %}" class="text-primary-700 hover:underline dark:text-primary-300">Contact page</a>
-                of the platform. We may ask you to provide information to verify your identity before acting on your request. We will respond as soon as reasonably possible and, in any case, within the time limits established by applicable law (generally within one month).
+            <p class="text-muted-foreground leading-relaxed mb-4">
+                You can request account deletion through your account area before a refresh. Deletion cancels your upcoming organised events and pending participation, removes your account and event contact emails, and keeps historical event and participation records without links to your account. If an event you organise is in progress, this self-service deletion is blocked until it ends. The shared demo account cannot be deleted through the application.
+            </p>
+            <p class="text-muted-foreground leading-relaxed mb-4">
+                Deletion does not automatically remove personal information you wrote into event titles, descriptions or addresses. Contact us if such text needs to be removed. Messages in Formspree and the operator's inbox are kept for handling and following up enquiries, separately from demo data. Demo refreshes and account deletion do not automatically erase those messages or providers' operational logs. You can contact us to request deletion of information that is no longer needed.
             </p>
         </section>
 
-        <!-- Children's Privacy -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">11. Children's Privacy</h2>
+            <h2 class="text-2xl font-bold mb-4">7. Security and your choices</h2>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                Tabula Belli is intended for use by adults and older teenagers who are legally permitted to use online services in their jurisdiction.
+                The application uses HTTPS on the published site, password hashing, access controls and protections against cross-site request forgery. No online service can guarantee absolute security. Keep your personal account credentials private; the deliberately shared demo credentials are an exception.
             </p>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                We do not knowingly collect personal data from children under 13 years of age (or the minimum age required by local law if higher).
+                Depending on applicable data protection law, you may request access, correction, deletion, restriction or portability of your personal data, or object to processing based on legitimate interests. You can edit your profile and use account deletion where available. For other requests, use the <a href="{% url 'contact' %}" class="text-primary-700 hover:underline dark:text-primary-300">Contact page</a>. We may need to verify that a request concerns your own data.
             </p>
-            <p class="text-muted-foreground leading-relaxed">
-                If you believe that a child has provided personal data to us without the appropriate consent, please contact us so that we can investigate the situation and, if necessary, delete the data.
+            <p class="text-muted-foreground leading-relaxed mb-4">
+                You may also raise a complaint with your competent data protection authority. This policy does not limit your statutory rights.
             </p>
         </section>
 
-        <!-- Changes to Policy -->
         <section>
-            <h2 class="text-2xl font-bold mb-4">12. Changes to This Privacy Policy</h2>
+            <h2 class="text-2xl font-bold mb-4">8. Changes and contact</h2>
             <p class="text-muted-foreground leading-relaxed mb-4">
-                We may revise this Privacy Policy from time to time, for example when we introduce new features, update how the platform works, or when legal requirements change.
-            </p>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                When we make significant changes:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li>We will update the "Last updated" date at the top of this page</li>
-                <li>Where appropriate, we may also provide additional notice within the platform</li>
-            </ul>
-            <p class="text-muted-foreground leading-relaxed mt-4">
-                We encourage you to review this page periodically. By continuing to use Tabula Belli after changes become effective, you will be deemed to have accepted the updated Privacy Policy.
-            </p>
-        </section>
-
-        <!-- Third-Party Services -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4">13. Third-Party Services</h2>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                At this time, Tabula Belli does <strong>not</strong> use third-party analytics services, advertising networks, or social media plugins that track you across different websites.
-            </p>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                If in the future we integrate such third-party services:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li>We will update this Privacy Policy to describe the new processing activities</li>
-                <li>Where required by law, we will ask for your consent before enabling those services or storing any non-essential cookies</li>
-            </ul>
-        </section>
-
-        <!-- Contact -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4">14. Contact</h2>
-            <p class="text-muted-foreground leading-relaxed mb-4">
-                If you have any questions, concerns, or requests regarding this Privacy Policy or the way we process your personal data, you can reach us using the 
-                <a href="{% url 'contact' %}" class="text-primary-700 hover:underline dark:text-primary-300">Contact page</a>
-                available on the platform.
-            </p>
-            <p class="text-muted-foreground leading-relaxed">
-                If you are not satisfied with our reply, you also have the right to lodge a complaint with your local data protection authority or with the competent authority in the EU Member State where you live, work, or where you believe your rights have been infringed.
+                If the way the project uses data changes, this policy and its update date will be revised. You can ask questions about the current policy through the <a href="{% url 'contact' %}" class="text-primary-700 hover:underline dark:text-primary-300">Contact page</a>.
             </p>
         </section>
     </div>
