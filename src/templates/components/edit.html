@@ -1,48 +1,17 @@
-<!-- Generic Edit Modal - Reusable across the app -->
-<div 
-  x-data="{ open: false }" 
-  @modal-open.window="open = true"
-  @modal-close.window="open = false"
-  x-cloak>
-  
-  <div 
-    x-show="open"
-    class="fixed left-0 right-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50 md:inset-0">
-    
-    <div 
-      @click.away="open = false"
-      class="relative max-h-full w-full max-w-2xl p-4">
-      
-      <!-- Modal content -->
-      <div class="relative rounded-lg bg-card shadow dark:bg-card">
-        
-        <!-- Modal header -->
-        <div class="flex items-center justify-between rounded-t border-b border-border p-4 dark:border-border md:p-5">
-          <h3 class="text-lg font-semibold text-foreground dark:text-foreground" id="modal-title">
-            Edit
-          </h3>
-          <button 
-            type="button" 
-            @click="open = false"
-            class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-muted-foreground hover:bg-muted hover:text-foreground dark:hover:bg-muted dark:hover:text-foreground cursor-pointer">
-            <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-            </svg>
-            <span class="sr-only">Close modal</span>
-          </button>
-        </div>
-        
-        <!-- Modal body - Dynamic content injected by HTMX -->
-        <div id="modal-content">
-          <!-- Form will be loaded here via HTMX -->
-        </div>
-
-      </div>
-    </div>
+<dialog id="edit-dialog" aria-labelledby="edit-dialog-title"
+        class="fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-lg border border-border bg-card p-0 text-foreground shadow-xl backdrop:bg-black/50">
+  <div class="flex items-center justify-between border-b border-border p-4 md:p-5">
+    <h2 id="edit-dialog-title" class="text-lg font-semibold">Edit Profile</h2>
+    <button type="button" data-modal-close autofocus
+            class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary-600 cursor-pointer"
+            aria-label="Close modal">
+      <svg class="h-4 w-4" aria-hidden="true" viewBox="0 0 14 14" fill="none">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+      </svg>
+    </button>
   </div>
-</div>
-
-<style>
-  [x-cloak] { display: none !important; }
-</style>
-
+  <p id="profile-save-error" role="alert" hidden class="mx-4 mt-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+    We couldn't save your changes. Your entries are still here. Please try again.
+  </p>
+  <div id="modal-content"></div>
+</dialog>

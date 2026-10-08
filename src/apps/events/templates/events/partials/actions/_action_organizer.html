@@ -11,6 +11,7 @@
     
     {# Cancel event with HTMX confirmation #}
     <form
+      hx-confirm="Are you sure you want to cancel this event? This action cannot be undone."
       method="post"
       action="{% url 'my_events:cancel' event.slug %}"
       hx-post="{% url 'my_events:cancel' event.slug %}"
@@ -20,7 +21,6 @@
       {% csrf_token %}
       <button
         type="submit"
-        hx-confirm="Are you sure you want to cancel this event? This action cannot be undone."
         class="text-xs text-destructive hover:underline dark:text-destructive cursor-pointer">
         Cancel
       </button>

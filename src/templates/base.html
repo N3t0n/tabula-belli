@@ -106,25 +106,7 @@
     {% include 'partials/footer.html' %}
     {% include 'components/confirmation.html' %}
     
-    <script>
-      // Intercept HTMX confirm dialogs and show custom modal
-      document.body.addEventListener('htmx:confirm', function(evt) {
-        // Solo interceptar si hay mensaje de confirmación
-        if (!evt.detail.question) {
-          return;
-        }
-        
-        evt.preventDefault();
-        
-        window.dispatchEvent(new CustomEvent('modal-confirm-open', {
-          detail: {
-            title: 'Confirm Action',
-            message: evt.detail.question,
-            confirmAction: () => evt.detail.issueRequest(true)
-          }
-        }));
-      });
-    </script>
+    <script src="{% static 'js/modals.js' %}"></script>
     
     <script src="{% static 'js/flowbite.min.js' %}"></script>
 </body>
