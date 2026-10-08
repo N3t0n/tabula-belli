@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from apps.players.models import Player
@@ -38,6 +38,37 @@ class AccountFlowTest(TestCase):
         self.assertContains(response, 'css/output.css')
         self.assertContains(response, 'Tabula Belli')
         self.assertNotContains(response, '<h2>Menu:</h2>')
+
+    def test_logout_get_shows_confirmation_without_ending_the_session(self):
+        user = Player.objects.create_user(
+            username='logout-review', email='logout@accounts.test', password=self.password,
+        )
+        self.client.force_login(user)
+        response = self.client.get(reverse('account_logout'))
+        self.assert_branded_page(response, 'Sign out?')
+        self.assertContains(response, 'Stay signed in')
+        self.assertContains(response, reverse('accounts:profile'))
+        self.assertContains(response, 'name="csrfmiddlewaretoken"')
+        self.assertEqual(get_user(self.client).pk, user.pk)
+
+    def test_logout_confirmation_requires_csrf_and_preserves_safe_next_redirect(self):
+        user = Player.objects.create_user(
+            username='logout-post', email='logout-post@accounts.test', password=self.password,
+        )
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(user)
+        next_url = reverse('events')
+        response = client.get(reverse('account_logout'), {'next': next_url})
+        self.assertContains(response, f'name="next" value="{next_url}"')
+        rejected = client.post(reverse('account_logout'), {'next': next_url})
+        self.assertEqual(rejected.status_code, 403)
+        self.assertEqual(get_user(client).pk, user.pk)
+        response = client.post(reverse('account_logout'), {
+            'next': next_url,
+            'csrfmiddlewaretoken': client.cookies['csrftoken'].value,
+        })
+        self.assertRedirects(response, next_url, fetch_redirect_response=False)
+        self.assertFalse(get_user(client).is_authenticated)
 
     def test_signup_email_and_confirmation_require_post(self):
         response = self.client.post(reverse('account_signup'), {
