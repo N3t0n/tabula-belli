@@ -1,7 +1,8 @@
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import CreateView, UpdateView
-from django.db.models import Q, Count, Subquery, OuterRef
+from django.db.models import Q, Count, Subquery, OuterRef, Exists
 from django.utils import timezone
+from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
@@ -187,7 +188,7 @@ class EventListView(ListView):
             ).values('status')[:1]
 
             queryset = queryset.annotate(
-                user_registration_status=Subquery(user_reg_status)
+                user_registration_status=Subquery(confirmed_registration.values('status')[:1])
             )
 
         queryset = self._apply_filters(queryset)
@@ -412,46 +413,53 @@ class RegistrationCreateView(VerifiedUserRequiredMixin, View):
 
 class RegistrationCancelView(VerifiedUserRequiredMixin, View):
 
+    def _my_events_response(self, request, *, error=None):
+        context = _my_events_context(request, request.POST)
+        context['registration_error'] = error
+        context['registration_cancelled'] = error is None
+        if not _is_htmx(request):
+            notice = messages.error if error else messages.success
+            notice(request, error or 'Registration cancelled successfully.')
+            params = {key: request.POST[key] for key in
+                      ('tab', 'q', 'status', 'org_page', 'part_page')
+                      if key in request.POST}
+            return redirect(f"{reverse('my_events:index')}?{urlencode(params)}")
+        return render(request, 'events/partials/_my_events_content.html',
+                      context, status=400 if error else 200)
+
     def post(self, request, slug):
         from apps.events.services import cancel_registration_for_actor
 
         event = get_object_or_404(Event, slug=slug)
-
+        from_my_events = request.POST.get('source') == 'my-events'
         registration = EventRegistration.objects.filter(
-            event=event,
-            player=request.user,
-            status=EventRegistration.Status.CONFIRMED
+            event=event, player=request.user,
+            status=EventRegistration.Status.CONFIRMED,
         ).first()
-
+        error = None
         if not registration:
+            error = 'No active registration found'
+        else:
+            try:
+                cancel_registration_for_actor(registration, request.user)
+            except ValidationError as exc:
+                error = '; '.join(exc.messages)
+
+        if from_my_events:
+            return self._my_events_response(request, error=error)
+        if error:
             if not _is_htmx(request):
-                messages.error(request, 'No active registration found')
+                messages.error(request, error)
                 return redirect('event_detail', slug=event.slug)
-
-            return HttpResponse(
-                '<div class="text-red-600 text-sm mt-2">No active registration found</div>',
-                status=400
-            )
-
-        try:
-            cancel_registration_for_actor(registration, request.user)
-        except ValidationError as e:
-            if not _is_htmx(request):
-                messages.error(request, str(e))
-                return redirect('event_detail', slug=event.slug)
-
-            return HttpResponse(
-                f'<div class="text-red-600 text-sm mt-2">{str(e)}</div>',
-                status=400
-            )
-
+            # Escape validation text rather than interpolating it into HTML.
+            return HttpResponse(format_html(
+                '<div class="text-red-600 text-sm mt-2">{}</div>', error,
+            ), status=400)
         if not _is_htmx(request):
             messages.success(request, 'Registration cancelled successfully.')
             return redirect('event_detail', slug=event.slug)
-
         return render(
-            request,
-            'events/partials/registration_button.html',
+            request, 'events/partials/registration_button.html',
             _registration_button_context(event, None, oob_update=True),
         )
 
@@ -462,93 +470,75 @@ class MyEventsView(VerifiedUserRequiredMixin, ListView):
     def get_queryset(self):
         return Event.objects.none()
 
-    def _apply_filters(self, qs, q, status, is_registered_tab=False):
-        if q:
-            qs = qs.filter(
-                Q(title__icontains=q) | Q(game__name__icontains=q)
-            )
-        if status and status in ['ACTIVE', 'COMPLETED', 'CANCELED']:
-            if is_registered_tab:
-                # En registered: filtrar por estado del evento + inscripción CONFIRMED
-                qs = qs.filter(
-                    status=status,
-                    registrations__status=EventRegistration.Status.CONFIRMED
-                )
-            else:
-                # En organizing: siempre filtra por estado del evento
-                qs = qs.filter(status=status)
-        else:
-            if is_registered_tab:
-                # En registered "All": solo inscripciones CONFIRMED
-                qs = qs.filter(
-                    registrations__status=EventRegistration.Status.CONFIRMED)
-        return qs.order_by('-start_at')
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        request = self.request
-
-        active_tab = request.GET.get('tab', 'organizing')
-        if active_tab not in ['organizing', 'registered']:
-            active_tab = 'organizing'
-
-        q = request.GET.get('q', '').strip()
-        status = request.GET.get('status', '').strip()
-
-        organizing_qs = Event.objects.filter(
-            organizer=request.user
-        ).select_related(
-            'game', 'city', 'country'
-        ).annotate(
-            participants_count=Count(
-                'registrations',
-                filter=Q(registrations__status=EventRegistration.Status.CONFIRMED),
-                distinct=True
-            )
-        )
-
-        # Events where user is participant
-        # Subquery para obtener el estado de la inscripción del usuario
-        user_reg_status = EventRegistration.objects.filter(
-            event=OuterRef('pk'),
-            player=request.user
-        ).values('status')[:1]
-
-        participating_qs = Event.objects.filter(
-            registrations__player=request.user
-        ).select_related(
-            'game', 'city', 'country'
-        ).annotate(
-            participants_count=Count(
-                'registrations',
-                filter=Q(registrations__status=EventRegistration.Status.CONFIRMED),
-                distinct=True
-            ),
-            user_registration_status=Subquery(user_reg_status)
-        ).distinct()
-
-        organizing_qs = self._apply_filters(
-            organizing_qs, q, status, is_registered_tab=False)
-        participating_qs = self._apply_filters(
-            participating_qs, q, status, is_registered_tab=True)
-
-        org_paginator = Paginator(organizing_qs, 12)
-        org_page_number = request.GET.get('org_page', 1)
-        organizing_page = org_paginator.get_page(org_page_number)
-
-        part_paginator = Paginator(participating_qs, 12)
-        part_page_number = request.GET.get('part_page', 1)
-        participating_page = part_paginator.get_page(part_page_number)
-
-        context.update({
-            'organizing_page': organizing_page,
-            'participating_page': participating_page,
-            'active_tab': active_tab,
-            'q': q,
-            'status': status,
-        })
-
+        context.update(_my_events_context(self.request, self.request.GET))
         return context
+
+
+def _filter_my_events(qs, q, status):
+    if q:
+        qs = qs.filter(Q(title__icontains=q) | Q(game__name__icontains=q))
+    if status in Event.Status.values:
+        qs = qs.filter(status=status)
+    return qs.order_by('-start_at')
+
+
+def _my_events_context(request, params):
+    active_tab = params.get('tab', 'organizing')
+    if active_tab not in ['organizing', 'registered']:
+        active_tab = 'organizing'
+
+    q = params.get('q', '').strip()
+    status = params.get('status', '').strip()
+
+    organizing_qs = Event.objects.filter(
+        organizer=request.user
+    ).select_related(
+        'game', 'city', 'country'
+    ).annotate(
+        participants_count=Count(
+            'registrations',
+            filter=Q(registrations__status=EventRegistration.Status.CONFIRMED),
+            distinct=True
+        )
+    )
+
+    # Membership is independent of the join used to count all participants.
+    confirmed_registration = EventRegistration.objects.filter(
+        event=OuterRef('pk'), player=request.user,
+        status=EventRegistration.Status.CONFIRMED,
+    )
+
+    participating_qs = Event.objects.filter(Exists(confirmed_registration)).select_related(
+        'game', 'city', 'country'
+    ).annotate(
+        participants_count=Count(
+            'registrations',
+            filter=Q(registrations__status=EventRegistration.Status.CONFIRMED),
+            distinct=True
+        ),
+        user_registration_status=Subquery(confirmed_registration.values('status')[:1])
+    ).distinct()
+
+    organizing_qs = _filter_my_events(organizing_qs, q, status)
+    participating_qs = _filter_my_events(participating_qs, q, status)
+
+    org_paginator = Paginator(organizing_qs, 12)
+    org_page_number = params.get('org_page', 1)
+    organizing_page = org_paginator.get_page(org_page_number)
+
+    part_paginator = Paginator(participating_qs, 12)
+    part_page_number = params.get('part_page', 1)
+    participating_page = part_paginator.get_page(part_page_number)
+
+    return {
+        'organizing_page': organizing_page,
+        'participating_page': participating_page,
+        'active_tab': active_tab,
+        'q': q,
+        'status': status,
+    }
 
 
 class EventCreateView(VerifiedUserRequiredMixin, CreateView):
