@@ -585,7 +585,7 @@ preparado tecnicamente pero no cerrado operacionalmente.
 ### 4.2. Integración continua
 
 El workflow `.github/workflows/ci.yml` se ejecuta en pushes y pull requests.
-Valida Python 3.12, PostgreSQL 16.14, Node desde `.node-version`, dependencias,
+Valida Python 3.12, PostgreSQL 17.11, Node desde `.node-version`, dependencias,
 tests, build frontend, `collectstatic`, `check --deploy` y que los comandos no
 dejen cambios versionados.
 

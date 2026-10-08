@@ -43,7 +43,7 @@ configuration.
 
 - Python 3.12
 - Django 5.2
-- PostgreSQL 16
+- PostgreSQL 17
 - django-allauth
 - django-anymail with Resend for production transactional email
 - django-cities-light / GeoNames
@@ -59,7 +59,7 @@ Runtime versions are declared in `.python-version`, `.node-version`,
 The detailed setup is documented in
 [MANUAL_DE_INSTALACION.md](MANUAL_DE_INSTALACION.md). The short version is:
 
-1. Install Python 3.12, PostgreSQL 16, and Node.js 24.
+1. Install Python 3.12, PostgreSQL 17, and Node.js 24.
 2. Copy `.env.example` to `.env`.
 3. Generate a local `SECRET_KEY` and replace the PostgreSQL placeholders.
 4. Create and activate `.venv`.
