@@ -94,6 +94,17 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
                 self.assertNotContains(filtered, "data-listing-error")
                 self.assertNotContains(filtered, "js/listings.js")
 
+    def test_events_initial_selection_preserves_explicit_all_status(self):
+        for params, expected in (
+            ({}, "upcoming"),
+            ({"status": ""}, ""),
+            ({"status": "completed"}, "completed"),
+        ):
+            with self.subTest(params=params):
+                response = self.client.get(reverse("events"), params)
+                self.assertEqual(response.context["current_status"], expected)
+                self.assertContains(response, f"status: '{expected}'")
+
     def test_cancel_event_form_is_separate_and_targets_cancel_endpoint(self):
         event = self.create_event("form-contract")
         self.client.force_login(self.owner)

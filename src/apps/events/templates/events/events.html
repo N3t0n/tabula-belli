@@ -18,7 +18,7 @@
 
   <!-- Events Listing (Bloque Único: Pills + Filters + Table + Pagination) -->
   <div data-listing-feedback hx-sync="this:replace" hx-request='{"timeout":20000}' x-data="{
-         status: '{{ current_status|default:'upcoming' }}',
+         status: '{{ current_status|default_if_none:'upcoming'|escapejs }}',
          eventType: '{{ current_event_type|default:'' }}',
          filtersOpen: false,
          get activeFiltersCount() {
