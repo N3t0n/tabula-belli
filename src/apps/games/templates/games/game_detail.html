@@ -31,6 +31,7 @@
     </div>
 
     <div class="bg-card dark:bg-card rounded-lg shadow-md p-6"
+         data-listing-feedback hx-sync="this:replace" hx-request='{"timeout":20000}'
          x-data="{
            status: '{{ status|default:''|escapejs }}',
            submitFilters() {
@@ -43,7 +44,8 @@
             Events
         </h2>
         
-        <div id="game-events-listing">
+        {% include 'components/listing_feedback.html' %}
+        <div id="game-events-listing" data-event-listing aria-busy="false">
             {% include 'games/_game_events_listing.html' %}
         </div>
     </div>
