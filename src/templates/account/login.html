@@ -15,19 +15,19 @@
         Sign in to Tabula Belli
         <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
       </h1>
-      <form x-data class="space-y-4 md:space-y-6" method="POST" action="{% url 'account_login' %}">
+      <form x-data class="space-y-6" method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
         
         <!-- Error messages -->
         {% if form.non_field_errors %}
-        <div class="p-4 mb-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
+        <div role="alert" class="p-4 mb-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
           {{ form.non_field_errors }}
         </div>
         {% endif %}
         
         <!-- Username/Email field -->
         <div>
-          <label for="{{ form.login.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.login.id_for_label }}" class="form-label">
             Your username or email
           </label>
           <input 
@@ -35,17 +35,20 @@
             name="{{ form.login.name }}" 
             x-ref="login"
             id="{{ form.login.id_for_label }}"
-            class="bg-input border border-border text-foreground rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground" 
+            value="{{ form.login.value|default:'' }}" autocomplete="username"
+            {% if form.login.errors %}aria-invalid="true"{% endif %}
+            {% if form.login.errors %}aria-describedby="{{ form.login.auto_id }}_error"{% endif %}
+            class="form-control"
             placeholder="username or email@example.com" 
             required>
           {% if form.login.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-red-500">{{ form.login.errors.0 }}</p>
+            <p id="{{ form.login.auto_id }}_error" role="alert" class="form-error">{{ form.login.errors.0 }}</p>
           {% endif %}
         </div>
         
         <!-- Password field -->
         <div>
-          <label for="{{ form.password.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.password.id_for_label }}" class="form-label">
             Password
           </label>
           <input 
@@ -53,11 +56,14 @@
             name="{{ form.password.name }}" 
             x-ref="password"
             id="{{ form.password.id_for_label }}"
+            autocomplete="current-password"
+            {% if form.password.errors %}aria-invalid="true"{% endif %}
+            {% if form.password.errors %}aria-describedby="{{ form.password.auto_id }}_error"{% endif %}
             placeholder="••••••••" 
-            class="bg-input border border-border text-foreground rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground" 
+            class="form-control"
             required>
           {% if form.password.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-red-500">{{ form.password.errors.0 }}</p>
+            <p id="{{ form.password.auto_id }}_error" role="alert" class="form-error">{{ form.password.errors.0 }}</p>
           {% endif %}
         </div>
         
@@ -67,7 +73,8 @@
             <div class="flex items-center h-5">
               <input 
                 id="{{ form.remember.id_for_label }}" 
-                name="{{ form.remember.name }}" 
+                name="{{ form.remember.name }}"
+                {% if form.remember.value %}checked{% endif %}
                 type="checkbox" 
                 class="w-4 h-4 border border-border rounded bg-input focus:ring-3 focus:ring-primary-300 dark:bg-input dark:border-border dark:focus:ring-primary-600 dark:ring-offset-gray-800">
             </div>

@@ -28,7 +28,7 @@
       
       <!-- Non-field errors -->
       {% if form.non_field_errors %}
-        <div class="p-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
+        <div role="alert" class="p-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
           {{ form.non_field_errors }}
         </div>
       {% endif %}
@@ -36,45 +36,49 @@
       <!-- ========================= -->
       <!-- SECTION 1: BASIC INFO    -->
       <!-- ========================= -->
-      <section class="p-4 md:p-5 bg-card border border-border rounded-lg space-y-4">
+      <section class="p-4 md:p-5 bg-card border border-border rounded-lg space-y-6">
         <header class="border-b border-border pb-2 mb-2">
           <h2 class="text-lg font-semibold text-foreground">
             Basic Information
           </h2>
-          <p class="mt-1 text-sm text-muted-foreground">
+          <p class="form-help">
             Event type, game and a short description.
           </p>
         </header>
         
         <!-- Event type + Game -->
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label for="{{ form.event_type.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.event_type.id_for_label }}" class="form-label">
               Event Type *
             </label>
             <select
               name="{{ form.event_type.name }}"
               id="{{ form.event_type.id_for_label }}"
+            {% if form.event_type.errors %}aria-invalid="true"{% endif %}
+            {% if form.event_type.errors %}aria-describedby="{{ form.event_type.auto_id }}_error"{% endif %}
               required
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
               {% for value, label in form.event_type.field.choices %}
                 <option value="{{ value }}" {% if form.event_type.value|is_selected:value %}selected{% endif %}>{{ label }}</option>
               {% endfor %}
             </select>
             {% if form.event_type.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.event_type.errors.0 }}</p>
+              <p id="{{ form.event_type.auto_id }}_error" role="alert" class="form-error">{{ form.event_type.errors.0 }}</p>
             {% endif %}
           </div>
           
           <div>
-            <label for="{{ form.game.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.game.id_for_label }}" class="form-label">
               Game *
             </label>
             <select
               name="{{ form.game.name }}"
               id="{{ form.game.id_for_label }}"
+            {% if form.game.errors %}aria-invalid="true"{% endif %}
+            {% if form.game.errors %}aria-describedby="{{ form.game.auto_id }}_error"{% endif %}
               required
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
               <option value="">Select game</option>
               {% for value, label in form.game.field.choices %}
                 {% if value %}
@@ -83,45 +87,49 @@
               {% endfor %}
             </select>
             {% if form.game.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.game.errors.0 }}</p>
+              <p id="{{ form.game.auto_id }}_error" role="alert" class="form-error">{{ form.game.errors.0 }}</p>
             {% endif %}
           </div>
         </div>
         
         <!-- Title -->
         <div>
-          <label for="{{ form.title.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.title.id_for_label }}" class="form-label">
             Title *
           </label>
           <input
             type="text"
             name="{{ form.title.name }}"
             id="{{ form.title.id_for_label }}"
+            {% if form.title.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.title.auto_id }}_helptext{% if form.title.errors %} {{ form.title.auto_id }}_error{% endif %}"
             value="{{ form.title.value|default:'' }}"
             required
             placeholder="e.g., Warhammer 40K Tournament Spring 2025"
-            class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+            class="form-control">
           {% if form.title.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.title.errors.0 }}</p>
+            <p id="{{ form.title.auto_id }}_error" role="alert" class="form-error">{{ form.title.errors.0 }}</p>
           {% endif %}
-          <p class="mt-1 text-xs text-muted-foreground">
+          <p id="{{ form.title.auto_id }}_helptext" class="form-help">
             Use a short, descriptive name so players instantly know what this is.
           </p>
         </div>
         
         <!-- Description -->
         <div>
-          <label for="{{ form.description.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.description.id_for_label }}" class="form-label">
             Description <span class="text-muted-foreground text-xs">(optional)</span>
           </label>
           <textarea
             name="{{ form.description.name }}"
             id="{{ form.description.id_for_label }}"
+            {% if form.description.errors %}aria-invalid="true"{% endif %}
+            {% if form.description.errors %}aria-describedby="{{ form.description.auto_id }}_error"{% endif %}
             rows="4"
             placeholder="Describe your event: format, schedule, prizes, rules, etc."
-            class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">{{ form.description.value|default:'' }}</textarea>
+            class="form-control">{{ form.description.value|default:'' }}</textarea>
           {% if form.description.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.description.errors.0 }}</p>
+            <p id="{{ form.description.auto_id }}_error" role="alert" class="form-error">{{ form.description.errors.0 }}</p>
           {% endif %}
         </div>
       </section>
@@ -129,32 +137,34 @@
       <!-- ========================= -->
       <!-- SECTION 2: LOCATION      -->
       <!-- ========================= -->
-      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-6">
         <header class="border-b border-border dark:border-border pb-2 mb-2">
           <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
             Location
           </h2>
-          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+          <p class="form-help">
             Where the event will take place.
           </p>
         </header>
         
         <!-- Country + Region -->
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label for="{{ form.country.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.country.id_for_label }}" class="form-label">
               Country *
             </label>
             <select
               name="{{ form.country.name }}"
               id="{{ form.country.id_for_label }}"
+            {% if form.country.errors %}aria-invalid="true"{% endif %}
+            {% if form.country.errors %}aria-describedby="{{ form.country.auto_id }}_error"{% endif %}
               hx-get="{% url 'locations:get_regions' %}"
               hx-target="#{{ form.region.id_for_label }}"
               hx-swap="innerHTML"
               hx-include="this"
               hx-trigger="change"
               required
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
               <option value="">Select country</option>
               {% for value, label in form.country.field.choices %}
                 {% if value %}
@@ -163,23 +173,25 @@
               {% endfor %}
             </select>
             {% if form.country.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.country.errors.0 }}</p>
+              <p id="{{ form.country.auto_id }}_error" role="alert" class="form-error">{{ form.country.errors.0 }}</p>
             {% endif %}
           </div>
           
           <div>
-            <label for="{{ form.region.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.region.id_for_label }}" class="form-label">
               Region / State <span class="text-muted-foreground text-xs">(optional)</span>
             </label>
             <select
               name="{{ form.region.name }}"
               id="{{ form.region.id_for_label }}"
+            {% if form.region.errors %}aria-invalid="true"{% endif %}
+            {% if form.region.errors %}aria-describedby="{{ form.region.auto_id }}_error"{% endif %}
               hx-get="{% url 'locations:get_cities' %}"
               hx-target="#{{ form.city.id_for_label }}"
               hx-swap="innerHTML"
               hx-include="#{{ form.country.id_for_label }},this"
               hx-trigger="change"
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
               <option value="">Select region</option>
               {% for value, label in form.region.field.choices %}
                 {% if value %}
@@ -188,22 +200,24 @@
               {% endfor %}
             </select>
             {% if form.region.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.region.errors.0 }}</p>
+              <p id="{{ form.region.auto_id }}_error" role="alert" class="form-error">{{ form.region.errors.0 }}</p>
             {% endif %}
           </div>
         </div>
         
         <!-- City + Venue name -->
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label for="{{ form.city.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.city.id_for_label }}" class="form-label">
               City *
             </label>
             <select
               name="{{ form.city.name }}"
               id="{{ form.city.id_for_label }}"
+            {% if form.city.errors %}aria-invalid="true"{% endif %}
+            {% if form.city.errors %}aria-describedby="{{ form.city.auto_id }}_error"{% endif %}
               required
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
               <option value="">Select city</option>
               {% for value, label in form.city.field.choices %}
                 {% if value %}
@@ -212,41 +226,45 @@
               {% endfor %}
             </select>
             {% if form.city.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.city.errors.0 }}</p>
+              <p id="{{ form.city.auto_id }}_error" role="alert" class="form-error">{{ form.city.errors.0 }}</p>
             {% endif %}
           </div>
           
           <div>
-            <label for="{{ form.location_name.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.location_name.id_for_label }}" class="form-label">
               Venue Name <span class="text-muted-foreground text-xs">(optional)</span>
             </label>
             <input
               type="text"
               name="{{ form.location_name.name }}"
               id="{{ form.location_name.id_for_label }}"
+            {% if form.location_name.errors %}aria-invalid="true"{% endif %}
+            {% if form.location_name.errors %}aria-describedby="{{ form.location_name.auto_id }}_error"{% endif %}
               value="{{ form.location_name.value|default:'' }}"
               placeholder="e.g., Comic Store Madrid"
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+              class="form-control">
             {% if form.location_name.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.location_name.errors.0 }}</p>
+              <p id="{{ form.location_name.auto_id }}_error" role="alert" class="form-error">{{ form.location_name.errors.0 }}</p>
             {% endif %}
           </div>
         </div>
         
         <!-- Address -->
         <div>
-          <label for="{{ form.location_address.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.location_address.id_for_label }}" class="form-label">
             Address <span class="text-muted-foreground text-xs">(optional)</span>
           </label>
           <input
             type="text"
             name="{{ form.location_address.name }}"
             id="{{ form.location_address.id_for_label }}"
+            {% if form.location_address.errors %}aria-invalid="true"{% endif %}
+            {% if form.location_address.errors %}aria-describedby="{{ form.location_address.auto_id }}_error"{% endif %}
             value="{{ form.location_address.value|default:'' }}"
             placeholder="e.g., Calle Gran Vía 28, 2nd floor"
-            class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+            class="form-control">
           {% if form.location_address.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.location_address.errors.0 }}</p>
+            <p id="{{ form.location_address.auto_id }}_error" role="alert" class="form-error">{{ form.location_address.errors.0 }}</p>
           {% endif %}
         </div>
       </section>
@@ -254,85 +272,93 @@
       <!-- ========================= -->
       <!-- SECTION 3: DATE & TIME   -->
       <!-- ========================= -->
-      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-6">
         <header class="border-b border-border dark:border-border pb-2 mb-2">
           <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
             Date & Time
           </h2>
-          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+          <p class="form-help">
             Event schedule and registration window.
           </p>
         </header>
         
         <!-- Start + End -->
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label for="{{ form.start_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.start_at.id_for_label }}" class="form-label">
               Start Date & Time *
             </label>
             <input
               type="datetime-local"
               name="{{ form.start_at.name }}"
               id="{{ form.start_at.id_for_label }}"
+            {% if form.start_at.errors %}aria-invalid="true"{% endif %}
+            {% if form.start_at.errors %}aria-describedby="{{ form.start_at.auto_id }}_error"{% endif %}
               value="{{ form.start_at.value|date:'Y-m-d\TH:i'|default:form.start_at.value|default:'' }}"
               required
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
             {% if form.start_at.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.start_at.errors.0 }}</p>
+              <p id="{{ form.start_at.auto_id }}_error" role="alert" class="form-error">{{ form.start_at.errors.0 }}</p>
             {% endif %}
           </div>
           
           <div>
-            <label for="{{ form.end_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.end_at.id_for_label }}" class="form-label">
               End Date & Time *
             </label>
             <input
               type="datetime-local"
               name="{{ form.end_at.name }}"
               id="{{ form.end_at.id_for_label }}"
+            {% if form.end_at.errors %}aria-invalid="true"{% endif %}
+            {% if form.end_at.errors %}aria-describedby="{{ form.end_at.auto_id }}_error"{% endif %}
               value="{{ form.end_at.value|date:'Y-m-d\TH:i'|default:form.end_at.value|default:'' }}"
               required
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
             {% if form.end_at.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.end_at.errors.0 }}</p>
+              <p id="{{ form.end_at.auto_id }}_error" role="alert" class="form-error">{{ form.end_at.errors.0 }}</p>
             {% endif %}
           </div>
         </div>
         
         <!-- Registration opens/closes -->
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label for="{{ form.registration_opens_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.registration_opens_at.id_for_label }}" class="form-label">
               Registration Opens <span class="text-muted-foreground text-xs">(optional)</span>
             </label>
             <input
               type="datetime-local"
               name="{{ form.registration_opens_at.name }}"
               id="{{ form.registration_opens_at.id_for_label }}"
+            {% if form.registration_opens_at.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.registration_opens_at.auto_id }}_helptext{% if form.registration_opens_at.errors %} {{ form.registration_opens_at.auto_id }}_error{% endif %}"
               value="{{ form.registration_opens_at.value|date:'Y-m-d\TH:i'|default:form.registration_opens_at.value|default:'' }}"
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
             {% if form.registration_opens_at.errors %}
-              <p class="mt-2 text-sm text-destructive">{{ form.registration_opens_at.errors.0 }}</p>
+              <p id="{{ form.registration_opens_at.auto_id }}_error" role="alert" class="form-error">{{ form.registration_opens_at.errors.0 }}</p>
             {% endif %}
-            <p class="mt-1 text-xs text-muted-foreground">
+            <p id="{{ form.registration_opens_at.auto_id }}_helptext" class="form-help">
               If empty, the system will use its default opening time.
             </p>
           </div>
           
           <div>
-            <label for="{{ form.registration_closes_at.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.registration_closes_at.id_for_label }}" class="form-label">
               Registration Closes <span class="text-muted-foreground text-xs">(optional)</span>
             </label>
             <input
               type="datetime-local"
               name="{{ form.registration_closes_at.name }}"
               id="{{ form.registration_closes_at.id_for_label }}"
+            {% if form.registration_closes_at.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.registration_closes_at.auto_id }}_helptext{% if form.registration_closes_at.errors %} {{ form.registration_closes_at.auto_id }}_error{% endif %}"
               value="{{ form.registration_closes_at.value|date:'Y-m-d\TH:i'|default:form.registration_closes_at.value|default:'' }}"
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-input dark:border-border dark:text-foreground dark:focus:ring-primary-500 dark:focus:border-primary-500">
+              class="form-control">
             {% if form.registration_closes_at.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.registration_closes_at.errors.0 }}</p>
+              <p id="{{ form.registration_closes_at.auto_id }}_error" role="alert" class="form-error">{{ form.registration_closes_at.errors.0 }}</p>
             {% endif %}
-            <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+            <p id="{{ form.registration_closes_at.auto_id }}_helptext" class="form-help">
               If empty, the system will use its default closing time.
             </p>
           </div>
@@ -342,56 +368,60 @@
       <!-- ========================= -->
       <!-- SECTION 4: CAPACITY      -->
       <!-- ========================= -->
-      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-6">
         <header class="border-b border-border dark:border-border pb-2 mb-2">
           <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
             Capacity & Pricing
           </h2>
-          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+          <p class="form-help">
             How many players and the entry fee.
           </p>
         </header>
         
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           <div>
-            <label for="{{ form.capacity.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.capacity.id_for_label }}" class="form-label">
               Capacity *
             </label>
             <input
               type="number"
               name="{{ form.capacity.name }}"
               id="{{ form.capacity.id_for_label }}"
+            {% if form.capacity.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.capacity.auto_id }}_helptext{% if form.capacity.errors %} {{ form.capacity.auto_id }}_error{% endif %}"
               value="{{ form.capacity.value|default:'' }}"
               min="1"
               max="10000"
               required
               placeholder="50"
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+              class="form-control">
             {% if form.capacity.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.capacity.errors.0 }}</p>
+              <p id="{{ form.capacity.auto_id }}_error" role="alert" class="form-error">{{ form.capacity.errors.0 }}</p>
             {% endif %}
-            <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+            <p id="{{ form.capacity.auto_id }}_helptext" class="form-help">
               Maximum participants (1–10,000).
             </p>
           </div>
           
           <div>
-            <label for="{{ form.price.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+            <label for="{{ form.price.id_for_label }}" class="form-label">
               Price (€) <span class="text-muted-foreground text-xs">(optional)</span>
             </label>
             <input
               type="number"
               name="{{ form.price.name }}"
               id="{{ form.price.id_for_label }}"
+            {% if form.price.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.price.auto_id }}_helptext{% if form.price.errors %} {{ form.price.auto_id }}_error{% endif %}"
               value="{{ form.price.value|default:'' }}"
               step="0.01"
               min="0"
               placeholder="0.00"
-              class="bg-input border border-border text-foreground text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground">
+              class="form-control">
             {% if form.price.errors %}
-              <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.price.errors.0 }}</p>
+              <p id="{{ form.price.auto_id }}_error" role="alert" class="form-error">{{ form.price.errors.0 }}</p>
             {% endif %}
-            <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+            <p id="{{ form.price.auto_id }}_helptext" class="form-help">
               Leave empty or 0 for free events.
             </p>
           </div>
@@ -401,19 +431,19 @@
       <!-- ============================== -->
       <!-- SECTION 5: CONTACT INFORMATION -->
       <!-- ============================== -->
-      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-4">
+      <section class="p-4 md:p-5 bg-card dark:bg-card border border-border dark:border-border rounded-lg space-y-6">
         <header class="border-b border-border dark:border-border pb-2 mb-2">
           <h2 class="text-lg font-semibold text-foreground dark:text-foreground">
             Contact Information
           </h2>
-          <p class="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
+          <p class="form-help">
             How players can reach you about this event. This email will be displayed on the event detail page.
           </p>
         </header>
 
         <div>
           <label for="{{ form.contact_email.id_for_label }}" 
-                 class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+                 class="form-label">
             Contact Email
             <span class="text-destructive dark:text-destructive">*</span>
           </label>
@@ -422,22 +452,20 @@
             type="email"
             name="{{ form.contact_email.name }}"
             id="{{ form.contact_email.id_for_label }}"
+            {% if form.contact_email.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.contact_email.auto_id }}_helptext{% if form.contact_email.errors %} {{ form.contact_email.auto_id }}_error{% endif %}"
             value="{{ form.contact_email.value|default:'' }}"
             required
             placeholder="organizer@example.com"
-            class="bg-input border border-border text-foreground text-sm rounded-lg 
-                   focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 
-                   placeholder:text-muted-foreground dark:bg-input dark:border-border 
-                   dark:text-foreground dark:placeholder:text-muted-foreground 
-                   dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            class="form-control">
           
           {% if form.contact_email.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-destructive">
+            <p id="{{ form.contact_email.auto_id }}_error" role="alert" class="form-error">
               {{ form.contact_email.errors.0 }}
             </p>
           {% endif %}
           
-          <p class="mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+          <p id="{{ form.contact_email.auto_id }}_helptext" class="form-help">
             💡 Defaults to your account email. You can customize it for this event.
           </p>
         </div>

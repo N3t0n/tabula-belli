@@ -15,81 +15,94 @@
         Create an account
         <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
       </h1>
-      <form class="space-y-4 md:space-y-6" method="POST" action="{% url 'account_signup' %}">
+      <form class="space-y-6" method="POST" action="{% url 'account_signup' %}">
         {% csrf_token %}
         
         <!-- Error messages -->
         {% if form.non_field_errors %}
-        <div class="p-4 mb-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
+        <div role="alert" class="p-4 mb-4 text-sm text-destructive rounded-lg bg-destructive/10 dark:bg-destructive/20 dark:text-destructive">
           {{ form.non_field_errors }}
         </div>
         {% endif %}
         
         <!-- Username field -->
         <div>
-          <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.username.id_for_label }}" class="form-label">
             Username
           </label>
           <input 
             type="text"
             name="{{ form.username.name }}"
             id="{{ form.username.id_for_label }}"
-            class="bg-input border border-border text-foreground rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground"
+            autocomplete="username" value="{{ form.username.value|default:'' }}"
+            {% if form.username.errors %}aria-invalid="true"{% endif %}
+            {% if form.username.errors %}aria-describedby="{{ form.username.auto_id }}_error"{% endif %}
+            class="form-control"
             placeholder="johndoe"
             required>
           {% if form.username.errors %}
-            <p class="mt-2 text-sm text-destructive">{{ form.username.errors.0 }}</p>
+            <p id="{{ form.username.auto_id }}_error" role="alert" class="form-error">{{ form.username.errors.0 }}</p>
           {% endif %}
         </div>
         
         <!-- Email field -->
         <div>
-          <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.email.id_for_label }}" class="form-label">
             Your email
           </label>
           <input 
             type="email" 
             name="{{ form.email.name }}" 
-            id="{{ form.email.id_for_label }}" 
-            class="bg-input border border-border text-foreground rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground" 
+            id="{{ form.email.id_for_label }}"
+            autocomplete="email" value="{{ form.email.value|default:'' }}"
+            {% if form.email.errors %}aria-invalid="true"{% endif %}
+            {% if form.email.errors %}aria-describedby="{{ form.email.auto_id }}_error"{% endif %}
+            class="form-control"
             placeholder="name@company.com" 
             required>
           {% if form.email.errors %}
-            <p class="mt-2 text-sm text-destructive">{{ form.email.errors.0 }}</p>
+            <p id="{{ form.email.auto_id }}_error" role="alert" class="form-error">{{ form.email.errors.0 }}</p>
           {% endif %}
         </div>
         
         <!-- Password field -->
         <div>
-          <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.password1.id_for_label }}" class="form-label">
             Password
           </label>
           <input 
             type="password" 
             name="{{ form.password1.name }}" 
-            id="{{ form.password1.id_for_label }}" 
+            id="{{ form.password1.id_for_label }}"
+            autocomplete="new-password"
+            {% if form.password1.errors %}aria-invalid="true"{% endif %}
+            aria-describedby="{{ form.password1.auto_id }}_helptext{% if form.password1.errors %} {{ form.password1.auto_id }}_error{% endif %}"
             placeholder="••••••••" 
-            class="bg-input border border-border text-foreground rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground" 
+            class="form-control"
             required>
+          {% if form.password1.help_text %}<div id="{{ form.password1.auto_id }}_helptext" class="form-help">{{ form.password1.help_text|safe }}</div>{% endif %}
           {% if form.password1.errors %}
-            <p class="mt-2 text-sm text-destructive">{{ form.password1.errors.0 }}</p>
+            <p id="{{ form.password1.auto_id }}_error" role="alert" class="form-error">{{ form.password1.errors.0 }}</p>
           {% endif %}
         </div>
         
         <!-- Confirm password field -->
         <div>
-          <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-foreground dark:text-foreground">
+          <label for="{{ form.password2.id_for_label }}" class="form-label">
             Confirm password
           </label>
           <input 
             type="password" 
             name="{{ form.password2.name }}" 
-            id="{{ form.password2.id_for_label }}" 
+            id="{{ form.password2.id_for_label }}"
+            autocomplete="new-password"
+            {% if form.password2.errors %}aria-invalid="true"{% endif %}
+            {% if form.password2.errors %}aria-describedby="{{ form.password2.auto_id }}_error"{% endif %}
             placeholder="••••••••" 
-            class="bg-input border border-border text-foreground rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 placeholder:text-muted-foreground" 
+            class="form-control"
             required>
           {% if form.password2.errors %}
-            <p class="mt-2 text-sm text-destructive dark:text-destructive">{{ form.password2.errors.0 }}</p>
+            <p id="{{ form.password2.auto_id }}_error" role="alert" class="form-error">{{ form.password2.errors.0 }}</p>
           {% endif %}
         </div>
         
@@ -98,7 +111,6 @@
           <div class="flex items-center h-5">
             <input 
               id="terms" 
-              aria-describedby="terms" 
               type="checkbox" 
               class="w-4 h-4 border border-border rounded bg-input focus:ring-3 focus:ring-primary-300 dark:bg-input dark:border-border dark:focus:ring-primary-600 dark:ring-offset-gray-800" 
               required>
