@@ -106,10 +106,19 @@
                                             method="post"
                                             action="{% url 'event_cancel_registration' event.slug %}"
                                             hx-post="{% url 'event_cancel_registration' event.slug %}"
-                                            hx-target="closest tr"
-                                            hx-swap="delete"
+                                            hx-target="#my-events-content"
+                                            hx-swap="outerHTML"
+                                            hx-disabled-elt="find button"
+                                            hx-sync="#my-events-content:drop"
                                             class="inline">
                                         {% csrf_token %}
+                                        <input type="hidden" name="source" value="my-events">
+                                        <input type="hidden" name="tab" value="registered">
+                                        <input type="hidden" name="q" value="{{ q }}">
+                                        <input type="hidden" name="status" value="{{ status }}">
+                                        <input type="hidden" name="org_page" value="{{ organizing_page.number }}">
+                                        <input type="hidden" name="part_page" value="{{ page.number }}">
+
                                         <button
                                                 type="submit"
                                                 class="btn btn-text-danger">

@@ -1,0 +1,162 @@
+    {# Tabs Navigation (Alpine.js for visual feedback only) #}
+    <div id="my-events-content"
+        tabindex="-1"
+        x-data="{ activeTab: '{{ active_tab }}' }" 
+        class="mb-6"
+    >
+        {% if registration_error %}
+        <div role="alert" class="mb-4 form-error">{{ registration_error }}</div>
+        {% elif registration_cancelled %}
+        <p role="status" x-data="messageNotice(true)" x-show="show"
+           @mouseenter="setHovered(true)" @mouseleave="setHovered(false)"
+           @focusin="setFocused(true)" @focusout="setFocused($el.contains($event.relatedTarget))"
+           class="mb-4 text-green-700 dark:text-green-400">Registration cancelled successfully.</p>
+        {% endif %}
+        {# Tab Buttons + Create Button #}
+        <div class="border-b border-border flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <nav class="order-2 -mb-px flex gap-4 sm:order-1 sm:gap-8" aria-label="Tabs">
+                {# Organizing Tab #}
+                <a 
+                    href="?tab=organizing"
+                    {% if active_tab == 'organizing' %}aria-current="page"{% endif %}
+                    :aria-current="activeTab === 'organizing' ? 'page' : null"
+                    @click="activeTab = 'organizing'"
+                    :class="activeTab === 'organizing' ? 
+                        'border-primary-600 text-primary-700 dark:text-primary-300' :
+                        'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300"
+                >
+                    Organizing ({{ organizing_page.paginator.count }})
+                </a>
+
+                {# Registered Tab #}
+                <a 
+                    href="?tab=registered"
+                    {% if active_tab == 'registered' %}aria-current="page"{% endif %}
+                    :aria-current="activeTab === 'registered' ? 'page' : null"
+                    @click="activeTab = 'registered'"
+                    :class="activeTab === 'registered' ? 
+                        'border-primary-600 text-primary-700 dark:text-primary-300' :
+                        'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
+                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300"
+                >
+                    Registered ({{ participating_page.paginator.count }})
+                </a>
+            </nav>
+            
+            <a href="{% url 'my_events:create' %}" 
+               class="btn btn-primary order-1 self-center shrink-0 sm:order-2 sm:self-auto">
+                <svg focusable="false" aria-hidden="true" class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 5v10m-5-5h10"/>
+                </svg>
+                Create Event
+            </a>
+        </div>
+
+        {# Tab Content: Organizing #}
+        <div x-show="activeTab === 'organizing'" class="mt-6">
+            
+            {# Status Pills + Search #}
+            <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
+                {# Status Pills #}
+                <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
+                    <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}"
+                       {% if not status %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        All
+                    </a>
+                    <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'ACTIVE' %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Active
+                    </a>
+                    <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'COMPLETED' %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Completed
+                    </a>
+                    <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'CANCELED' %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Canceled
+                    </a>
+                </div>
+                
+                {# Search #}
+                <form method="get" action="{% url 'my_events:index' %}" class="w-full sm:w-auto">
+                    <input type="hidden" name="tab" value="organizing">
+                    {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg focusable="false" aria-hidden="true" class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <input 
+                            type="search" 
+                            name="q" 
+                            value="{{ q }}"
+                            placeholder="Search events..."
+                            aria-label="Search events"
+                            class="form-control sm:w-64 form-control-search"
+                        >
+                    </div>
+                </form>
+            </div>
+
+            {# Table: Organizing #}
+            {% include 'events/partials/_my_events_table.html' with events=organizing_page.object_list page=organizing_page tab='organizing' role='organizer' show_game=True show_price=True columns_count=8 q=q status=status empty_message="You are not organizing any events yet." %}
+        </div>
+
+        {# Tab Content: Registered #}
+        <div x-show="activeTab === 'registered'" class="mt-6">
+            
+            {# Status Pills + Search #}
+            <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
+                {# Status Pills #}
+                <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted dark:bg-muted p-1">
+                    <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}"
+                       {% if not status %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        All
+                    </a>
+                    <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'ACTIVE' %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Active
+                    </a>
+                    <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'COMPLETED' %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Completed
+                    </a>
+                    <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'CANCELED' %}aria-current="true"{% endif %}
+                       class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
+                        Canceled
+                    </a>
+                </div>
+                
+                {# Search #}
+                <form method="get" action="{% url 'my_events:index' %}" class="w-full sm:w-auto">
+                    <input type="hidden" name="tab" value="registered">
+                    {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg focusable="false" aria-hidden="true" class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <input 
+                            type="search" 
+                            name="q" 
+                            value="{{ q }}"
+                            placeholder="Search events..."
+                            aria-label="Search events"
+                            class="form-control sm:w-64 form-control-search"
+                        >
+                    </div>
+                </form>
+            </div>
+
+            {# Table: Registered #}
+            {% include 'events/partials/_my_events_table.html' with events=participating_page.object_list page=participating_page tab='registered' role='participant' show_game=True show_price=True columns_count=8 q=q status=status empty_message="You are not registered for any events." %}
+        </div>
+    </div>
+

@@ -279,3 +279,107 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
         self.assertEqual(
             registration.status, EventRegistration.Status.CANCELLED
         )
+
+    def test_my_events_requires_own_confirmed_registration(self):
+        event = self.create_event("cancelled-membership", capacity=5)
+        EventRegistration.objects.create(event=event, player=self.player,
+                                         status=EventRegistration.Status.CANCELLED)
+        EventRegistration.objects.create(event=event, player=self.other_player)
+        self.client.force_login(self.player)
+        for status in ("", "ACTIVE"):
+            response = self.client.get(reverse("my_events:index"),
+                                       {"tab": "registered", "status": status})
+            self.assertEqual(response.context["participating_page"].paginator.count, 0)
+
+    def test_my_events_counts_all_confirmed_participants_after_reregistration(self):
+        event = self.create_event("reregistered", capacity=5)
+        EventRegistration.objects.create(event=event, player=self.player,
+                                         status=EventRegistration.Status.CANCELLED)
+        EventRegistration.objects.create(event=event, player=self.player)
+        EventRegistration.objects.create(event=event, player=self.other_player)
+        self.client.force_login(self.player)
+        response = self.client.get(reverse("my_events:index"), {"tab": "registered"})
+        page = response.context["participating_page"]
+        self.assertEqual(page.paginator.count, 1)
+        self.assertEqual(page.object_list[0].participants_count, 2)
+        self.assertEqual(page.object_list[0].user_registration_status, "CONFIRMED")
+
+    def cancel_from_my_events(self, event, **params):
+        self.client.force_login(self.player)
+        return self.client.post(
+            reverse("event_cancel_registration", kwargs={"slug": event.slug}),
+            {"source": "my-events", "tab": "registered", **params},
+            HTTP_HX_REQUEST="true",
+        )
+
+    def test_my_events_cancel_returns_complete_empty_block(self):
+        event = self.create_event("last-registration")
+        registration = EventRegistration.objects.create(event=event, player=self.player)
+        response = self.cancel_from_my_events(event)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "events/partials/_my_events_content.html")
+        self.assertContains(response, "Registered (0)")
+        self.assertContains(response, "No events where you participate")
+        self.assertNotContains(response, "participants-badge-count")
+        self.assertNotContains(response, "<html")
+        registration.refresh_from_db()
+        self.assertEqual(registration.status, EventRegistration.Status.CANCELLED)
+
+    def test_my_events_cancel_clamps_last_page_and_preserves_filters(self):
+        events = [self.create_event(f"pagination-{number}") for number in range(13)]
+        for event in events:
+            EventRegistration.objects.create(event=event, player=self.player)
+        self.client.force_login(self.player)
+        params = {"tab": "registered", "part_page": "2", "q": "pagination", "status": "ACTIVE"}
+        before = self.client.get(reverse("my_events:index"), params)
+        last = before.context["participating_page"].object_list[0]
+        response = self.cancel_from_my_events(last, **params)
+        page = response.context["participating_page"]
+        self.assertEqual(page.number, 1)
+        self.assertEqual(page.paginator.count, 12)
+        self.assertEqual(len(page.object_list), 12)
+        self.assertEqual(response.context["q"], "pagination")
+        self.assertEqual(response.context["status"], "ACTIVE")
+        self.assertEqual(response.context["active_tab"], "registered")
+
+    def test_my_events_cancel_last_filtered_result(self):
+        selected = self.create_event("search-match")
+        other = self.create_event("outside-filter")
+        for event in (selected, other):
+            EventRegistration.objects.create(event=event, player=self.player)
+        response = self.cancel_from_my_events(selected, q="search-match", status="ACTIVE")
+        self.assertContains(response, "Registered (0)")
+        self.assertContains(response, "No events found with the applied filters.")
+        self.assertEqual(EventRegistration.objects.filter(
+            player=self.player, status=EventRegistration.Status.CONFIRMED).count(), 1)
+
+    def test_my_events_cancel_rejected_keeps_registration(self):
+        event = self.create_event("started-event")
+        registration = EventRegistration.objects.create(event=event, player=self.player)
+        Event.objects.filter(pk=event.pk).update(start_at=timezone.now() - timedelta(hours=1))
+        response = self.cancel_from_my_events(event)
+        self.assertEqual(response.status_code, 400)
+        self.assertTemplateUsed(response, "events/partials/_my_events_content.html")
+        self.assertEqual(response.context["participating_page"].paginator.count, 1)
+        self.assertTrue(response.context["registration_error"])
+        registration.refresh_from_db()
+        self.assertEqual(registration.status, EventRegistration.Status.CONFIRMED)
+
+    def test_my_events_cancel_without_javascript_returns_to_filtered_listing(self):
+        event = self.create_event("normal-my-events")
+        EventRegistration.objects.create(event=event, player=self.player)
+        self.client.force_login(self.player)
+        response = self.client.post(
+            reverse("event_cancel_registration", kwargs={"slug": event.slug}),
+            {"source": "my-events", "tab": "registered", "q": "A & B", "part_page": "2"},
+        )
+        self.assertRedirects(response, reverse("my_events:index") +
+                             "?tab=registered&q=A+%26+B&part_page=2")
+
+    def test_my_events_cancel_cannot_cancel_another_players_registration(self):
+        event = self.create_event("other-player-only")
+        registration = EventRegistration.objects.create(event=event, player=self.other_player)
+        response = self.cancel_from_my_events(event)
+        self.assertEqual(response.status_code, 400)
+        registration.refresh_from_db()
+        self.assertEqual(registration.status, EventRegistration.Status.CONFIRMED)
