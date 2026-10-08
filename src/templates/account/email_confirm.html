@@ -12,7 +12,7 @@
   </form>
 {% elif confirmation %}
   <p>This email address is already confirmed by another account. Sign in with your existing account or use a different email address.</p>
-  <a href="{% url 'account_login' %}" class="font-medium text-primary-600 hover:underline">Back to sign in</a>
+  <a href="{% url 'account_login' %}" class="font-medium text-primary-700 dark:text-primary-300 hover:underline">Back to sign in</a>
 {% else %}
   <p>This confirmation link has expired or is invalid. Sign in to request a new verification email.</p>
   <a href="{% url 'account_login' %}" class="btn btn-primary w-full">Request a new verification email</a>

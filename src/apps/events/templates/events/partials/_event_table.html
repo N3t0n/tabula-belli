@@ -8,24 +8,25 @@
   </div>
   {% endif %}
 
-  <div class="overflow-x-auto">
+  <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Event results">
     <table class="min-w-full text-sm">
+      <caption class="sr-only">Event results</caption>
       
       <thead class="bg-muted text-muted-foreground">
         <tr>
-          <th class="text-left font-medium px-3 py-2">TYPE</th>
-          <th class="text-left font-medium px-3 py-2">TITLE</th>
+          <th scope="col" class="text-left font-medium px-3 py-2">TYPE</th>
+          <th scope="col" class="text-left font-medium px-3 py-2">TITLE</th>
           {% if show_game %}
-            <th class="text-left font-medium px-3 py-2">GAME</th>
+            <th scope="col" class="text-left font-medium px-3 py-2">GAME</th>
           {% endif %}
-          <th class="text-left font-medium px-3 py-2">DATE</th>
-          <th class="text-left font-medium px-3 py-2">LOCATION</th>
-          <th class="text-right font-medium px-3 py-2">PLAYERS</th>
+          <th scope="col" class="text-left font-medium px-3 py-2">DATE</th>
+          <th scope="col" class="text-left font-medium px-3 py-2">LOCATION</th>
+          <th scope="col" class="text-right font-medium px-3 py-2">PLAYERS</th>
           {% if show_price %}
-            <th class="text-right font-medium px-3 py-2">PRICE</th>
+            <th scope="col" class="text-right font-medium px-3 py-2">PRICE</th>
           {% endif %}
           {% if action_type != 'none' %}
-            <th class="text-right font-medium px-3 py-2">REGISTRATION</th>
+            <th scope="col" class="text-right font-medium px-3 py-2">REGISTRATION</th>
           {% endif %}
         </tr>
       </thead>
@@ -36,9 +37,9 @@
           
           <td class="px-3 py-2">
             {% if event.event_type == 'TOURNAMENT' %}
-              <span class="text-xl text-warning dark:text-warning" title="Tournament">🏆</span>
+              <span class="text-xl text-warning dark:text-warning" role="img" aria-label="Tournament" title="Tournament">🏆</span>
             {% else %}
-              <span class="text-xl text-indigo-600 dark:text-indigo-400" title="Casual">🎲</span>
+              <span class="text-xl text-indigo-600 dark:text-indigo-400" role="img" aria-label="Casual" title="Casual">🎲</span>
             {% endif %}
           </td>
           
@@ -108,7 +109,7 @@
         
         <tr>
           <td colspan="{{ columns_count }}" class="px-3 py-8 text-center text-muted-foreground">
-            <svg class="mx-auto h-12 w-12 text-muted-foreground mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg focusable="false" aria-hidden="true" class="mx-auto h-12 w-12 text-muted-foreground mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
             </svg>
             <p class="text-lg font-medium">{{ empty_message }}</p>

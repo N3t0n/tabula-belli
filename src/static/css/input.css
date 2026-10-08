@@ -65,6 +65,9 @@
   /* States - use destructive scale above */
   --color-destructive: #C94B4B;          /* Maps to destructive-600 */
   --color-destructive-foreground: #FFFFFF;
+  --color-success-text: #166534;
+  --color-warning-text: #92400E;
+  --color-destructive-text: #B91C1C;
   --color-success: #2BA84A;              /* Success - verde equilibrado */
   --color-success-foreground: #FFFFFF;
   --color-warning: #E6A336;              /* Warning - amarillo cálido */
@@ -104,6 +107,9 @@
   /* States */
   --color-destructive: #FF6F6F;          /* Red suave - no agresivo */
   --color-destructive-foreground: #1E0505;
+  --color-success-text: #3DD06B;
+  --color-warning-text: #FFC36A;
+  --color-destructive-text: #FF6F6F;
   --color-success: #3DD06B;              /* Green vibrante - visible */
   --color-success-foreground: #FFFFFF;
   --color-warning: #FFC36A;              /* Amarillo cálido - amigable */
@@ -132,11 +138,11 @@
 .text-foreground { color: var(--color-foreground); }
 .text-muted-foreground { color: var(--color-muted-foreground); }
 .text-accent-foreground { color: var(--color-accent-foreground); }
-.text-destructive { color: var(--color-destructive); }
+.text-destructive { color: var(--color-destructive-text); }
 .text-destructive-foreground { color: var(--color-destructive-foreground); }
-.text-success { color: var(--color-success); }
+.text-success { color: var(--color-success-text); }
 .text-success-foreground { color: var(--color-success-foreground); }
-.text-warning { color: var(--color-warning); }
+.text-warning { color: var(--color-warning-text); }
 .text-warning-foreground { color: var(--color-warning-foreground); }
 
 /* Border utilities */
@@ -159,6 +165,9 @@
 .dark .dark\:bg-input { background-color: var(--color-input); }
 .dark .dark\:bg-muted { background-color: var(--color-muted); }
 .dark .dark\:bg-destructive { background-color: var(--color-destructive); }
+.dark .dark\:text-success { color: var(--color-success-text); }
+.dark .dark\:text-warning { color: var(--color-warning-text); }
+.dark .dark\:text-destructive { color: var(--color-destructive-text); }
 .dark .dark\:text-foreground { color: var(--color-foreground); }
 .dark .dark\:text-muted-foreground { color: var(--color-muted-foreground); }
 .dark .dark\:border-border { border-color: var(--color-border); }
@@ -189,7 +198,7 @@
     @apply mt-2 text-sm text-muted-foreground;
   }
   .form-error {
-    @apply mt-2 text-sm text-destructive;
+    @apply mt-2 text-sm text-destructive-text;
   }
 }
 
@@ -218,10 +227,10 @@
     @apply min-h-11 px-3 py-2 text-primary-700 enabled:hover:bg-muted dark:text-primary-300;
   }
   .btn-text-danger {
-    @apply min-h-11 px-3 py-2 text-destructive enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
+    @apply min-h-11 px-3 py-2 text-destructive-text enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
   }
   .btn-demo {
-    @apply border border-accent/60 text-foreground enabled:hover:bg-accent/15 focus-visible:outline-accent;
+    @apply border border-accent/60 text-foreground enabled:hover:bg-accent/15;
   }
 }
 
@@ -233,7 +242,7 @@
   a.btn-text-secondary:hover { @apply bg-muted text-foreground; }
   a.btn-text-primary:hover { @apply bg-muted; }
   .btn-outline-danger {
-    @apply border border-destructive text-destructive enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
+    @apply border border-destructive text-destructive-text enabled:hover:bg-destructive/10 focus-visible:outline-destructive;
   }
 }
 
@@ -248,5 +257,16 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Public keyboard navigation also covers plain links and scrollable results. */
+@layer base {
+  :is(a, button, summary, [tabindex], input[type="checkbox"], input[type="radio"]):focus-visible {
+    outline: 2px solid var(--color-primary-700);
+    outline-offset: 2px;
+  }
+  .dark :is(a, button, summary, [tabindex], input[type="checkbox"], input[type="radio"]):focus-visible {
+    outline-color: var(--color-primary-300);
   }
 }

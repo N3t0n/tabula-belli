@@ -11,7 +11,7 @@
   <p role="alert" class="text-destructive">{{ in_progress_error }}</p>
   <ul class="list-disc space-y-2 pl-5">
     {% for event in review.in_progress %}
-      <li><a href="{% url 'event_detail' event.slug %}" class="font-medium text-primary-600 hover:underline">{{ event.title }}</a> — ends {{ event.end_at|date:"d M Y, H:i T" }}</li>
+      <li><a href="{% url 'event_detail' event.slug %}" class="font-medium text-primary-700 dark:text-primary-300 hover:underline">{{ event.title }}</a> — ends {{ event.end_at|date:"d M Y, H:i T" }}</li>
     {% endfor %}
   </ul>
 {% else %}
@@ -34,5 +34,5 @@
     </button>
   </form>
 {% endif %}
-<p class="text-center"><a href="{% url 'accounts:profile' %}" class="font-medium text-primary-600 hover:underline">Keep my account</a></p>
+<p class="text-center"><a href="{% url 'accounts:profile' %}" class="font-medium text-primary-700 dark:text-primary-300 hover:underline">Keep my account</a></p>
 {% endblock %}
