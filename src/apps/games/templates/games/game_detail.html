@@ -16,7 +16,7 @@
                 <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full
                     {% if game.category == 'TCG' %}bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200
                     {% elif game.category == 'WARGAME' %}bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive
-                    {% elif game.category == 'TTRPG' %}bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent
+                    {% elif game.category == 'TTRPG' %}bg-accent/10 text-warning dark:bg-accent/20 dark:text-accent
                     {% endif %}">
                     {{ game.get_category_display }}
                 </span>
@@ -31,6 +31,7 @@
     </div>
 
     <div class="bg-card dark:bg-card rounded-lg shadow-md p-6"
+         data-listing-feedback hx-sync="this:replace" hx-request='{"timeout":20000}'
          x-data="{
            status: '{{ status|default:''|escapejs }}',
            submitFilters() {
@@ -43,7 +44,8 @@
             Events
         </h2>
         
-        <div id="game-events-listing">
+        {% include 'components/listing_feedback.html' %}
+        <div id="game-events-listing" data-event-listing aria-busy="false">
             {% include 'games/_game_events_listing.html' %}
         </div>
     </div>

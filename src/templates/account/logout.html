@@ -1,0 +1,14 @@
+{% extends "account/flow_base.html" %}
+{% block head_title %}Sign out{% endblock %}
+{% block flow_title %}Sign out?{% endblock %}
+{% block flow_content %}
+<p class="text-center">Are you sure you want to sign out of your Tabula Belli account?</p>
+<div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+  <form method="post" action="{% url 'account_logout' %}" class="w-full sm:w-auto">
+    {% csrf_token %}
+    {{ redirect_field }}
+    <button type="submit" class="btn btn-primary w-full">Sign out</button>
+  </form>
+  <a href="{% url 'accounts:profile' %}" class="btn btn-secondary w-full sm:w-auto">Stay signed in</a>
+</div>
+{% endblock %}

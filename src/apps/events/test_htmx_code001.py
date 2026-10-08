@@ -70,6 +70,41 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
             capacity=capacity,
         )
 
+    def test_listing_feedback_survives_filter_and_pagination_partial_swaps(self):
+        event = self.create_event("listing-feedback")
+        for url, partial in (
+            (reverse("events"), "events/_events_listing.html"),
+            (reverse("games:game_detail", kwargs={"slug": self.game.slug}),
+             "games/_game_events_listing.html"),
+        ):
+            with self.subTest(url=url):
+                full = self.client.get(url)
+                self.assertContains(full, "data-listing-feedback", count=1)
+                self.assertContains(full, "data-listing-error", count=1)
+                self.assertContains(full, "data-listing-loading", count=1)
+                self.assertContains(full, 'hx-sync="this:replace"', count=1)
+                filtered = self.client.get(
+                    url, {"status": "upcoming", "page": "1"},
+                    HTTP_HX_REQUEST="true",
+                )
+                self.assertTemplateUsed(filtered, partial)
+                self.assertContains(filtered, event.title)
+                # Feedback and its listener must not be duplicated on every swap.
+                self.assertNotContains(filtered, "data-listing-feedback")
+                self.assertNotContains(filtered, "data-listing-error")
+                self.assertNotContains(filtered, "js/listings.js")
+
+    def test_events_initial_selection_preserves_explicit_all_status(self):
+        for params, expected in (
+            ({}, "upcoming"),
+            ({"status": ""}, ""),
+            ({"status": "completed"}, "completed"),
+        ):
+            with self.subTest(params=params):
+                response = self.client.get(reverse("events"), params)
+                self.assertEqual(response.context["current_status"], expected)
+                self.assertContains(response, f"status: '{expected}'")
+
     def test_cancel_event_form_is_separate_and_targets_cancel_endpoint(self):
         event = self.create_event("form-contract")
         self.client.force_login(self.owner)

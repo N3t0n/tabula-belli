@@ -10,7 +10,7 @@
     <!-- 1. Navigation and management actions -->
     <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
       <a href="{{ return_url }}" class="btn btn-text-secondary">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg focusable="false" aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
         Back to events
@@ -41,10 +41,10 @@
     </div>
 
     <!-- 2. Title -->
-    <h2 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+    <h1 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
       {{ event.title }}
       <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
-    </h2>
+    </h1>
 
     <!-- 3. Badges: Game, Type, Status, Participants -->
     <div class="flex flex-wrap items-center gap-2">
@@ -75,7 +75,7 @@
       {% endif %}
 
       <span class="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground dark:bg-card dark:text-muted-foreground">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+        <svg focusable="false" aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
           <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
         </svg>
         <span id="participants-badge-count">{{ event.participants_count }}/{{ event.capacity }}</span>
@@ -84,7 +84,7 @@
 
     <!-- 4. Event Information - CARD -->
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Overview</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Overview</h2>
       
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         
@@ -140,7 +140,7 @@
     <!-- 5. Registration - CARD -->
     {% if event.registration_opens_at or event.registration_closes_at %}
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Registration</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Registration</h2>
       
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         
@@ -178,9 +178,9 @@
     {% if can_manage_event and event.participants_count > 0 %}
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6" x-data="{ expanded: false }">
       <div class="mb-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-        <h3 class="text-center text-lg font-bold uppercase text-foreground sm:text-left">
+        <h2 class="text-center text-lg font-bold uppercase text-foreground sm:text-left">
           Participants List
-        </h3>
+        </h2>
         <div class="flex items-center gap-3">
           <span 
             id="participants-list-badge"
@@ -197,7 +197,7 @@
           >
             <span x-show="!expanded">Show</span>
             <span x-show="expanded" x-cloak>Hide</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" 
+            <svg focusable="false" aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                  :class="expanded ? 'rotate-180' : ''" style="transition: transform 0.2s">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -274,7 +274,7 @@
     <!-- 6. Event Details - CARD -->
     {% if event.description %}
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Info</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Info</h2>
       <div class="text-muted-foreground dark:text-muted-foreground">
         {{ event.description|linebreaks }}
       </div>
@@ -283,7 +283,7 @@
 
     <!-- 7. Location (with map) - CARD -->
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Location</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Location</h2>
       
       <div class="space-y-2 text-muted-foreground dark:text-muted-foreground mb-4">
         <p>{{ event.city.name }}{% if event.region %}, {{ event.region.name }}{% endif %}, {{ event.country.name }}</p>
@@ -308,7 +308,7 @@
            target="_blank"
            rel="noopener noreferrer"
            class="inline-flex items-center gap-2 text-sm font-medium text-primary-700 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <svg focusable="false" aria-hidden="true" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
           </svg>
           Open in Google Maps

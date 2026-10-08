@@ -10,17 +10,18 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="{% if role == "organizer" %}Organized events{% else %}Registered events{% endif %}">
             <table class="min-w-full text-sm">
+                <caption class="sr-only">{% if role == "organizer" %}Organized events{% else %}Registered events{% endif %}</caption>
                 <thead class="bg-muted text-muted-foreground">
                     <tr>
-                        <th class="text-left font-medium px-3 py-2">TYPE</th>
-                        <th class="text-left font-medium px-3 py-2">TITLE</th>
-                        <th class="text-left font-medium px-3 py-2">GAME</th>
-                        <th class="text-left font-medium px-3 py-2">DATE</th>
-                        <th class="text-left font-medium px-3 py-2">LOCATION</th>
-                        <th class="text-right font-medium px-3 py-2">PLAYERS</th>
-                        <th class="text-right font-medium px-3 py-2">ACTION</th>
+                        <th scope="col" class="text-left font-medium px-3 py-2">TYPE</th>
+                        <th scope="col" class="text-left font-medium px-3 py-2">TITLE</th>
+                        <th scope="col" class="text-left font-medium px-3 py-2">GAME</th>
+                        <th scope="col" class="text-left font-medium px-3 py-2">DATE</th>
+                        <th scope="col" class="text-left font-medium px-3 py-2">LOCATION</th>
+                        <th scope="col" class="text-right font-medium px-3 py-2">PLAYERS</th>
+                        <th scope="col" class="text-right font-medium px-3 py-2">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,15 +29,15 @@
                     <tr class="border-t border-border hover:bg-muted/60">
                         <td class="px-3 py-2">
                             {% if event.event_type == 'TOURNAMENT' %}
-                                <span class="text-xl" title="Tournament">🏆</span>
+                                <span class="text-xl" role="img" aria-label="Tournament" title="Tournament">🏆</span>
                             {% else %}
-                                <span class="text-xl" title="Casual">🎲</span>
+                                <span class="text-xl" role="img" aria-label="Casual" title="Casual">🎲</span>
                             {% endif %}
                         </td>
                         
                         <td class="px-3 py-2">
                             <a href="{% url 'event_detail' event.slug %}" 
-                               class="font-medium text-foreground hover:text-primary-700 hover:underline">
+                               class="font-medium text-foreground hover:text-primary-700 dark:hover:text-primary-300 hover:underline">
                                 {{ event.title }}
                             </a>
                             <div class="text-xs text-muted-foreground">
@@ -160,7 +161,7 @@
 
 {% else %}
     <div class="rounded-2xl border border-border bg-card shadow-sm p-8 text-center">
-        <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg focusable="false" aria-hidden="true" class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
         </svg>
         <h3 class="mt-2 text-lg font-medium text-foreground">
@@ -184,8 +185,8 @@
         {% if role == 'organizer' and not q and not status %}
         <div class="mt-6">
             <a href="{% url 'my_events:create' %}" 
-               class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary-700 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 hover:underline">
-                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               class="btn btn-text-primary">
+                <svg focusable="false" aria-hidden="true" class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
                 Create event

@@ -26,9 +26,11 @@
                 {# Organizing Tab #}
                 <a 
                     href="?tab=organizing"
+                    {% if active_tab == 'organizing' %}aria-current="page"{% endif %}
+                    :aria-current="activeTab === 'organizing' ? 'page' : null"
                     @click="activeTab = 'organizing'"
                     :class="activeTab === 'organizing' ? 
-                        'border-primary-600 text-primary-600' : 
+                        'border-primary-600 text-primary-700 dark:text-primary-300' :
                         'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
                     class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300"
                 >
@@ -38,9 +40,11 @@
                 {# Registered Tab #}
                 <a 
                     href="?tab=registered"
+                    {% if active_tab == 'registered' %}aria-current="page"{% endif %}
+                    :aria-current="activeTab === 'registered' ? 'page' : null"
                     @click="activeTab = 'registered'"
                     :class="activeTab === 'registered' ? 
-                        'border-primary-600 text-primary-600' : 
+                        'border-primary-600 text-primary-700 dark:text-primary-300' :
                         'border-transparent text-muted-foreground hover:text-foreground hover:border-border'"
                     class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 dark:focus-visible:outline-primary-300"
                 >
@@ -50,7 +54,7 @@
             
             <a href="{% url 'my_events:create' %}" 
                class="btn btn-primary order-1 self-center shrink-0 sm:order-2 sm:self-auto">
-                <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                <svg focusable="false" aria-hidden="true" class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 20 20">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 5v10m-5-5h10"/>
                 </svg>
                 Create Event
@@ -63,20 +67,24 @@
             {# Status Pills + Search #}
             <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
                 {# Status Pills #}
-                <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
-                    <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}" 
+                <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
+                    <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}"
+                       {% if not status %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         All
                     </a>
-                    <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'ACTIVE' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Active
                     </a>
-                    <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'COMPLETED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Completed
                     </a>
-                    <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'CANCELED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Canceled
                     </a>
@@ -88,7 +96,7 @@
                     {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                            <svg focusable="false" aria-hidden="true" class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
                         </div>
                         <input 
                             type="search" 
@@ -112,20 +120,24 @@
             {# Status Pills + Search #}
             <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
                 {# Status Pills #}
-                <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted dark:bg-muted p-1">
-                    <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}" 
+                <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted dark:bg-muted p-1">
+                    <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}"
+                       {% if not status %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         All
                     </a>
-                    <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'ACTIVE' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Active
                     </a>
-                    <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'COMPLETED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Completed
                     </a>
-                    <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'CANCELED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Canceled
                     </a>
@@ -137,7 +149,7 @@
                     {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                            <svg focusable="false" aria-hidden="true" class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
                         </div>
                         <input 
                             type="search" 

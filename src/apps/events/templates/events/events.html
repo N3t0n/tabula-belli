@@ -17,8 +17,8 @@
   </div>
 
   <!-- Events Listing (Bloque Único: Pills + Filters + Table + Pagination) -->
-  <div x-data="{
-         status: '{{ current_status|default:'upcoming' }}',
+  <div data-listing-feedback hx-sync="this:replace" hx-request='{"timeout":20000}' x-data="{
+         status: '{{ current_status|default_if_none:'upcoming'|escapejs }}',
          eventType: '{{ current_event_type|default:'' }}',
          filtersOpen: false,
          get activeFiltersCount() {
@@ -68,15 +68,12 @@
            this.submitFilters();
          }
        }">
-    <div id="events-listing">
+    {% include 'components/listing_feedback.html' %}
+    <div id="events-listing" data-event-listing aria-busy="false">
       {% include "events/_events_listing.html" %}
     </div>
   </div>
 
-  <!-- Loading indicator -->
-  <div class="htmx-indicator fixed top-4 right-4 bg-primary-600 text-white px-4 py-2 rounded-lg shadow-lg">
-    Loading...
-  </div>
 </div>
 
 {% endblock %}
