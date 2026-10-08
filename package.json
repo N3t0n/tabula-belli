@@ -7,7 +7,7 @@
     "build:js": "node scripts/copy-deps.js",
     "build": "npm run build:css && npm run build:js",
     "watch:css": "tailwindcss -i src/static/css/input.css -o src/static/css/output.css --watch",
-    "dev": "npm run build && echo Frontend built! Now run: python manage.py runserver"
+    "dev": "npm run build && echo Frontend built! Now run: python src/manage.py runserver"
   },
   "repository": {
     "type": "git",
