@@ -267,6 +267,7 @@ ACCOUNT_FORMS = {
     'change_password': 'apps.accounts.forms.StyledChangePasswordForm',
     'set_password': 'apps.accounts.forms.StyledSetPasswordForm',
     'reset_password': 'apps.accounts.forms.PublicDemoResetPasswordForm',
+    'reset_password_from_key': 'apps.accounts.forms.StyledResetPasswordKeyForm',
     'user_token': 'apps.accounts.forms.PublicDemoUserTokenForm',
 }
 PUBLIC_DEMO_USERNAME = config(

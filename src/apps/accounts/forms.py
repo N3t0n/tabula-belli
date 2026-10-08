@@ -1,6 +1,6 @@
 from django import forms
 from allauth.account.forms import (
-    AddEmailForm, ChangePasswordForm, ResetPasswordForm, SetPasswordForm,
+    AddEmailForm, ChangePasswordForm, ResetPasswordForm, ResetPasswordKeyForm, SetPasswordForm,
     UserTokenForm,
 )
 from allauth.account.adapter import get_adapter
@@ -98,6 +98,10 @@ class StyledChangePasswordForm(AccountInputStyleMixin, ChangePasswordForm):
 
 
 class StyledSetPasswordForm(AccountInputStyleMixin, SetPasswordForm):
+    pass
+
+
+class StyledResetPasswordKeyForm(AccountInputStyleMixin, ResetPasswordKeyForm):
     pass
 
 

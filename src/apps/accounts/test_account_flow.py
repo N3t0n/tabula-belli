@@ -125,6 +125,10 @@ class AccountFlowTest(TestCase):
         reset_url = re.search(r'https?://[^\s]+', message.body).group()
         response = self.client.get(reset_url, follow=True)
         self.assert_branded_page(response, 'Save new password')
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        for name in ('password1', 'password2'):
+            self.assertIn('form-control', parser.fields[name].get('class', '').split())
         new_password = 'ChangedFlowTestPass456!'
         response = self.client.post(response.request['PATH_INFO'], {
             'password1': new_password, 'password2': new_password,
