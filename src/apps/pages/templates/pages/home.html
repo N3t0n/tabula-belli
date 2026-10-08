@@ -13,7 +13,7 @@
             <p class="mb-4 text-center">From demos, narrative events, and casual game nights to the most competitive tournaments on the continent, we've got you covered.</p>
 
             <div class="flex justify-center">
-            <a href="{% url 'about' %}" class="inline-flex items-center justify-center px-4 py-2.5 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900 transition-colors cursor-pointer">
+            <a href="{% url 'about' %}" class="btn btn-primary">
                     Learn More
             </a>
             </div>
@@ -103,7 +103,7 @@
                 @click="scrollContainer.scrollBy({ left: -400, behavior: 'smooth' }); setTimeout(() => checkScroll(), 300)"
                 :disabled="atStart"
                 :class="atStart ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer'"
-                class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 z-10 bg-card text-foreground p-2 md:p-3 rounded-full shadow-lg transition-colors">
+                type="button" aria-label="Previous events" class="btn btn-icon absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-2 rounded-full bg-card shadow-lg md:-translate-x-4">
                 <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -191,7 +191,7 @@
                     <h3 class="mt-4 text-lg font-medium text-foreground">No upcoming events</h3>
                     <p class="mt-2 text-sm text-muted-foreground">Check back soon for new events or browse all past events.</p>
                     <div class="mt-6">
-                        <a href="{% url 'events' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900 dark:text-primary-300">
+                        <a href="{% url 'events' %}" class="btn btn-secondary btn-compact">
                             Browse All Events
                         </a>
                     </div>
@@ -204,7 +204,7 @@
                 @click="scrollContainer.scrollBy({ left: 400, behavior: 'smooth' }); setTimeout(() => checkScroll(), 300)"
                 :disabled="atEnd"
                 :class="atEnd ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer'"
-                class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 z-10 bg-card text-foreground p-2 md:p-3 rounded-full shadow-lg transition-colors">
+                type="button" aria-label="Next events" class="btn btn-icon absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-2 rounded-full bg-card shadow-lg md:translate-x-4">
                 <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
@@ -215,7 +215,7 @@
         {% if upcoming_events %}
         <div class="mt-8 text-center">
             <a href="{% url 'events' %}" 
-               class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+               class="btn btn-primary">
                 View All Events
             </a>
         </div>

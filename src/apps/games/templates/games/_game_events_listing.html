@@ -30,25 +30,25 @@
 
   <!-- Filter Pills -->
   <div>
-    <div class="inline-flex rounded-xl bg-muted p-1">
+    <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
       <button 
         type="button"
         @click="status = ''; submitFilters()"
-        class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+        class="btn btn-compact"
         :class="status === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
         All
       </button>
       <button 
         type="button"
         @click="status = 'upcoming'; submitFilters()"
-        class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+        class="btn btn-compact"
         :class="status === 'upcoming' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
         Upcoming
       </button>
       <button 
         type="button"
         @click="status = 'completed'; submitFilters()"
-        class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+        class="btn btn-compact"
         :class="status === 'completed' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
         Completed
       </button>
@@ -61,11 +61,11 @@
 
 <!-- Pagination -->
 {% if page_obj.has_other_pages %}
-<div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
+<div class="mt-4 flex flex-col items-center gap-3 border-t border-border pt-4 sm:flex-row sm:justify-between">
   <div class="text-sm text-muted-foreground">
     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
   </div>
-  <div class="flex gap-2">
+  <div class="flex flex-wrap justify-center gap-2">
     {% if page_obj.has_previous %}
       <button 
         type="button"
@@ -73,7 +73,7 @@
         hx-target="#game-events-listing"
         hx-swap="innerHTML"
         hx-replace-url="true"
-        class="px-3 py-1.5 rounded-lg border border-border bg-card text-sm hover:bg-muted transition-colors cursor-pointer">
+        class="btn btn-secondary btn-compact">
         Previous
       </button>
     {% endif %}
@@ -84,7 +84,7 @@
         hx-target="#game-events-listing"
         hx-swap="innerHTML"
         hx-replace-url="true"
-        class="px-3 py-1.5 rounded-lg border border-border bg-card text-sm hover:bg-muted transition-colors cursor-pointer">
+        class="btn btn-secondary btn-compact">
         Next
       </button>
     {% endif %}

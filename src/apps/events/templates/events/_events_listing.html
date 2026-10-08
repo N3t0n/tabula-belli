@@ -21,51 +21,51 @@
     <!-- Left: Pills (stack on mobile, inline on desktop) -->
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
       <!-- Status Pills -->
-      <div class="inline-flex rounded-xl bg-muted p-1">
+      <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
         <button 
           type="button"
           @click="status=''; submitFilters()"
           :class="status === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
-          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          class="btn btn-compact">
           All
         </button>
         <button 
           type="button"
           @click="status='upcoming'; submitFilters()"
           :class="status === 'upcoming' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
-          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          class="btn btn-compact">
           Upcoming
         </button>
         <button 
           type="button"
           @click="status='completed'; submitFilters()"
           :class="status === 'completed' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
-          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          class="btn btn-compact">
           Completed
         </button>
       </div>
       
       <!-- Event Type Pills -->
-      <div class="inline-flex rounded-xl bg-muted p-1">
+      <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
         <button 
           type="button"
           @click="eventType=''; submitFilters()"
           :class="eventType === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
-          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          class="btn btn-compact">
           All Events
         </button>
         <button 
           type="button"
           @click="eventType='CASUAL'; submitFilters()"
           :class="eventType === 'CASUAL' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
-          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          class="btn btn-compact">
           Casual
         </button>
         <button 
           type="button"
           @click="eventType='TOURNAMENT'; submitFilters()"
           :class="eventType === 'TOURNAMENT' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'"
-          class="px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer">
+          class="btn btn-compact">
           Tournaments
         </button>
       </div>
@@ -76,7 +76,7 @@
         x-cloak
         type="button"
         @click="clearAllFilters()" 
-        class="px-2.5 py-1.5 rounded-lg text-xs text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-1 shrink-0 cursor-pointer">
+        class="btn btn-text-secondary shrink-0">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
@@ -111,7 +111,7 @@
           x-ref="filtersToggle"
           :aria-expanded="filtersOpen"
           aria-controls="event-filters-panel"
-          class="px-3 py-2 rounded-lg border border-border bg-card text-sm flex items-center gap-2 whitespace-nowrap cursor-pointer">
+          class="btn btn-secondary px-3 whitespace-nowrap">
           <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="h-4 w-4 text-muted-foreground" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
           Filters
           <svg class="w-5 h-5 text-muted-foreground hidden lg:block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path clip-rule="evenodd" fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
@@ -130,7 +130,7 @@
         <h2 class="text-lg font-medium text-foreground">Filters</h2>
         <button type="button" aria-label="Close filters"
                 @click="filtersOpen=false; $refs.filtersToggle.focus()"
-                class="inline-flex h-11 w-11 items-center justify-center rounded-lg text-2xl text-muted-foreground hover:text-foreground cursor-pointer">×</button>
+                class="btn btn-icon text-2xl">×</button>
       </div>
 
       <!-- Filters content (responsive grid) -->
@@ -222,17 +222,17 @@
       </div>
 
       <!-- Buttons -->
-      <div class="flex items-center justify-between mt-3 pt-3 border-t border-border">
+      <div class="mt-3 flex flex-wrap items-center justify-center gap-3 border-t border-border pt-3 sm:justify-between">
         <button 
           type="button" 
           @click="clearPanelFilters()" 
-          class="text-xs text-muted-foreground hover:underline cursor-pointer">
+          class="btn btn-text-secondary">
           Clear filters
         </button>
         <button 
           type="button"
           @click="filtersOpen=false; $refs.filtersToggle.focus()"
-          class="px-3 py-1.5 rounded-lg bg-foreground text-background dark:bg-foreground dark:text-background text-xs">
+          class="btn btn-secondary btn-compact">
           Close
         </button>
       </div>
@@ -249,22 +249,22 @@
 
   <!-- Pagination -->
   {% if page_obj.has_other_pages %}
-    <div class="flex items-center justify-between p-3 text-sm border-t border-border">
+    <div class="flex flex-col items-center gap-3 border-t border-border p-3 text-sm sm:flex-row sm:justify-between">
       <div class="text-muted-foreground">
         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center justify-center gap-2">
         {% if page_obj.has_previous %}
           <button 
             hx-get="{% pagination_url page_obj.previous_page_number %}" 
             hx-target="#events-listing" 
             hx-swap="innerHTML"
             hx-push-url="true"
-            class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted cursor-pointer">
+            class="btn btn-secondary btn-compact">
             Previous
           </button>
         {% else %}
-          <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+          <button disabled class="btn btn-secondary btn-compact">
             Previous
           </button>
         {% endif %}
@@ -275,11 +275,11 @@
             hx-target="#events-listing" 
             hx-swap="innerHTML"
             hx-push-url="true"
-            class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted cursor-pointer">
+            class="btn btn-secondary btn-compact">
             Next
           </button>
         {% else %}
-          <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+          <button disabled class="btn btn-secondary btn-compact">
             Next
           </button>
         {% endif %}

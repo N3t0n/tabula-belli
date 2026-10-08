@@ -480,12 +480,12 @@
           <button
             type="submit"
             form="event-main-form"
-            class="inline-flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors cursor-pointer dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            class="btn btn-primary">
             {% if object %}Update Event{% else %}Create Event{% endif %}
           </button>
           <a
             href="{% url 'my_events:index' %}"
-            class="inline-flex items-center justify-center text-foreground bg-card border border-border hover:bg-muted focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors cursor-pointer">
+            class="btn btn-secondary">
             Cancel
           </a>
         </div>
@@ -502,7 +502,7 @@
           {% csrf_token %}
           <button
             type="submit"
-            class="inline-flex w-full items-center justify-center text-white bg-destructive-600 hover:bg-destructive-700 focus:ring-4 focus:outline-none focus:ring-destructive-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors cursor-pointer sm:w-auto">
+            class="btn btn-danger w-full sm:w-auto">
             Cancel Event
           </button>
         </form>

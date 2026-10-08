@@ -74,9 +74,9 @@
                         <td class="px-3 py-2 text-right">
                             {% if role == 'organizer' %}
                                 {% if event.is_editable %}
-                                    <div class="flex items-center justify-end gap-2">
+                                    <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
                                         <a href="{% url 'my_events:edit' event.slug %}"
-                                           class="text-xs text-primary-600 hover:underline dark:text-primary-400">
+                                           class="btn btn-text-primary">
                                             Edit
                                         </a>
                                         <form
@@ -90,7 +90,7 @@
                                             {% csrf_token %}
                                             <button
                                                     type="submit"
-                                                    class="text-xs text-destructive hover:underline dark:text-destructive cursor-pointer">
+                                                    class="btn btn-text-danger">
                                                 Cancel
                                             </button>
                                         </form>
@@ -111,7 +111,7 @@
                                         {% csrf_token %}
                                         <button
                                                 type="submit"
-                                                class="text-xs text-red-600 hover:underline dark:text-red-400 cursor-pointer">
+                                                class="btn btn-text-danger">
                                             Cancel registration
                                         </button>
                                     </form>
@@ -127,29 +127,29 @@
         </div>
 
         {% if page.paginator.num_pages > 1 %}
-        <div class="flex items-center justify-between p-3 text-sm border-t border-border">
+        <div class="flex flex-col items-center gap-3 border-t border-border p-3 text-sm sm:flex-row sm:justify-between">
             <div class="text-muted-foreground">
                 Page {{ page.number }} of {{ page.paginator.num_pages }}
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center justify-center gap-2">
                 {% if page.has_previous %}
                     <a href="?tab={{ tab }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.previous_page_number }}{% else %}&part_page={{ page.previous_page_number }}{% endif %}" 
-                       class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted">
+                       class="btn btn-secondary btn-compact">
                         Previous
                     </a>
                 {% else %}
-                    <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+                    <button disabled class="btn btn-secondary btn-compact">
                         Previous
                     </button>
                 {% endif %}
                 
                 {% if page.has_next %}
                     <a href="?tab={{ tab }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.next_page_number }}{% else %}&part_page={{ page.next_page_number }}{% endif %}" 
-                       class="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted">
+                       class="btn btn-secondary btn-compact">
                         Next
                     </a>
                 {% else %}
-                    <button disabled class="px-3 py-1.5 rounded-lg border border-border bg-card opacity-50 cursor-not-allowed">
+                    <button disabled class="btn btn-secondary btn-compact">
                         Next
                     </button>
                 {% endif %}
