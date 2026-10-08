@@ -22,7 +22,6 @@
             <img class="w-full rounded-lg" src="{% static 'images/40k_game.webp' %}" alt="Wargaming event">
             <img class="mt-4 w-full lg:mt-10 rounded-lg" src="{% static 'images/vampire_game.webp' %}" alt="Tabletop gaming event">
         </div>
-    </div>
 </div>
 
 <div class="border-t border-border bg-card">
@@ -100,7 +99,7 @@
         }" x-init="scrollContainer = $refs.container; checkScroll()">
             <!-- Previous Button -->
             <button 
-                @click="scrollContainer.scrollBy({ left: -400, behavior: 'smooth' }); setTimeout(() => checkScroll(), 300)"
+                @click="scrollContainer.scrollBy({ left: -400, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); setTimeout(() => checkScroll(), 300)"
                 :disabled="atStart"
                 :class="atStart ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer'"
                 type="button" aria-label="Previous events" class="btn btn-icon absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-2 rounded-full bg-card shadow-lg md:-translate-x-4">
@@ -113,7 +112,7 @@
             <div 
                 x-ref="container"
                 @scroll="checkScroll()"
-                class="flex gap-4 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+                class="flex gap-4 overflow-x-auto motion-safe:scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
                 style="scrollbar-width: none; -ms-overflow-style: none;">
                 
                 {% if upcoming_events %}
@@ -201,7 +200,7 @@
 
             <!-- Next Button -->
             <button 
-                @click="scrollContainer.scrollBy({ left: 400, behavior: 'smooth' }); setTimeout(() => checkScroll(), 300)"
+                @click="scrollContainer.scrollBy({ left: 400, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); setTimeout(() => checkScroll(), 300)"
                 :disabled="atEnd"
                 :class="atEnd ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted cursor-pointer'"
                 type="button" aria-label="Next events" class="btn btn-icon absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-2 rounded-full bg-card shadow-lg md:translate-x-4">
