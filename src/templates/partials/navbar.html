@@ -13,14 +13,14 @@
                 </button>
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:profile' %}" class="btn btn-text-secondary btn-nav max-[320px]:hidden {% if request.resolver_match.namespace == 'accounts' %}bg-muted{% endif %}">Profile</a>
-                    <form method="post" action="{% url 'account_logout' %}" class="flex max-[320px]:hidden">
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-text-secondary btn-nav max-[321px]:hidden {% if request.resolver_match.namespace == 'accounts' %}bg-muted{% endif %}">Profile</a>
+                    <form method="post" action="{% url 'account_logout' %}" class="flex max-[321px]:hidden">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-secondary btn-nav max-[320px]:hidden">Logout</button>
+                        <button type="submit" class="btn btn-secondary btn-nav max-[321px]:hidden">Logout</button>
                     </form>
                 {% else %}
-                    <a href="{% url "account_login" %}" class="btn btn-text-secondary btn-nav max-[320px]:hidden">Log in</a>
-                    <a href="{% url "account_signup" %}" class="btn btn-primary btn-nav max-[320px]:hidden">Sign Up</a>
+                    <a href="{% url "account_login" %}" class="btn btn-text-secondary btn-nav max-[321px]:hidden">Log in</a>
+                    <a href="{% url "account_signup" %}" class="btn btn-primary btn-nav max-[321px]:hidden">Sign Up</a>
                 {% endif %}
                     
                 <button data-collapse-toggle="mobile-menu-2" type="button" class="btn btn-icon lg:hidden" aria-controls="mobile-menu-2" aria-expanded="false">
