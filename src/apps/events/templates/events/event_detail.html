@@ -41,10 +41,10 @@
     </div>
 
     <!-- 2. Title -->
-    <h2 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
+    <h1 class="text-4xl tracking-tight font-extrabold text-foreground text-center inline-flex flex-col items-center w-full">
       {{ event.title }}
       <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
-    </h2>
+    </h1>
 
     <!-- 3. Badges: Game, Type, Status, Participants -->
     <div class="flex flex-wrap items-center gap-2">
@@ -84,7 +84,7 @@
 
     <!-- 4. Event Information - CARD -->
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Overview</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Overview</h2>
       
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         
@@ -140,7 +140,7 @@
     <!-- 5. Registration - CARD -->
     {% if event.registration_opens_at or event.registration_closes_at %}
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Registration</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Registration</h2>
       
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         
@@ -178,9 +178,9 @@
     {% if can_manage_event and event.participants_count > 0 %}
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6" x-data="{ expanded: false }">
       <div class="mb-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-        <h3 class="text-center text-lg font-bold uppercase text-foreground sm:text-left">
+        <h2 class="text-center text-lg font-bold uppercase text-foreground sm:text-left">
           Participants List
-        </h3>
+        </h2>
         <div class="flex items-center gap-3">
           <span 
             id="participants-list-badge"
@@ -274,7 +274,7 @@
     <!-- 6. Event Details - CARD -->
     {% if event.description %}
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Info</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Event Info</h2>
       <div class="text-muted-foreground dark:text-muted-foreground">
         {{ event.description|linebreaks }}
       </div>
@@ -283,7 +283,7 @@
 
     <!-- 7. Location (with map) - CARD -->
     <div class="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-      <h3 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Location</h3>
+      <h2 class="text-lg font-bold uppercase text-foreground dark:text-foreground mb-4">Location</h2>
       
       <div class="space-y-2 text-muted-foreground dark:text-muted-foreground mb-4">
         <p>{{ event.city.name }}{% if event.region %}, {{ event.region.name }}{% endif %}, {{ event.country.name }}</p>

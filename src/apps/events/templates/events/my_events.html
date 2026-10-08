@@ -26,6 +26,8 @@
                 {# Organizing Tab #}
                 <a 
                     href="?tab=organizing"
+                    {% if active_tab == 'organizing' %}aria-current="page"{% endif %}
+                    :aria-current="activeTab === 'organizing' ? 'page' : null"
                     @click="activeTab = 'organizing'"
                     :class="activeTab === 'organizing' ? 
                         'border-primary-600 text-primary-600' : 
@@ -38,6 +40,8 @@
                 {# Registered Tab #}
                 <a 
                     href="?tab=registered"
+                    {% if active_tab == 'registered' %}aria-current="page"{% endif %}
+                    :aria-current="activeTab === 'registered' ? 'page' : null"
                     @click="activeTab = 'registered'"
                     :class="activeTab === 'registered' ? 
                         'border-primary-600 text-primary-600' : 
@@ -63,20 +67,24 @@
             {# Status Pills + Search #}
             <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
                 {# Status Pills #}
-                <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
-                    <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}" 
+                <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
+                    <a href="?tab=organizing{% if q %}&q={{ q }}{% endif %}"
+                       {% if not status %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         All
                     </a>
-                    <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=organizing&status=ACTIVE{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'ACTIVE' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Active
                     </a>
-                    <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=organizing&status=COMPLETED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'COMPLETED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Completed
                     </a>
-                    <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=organizing&status=CANCELED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'CANCELED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Canceled
                     </a>
@@ -112,20 +120,24 @@
             {# Status Pills + Search #}
             <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 mb-4">
                 {# Status Pills #}
-                <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted dark:bg-muted p-1">
-                    <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}" 
+                <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted dark:bg-muted p-1">
+                    <a href="?tab=registered{% if q %}&q={{ q }}{% endif %}"
+                       {% if not status %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if not status %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         All
                     </a>
-                    <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=registered&status=ACTIVE{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'ACTIVE' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'ACTIVE' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Active
                     </a>
-                    <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=registered&status=COMPLETED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'COMPLETED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'COMPLETED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Completed
                     </a>
-                    <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}" 
+                    <a href="?tab=registered&status=CANCELED{% if q %}&q={{ q }}{% endif %}"
+                       {% if status == 'CANCELED' %}aria-current="true"{% endif %}
                        class="btn btn-compact {% if status == 'CANCELED' %}bg-card shadow text-foreground{% else %}text-muted-foreground hover:text-foreground{% endif %}">
                         Canceled
                     </a>

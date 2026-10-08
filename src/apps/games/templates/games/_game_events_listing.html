@@ -30,9 +30,11 @@
 
   <!-- Filter Pills -->
   <div>
-    <div class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
+    <div role="group" aria-label="Event status" class="inline-flex max-w-full flex-wrap justify-center rounded-xl bg-muted p-1">
       <button 
         type="button"
+        aria-pressed="{% if not status %}true{% else %}false{% endif %}"
+        :aria-pressed="status === ''"
         @click="status = ''; submitFilters()"
         class="btn btn-compact"
         :class="status === '' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
@@ -40,6 +42,8 @@
       </button>
       <button 
         type="button"
+        aria-pressed="{% if status == 'upcoming' %}true{% else %}false{% endif %}"
+        :aria-pressed="status === 'upcoming'"
         @click="status = 'upcoming'; submitFilters()"
         class="btn btn-compact"
         :class="status === 'upcoming' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
@@ -47,6 +51,8 @@
       </button>
       <button 
         type="button"
+        aria-pressed="{% if status == 'completed' %}true{% else %}false{% endif %}"
+        :aria-pressed="status === 'completed'"
         @click="status = 'completed'; submitFilters()"
         class="btn btn-compact"
         :class="status === 'completed' ? 'bg-card shadow text-foreground' : 'text-muted-foreground hover:text-foreground'">
