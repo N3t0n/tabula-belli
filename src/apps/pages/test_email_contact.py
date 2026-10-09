@@ -161,6 +161,7 @@ class AllauthEmailTransportTest(TestCase):
 
     def test_signup_verification_still_generates_email(self):
         response = self.client.post(reverse('account_signup'), {
+            'terms': 'on',
             'username': 'transport-signup',
             'email': 'transport-signup@example.com',
             'password1': self.password,

@@ -110,7 +110,10 @@
         <div class="flex items-start">
           <div class="flex items-center h-5">
             <input 
-              id="terms" 
+              id="terms"
+              name="terms"
+              {% if form.terms.value %}checked{% endif %}
+              {% if form.terms.errors %}aria-invalid="true" aria-describedby="terms_error"{% endif %}
               type="checkbox" 
               class="w-4 h-4 border border-border rounded bg-input focus:ring-3 focus:ring-primary-300 dark:bg-input dark:border-border dark:focus:ring-primary-600 dark:ring-offset-gray-800" 
               required>
@@ -122,6 +125,10 @@
           </div>
         </div>
         
+        {% if form.terms.errors %}
+          <p id="terms_error" role="alert" class="form-error">{{ form.terms.errors.0 }}</p>
+        {% endif %}
+
         <!-- Submit button -->
         <button type="submit" class="btn btn-primary w-full">
           Create an account
