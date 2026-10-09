@@ -13,10 +13,10 @@
                 </button>
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:profile' %}" class="btn btn-text-secondary btn-nav max-[321px]:hidden {% if request.resolver_match.namespace == 'accounts' %}bg-muted{% endif %}">Profile</a>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-secondary btn-nav max-[321px]:hidden {% if request.resolver_match.namespace == 'accounts' %}bg-muted{% endif %}">Profile</a>
                     <form method="post" action="{% url 'account_logout' %}" class="flex max-[321px]:hidden">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-secondary btn-nav max-[321px]:hidden">Logout</button>
+                        <button type="submit" class="btn btn-danger btn-nav max-[321px]:hidden">Logout</button>
                     </form>
                 {% else %}
                     <a href="{% url "account_login" %}" class="btn btn-text-secondary btn-nav max-[321px]:hidden">Log in</a>
@@ -48,10 +48,10 @@
                     </li>
                     <li class="min-[321px]:hidden border-t border-border mt-2 pt-2">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'accounts:profile' %}" class="btn btn-text-secondary justify-start">Profile</a>
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-secondary w-full justify-start {% if request.resolver_match.namespace == 'accounts' %}bg-muted{% endif %}">Profile</a>
                             <form method="post" action="{% url 'account_logout' %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-text-secondary w-full justify-start">Logout</button>
+                                <button type="submit" class="btn btn-danger mt-2 w-full justify-start">Logout</button>
                             </form>
                         {% else %}
                             <a href="{% url 'account_login' %}" class="btn btn-text-secondary justify-start">Log in</a>

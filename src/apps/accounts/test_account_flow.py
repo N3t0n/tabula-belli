@@ -39,6 +39,39 @@ class AccountFlowTest(TestCase):
         self.assertContains(response, 'Tabula Belli')
         self.assertNotContains(response, '<h2>Menu:</h2>')
 
+    def test_login_rotates_csrf_and_rejects_stale_form_tokens(self):
+        user = Player.objects.create_user(
+            username='csrf-review', email='csrf@accounts.test', password=self.password,
+        )
+        EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=True)
+        client = Client(enforce_csrf_checks=True)
+        url = reverse('account_login')
+        response = client.get(url, secure=True)
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        stale_token = parser.fields['csrfmiddlewaretoken']['value']
+        credentials = {'login': user.username, 'password': self.password}
+        response = client.post(url, {**credentials, 'csrfmiddlewaretoken': stale_token},
+                               secure=True, HTTP_ORIGIN='https://testserver')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(get_user(client).pk, user.pk)
+        response = client.post(url, {**credentials, 'csrfmiddlewaretoken': stale_token},
+                               secure=True, HTTP_ORIGIN='https://testserver')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(get_user(client).pk, user.pk)
+        response = client.post(reverse('account_logout'), {
+            'csrfmiddlewaretoken': client.cookies['csrftoken'].value,
+        }, secure=True, HTTP_ORIGIN='https://testserver')
+        self.assertEqual(response.status_code, 302)
+        response = client.get(url, secure=True)
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        response = client.post(url, {**credentials,
+            'csrfmiddlewaretoken': parser.fields['csrfmiddlewaretoken']['value'],
+        }, secure=True, HTTP_ORIGIN='https://testserver')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(get_user(client).pk, user.pk)
+
     def test_logout_get_shows_confirmation_without_ending_the_session(self):
         user = Player.objects.create_user(
             username='logout-review', email='logout@accounts.test', password=self.password,

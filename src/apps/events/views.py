@@ -188,7 +188,7 @@ class EventListView(ListView):
             ).values('status')[:1]
 
             queryset = queryset.annotate(
-                user_registration_status=Subquery(confirmed_registration.values('status')[:1])
+                user_registration_status=Subquery(user_reg_status)
             )
 
         queryset = self._apply_filters(queryset)

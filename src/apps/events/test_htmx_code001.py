@@ -94,6 +94,43 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
                 self.assertNotContains(filtered, "data-listing-error")
                 self.assertNotContains(filtered, "js/listings.js")
 
+    def test_events_list_renders_for_anonymous_participant_and_organizer(self):
+        event = self.create_event("authenticated-list")
+        for user in (None, self.player, self.owner):
+            self.client.logout()
+            if user is not None:
+                self.client.force_login(user)
+            for headers in ({}, {"HTTP_HX_REQUEST": "true"}):
+                with self.subTest(user=user, headers=headers):
+                    response = self.client.get(reverse("events"), **headers)
+                    self.assertContains(response, event.title)
+                    self.assertTemplateUsed(
+                        response,
+                        "events/_events_listing.html" if headers else "events/events.html",
+                    )
+
+    def test_events_list_registration_annotation_is_specific_to_current_user(self):
+        joined = self.create_event("own-registration", capacity=4)
+        other = self.create_event("other-registration", capacity=4)
+        cancelled = self.create_event("cancelled-registration", capacity=4)
+        for event, player, status in (
+            (joined, self.player, EventRegistration.Status.CONFIRMED),
+            (joined, self.other_player, EventRegistration.Status.CONFIRMED),
+            (other, self.other_player, EventRegistration.Status.CONFIRMED),
+            (cancelled, self.player, EventRegistration.Status.CANCELLED),
+        ):
+            EventRegistration.objects.create(event=event, player=player, status=status)
+        self.client.force_login(self.player)
+        for headers in ({}, {"HTTP_HX_REQUEST": "true"}):
+            with self.subTest(headers=headers):
+                response = self.client.get(reverse("events"), **headers)
+                self.assertEqual(response.status_code, 200)
+                events = {event.pk: event for event in response.context["events"]}
+                self.assertEqual(events[joined.pk].user_registration_status, "CONFIRMED")
+                self.assertEqual(events[joined.pk].participants_count, 2)
+                self.assertIsNone(events[other.pk].user_registration_status)
+                self.assertIsNone(events[cancelled.pk].user_registration_status)
+
     def test_events_initial_selection_preserves_explicit_all_status(self):
         for params, expected in (
             ({}, "upcoming"),
