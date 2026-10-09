@@ -39,6 +39,48 @@ class AccountFlowTest(TestCase):
         self.assertContains(response, 'Tabula Belli')
         self.assertNotContains(response, '<h2>Menu:</h2>')
 
+    def test_login_preserves_requested_destination_through_validation(self):
+        user = Player.objects.create_user(
+            username='login-destination', email='destination@accounts.test',
+            password=self.password,
+        )
+        EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=True)
+        destination = reverse('accounts:profile')
+        url = reverse('account_login')
+        response = self.client.get(url, {'next': destination})
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        self.assertEqual(parser.fields['next']['value'], destination)
+
+        response = self.client.post(url, {
+            'login': user.username, 'password': 'incorrect-password',
+            'next': destination,
+        })
+        self.assertEqual(response.status_code, 200)
+        parser = FormMarkupParser()
+        parser.feed(response.content.decode())
+        self.assertEqual(parser.fields['next']['value'], destination)
+        self.assertFalse(get_user(self.client).is_authenticated)
+
+        response = self.client.post(url, {
+            'login': user.username, 'password': self.password,
+            'next': parser.fields['next']['value'],
+        })
+        self.assertRedirects(response, destination, fetch_redirect_response=False)
+        self.assertEqual(get_user(self.client).pk, user.pk)
+
+    def test_login_does_not_redirect_to_an_external_destination(self):
+        user = Player.objects.create_user(
+            username='login-safe-destination', email='safe-destination@accounts.test',
+            password=self.password,
+        )
+        EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=True)
+        response = self.client.post(reverse('account_login'), {
+            'login': user.username, 'password': self.password,
+            'next': 'https://untrusted.example/collect',
+        })
+        self.assertRedirects(response, '/', fetch_redirect_response=False)
+
     def test_login_rotates_csrf_and_rejects_stale_form_tokens(self):
         user = Player.objects.create_user(
             username='csrf-review', email='csrf@accounts.test', password=self.password,
