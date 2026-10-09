@@ -15,8 +15,13 @@
         Sign in to Tabula Belli
         <span class="inline-block h-[3px] w-16 rounded-full bg-accent mt-3"></span>
       </h1>
-      <form x-data class="space-y-6" method="POST" action="{% url 'account_login' %}">
+      <form x-data="{ submitting: false }"
+            @submit="if (submitting) { $event.preventDefault() } else { submitting = true }"
+            @pageshow.window="submitting = false"
+            :aria-busy="submitting"
+            class="space-y-6" method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
+        {{ redirect_field }}
         
         <!-- Error messages -->
         {% if form.non_field_errors %}
@@ -86,7 +91,7 @@
         </div>
         
         <!-- Submit button -->
-        <button type="submit" class="btn btn-primary w-full">Sign in</button>
+        <button type="submit" :disabled="submitting" class="btn btn-primary w-full">Sign in</button>
         
         <div class="space-y-3 rounded-lg border border-accent/40 bg-accent/5 p-4 text-sm">
           <div class="space-y-2">
