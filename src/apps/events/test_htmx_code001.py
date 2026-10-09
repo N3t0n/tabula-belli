@@ -1,4 +1,7 @@
 from datetime import timedelta
+from html import unescape
+from html.parser import HTMLParser
+from urllib.parse import parse_qs, urlsplit
 
 from allauth.account.models import EmailAddress
 from cities_light.models import City, Country, Region
@@ -317,16 +320,16 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
             registration.status, EventRegistration.Status.CANCELLED
         )
 
-    def test_my_events_requires_own_confirmed_registration(self):
+    def test_my_events_history_requires_own_registration(self):
         event = self.create_event("cancelled-membership", capacity=5)
         EventRegistration.objects.create(event=event, player=self.player,
                                          status=EventRegistration.Status.CANCELLED)
         EventRegistration.objects.create(event=event, player=self.other_player)
         self.client.force_login(self.player)
-        for status in ("", "ACTIVE"):
+        for status, count in (("", 1), ("ACTIVE", 0), ("CANCELED", 1)):
             response = self.client.get(reverse("my_events:index"),
                                        {"tab": "registered", "status": status})
-            self.assertEqual(response.context["participating_page"].paginator.count, 0)
+            self.assertEqual(response.context["participating_page"].paginator.count, count)
 
     def test_my_events_counts_all_confirmed_participants_after_reregistration(self):
         event = self.create_event("reregistered", capacity=5)
@@ -349,14 +352,17 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
             HTTP_HX_REQUEST="true",
         )
 
-    def test_my_events_cancel_returns_complete_empty_block(self):
+    def test_my_events_cancel_keeps_history_in_complete_block(self):
         event = self.create_event("last-registration")
         registration = EventRegistration.objects.create(event=event, player=self.player)
         response = self.cancel_from_my_events(event)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "events/partials/_my_events_content.html")
-        self.assertContains(response, "Registered (0)")
-        self.assertContains(response, "No events where you participate")
+        self.assertContains(response, "Registrations (1)")
+        self.assertContains(response, "Registration canceled")
+        self.assertContains(response, "Event active")
+        self.assertEqual(response.context["participating_page"].paginator.count, 1)
+        self.assertNotContains(response, "Cancel registration")
         self.assertNotContains(response, "participants-badge-count")
         self.assertNotContains(response, "<html")
         registration.refresh_from_db()
@@ -385,7 +391,7 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
         for event in (selected, other):
             EventRegistration.objects.create(event=event, player=self.player)
         response = self.cancel_from_my_events(selected, q="search-match", status="ACTIVE")
-        self.assertContains(response, "Registered (0)")
+        self.assertContains(response, "Registrations (2)")
         self.assertContains(response, "No events found with the applied filters.")
         self.assertEqual(EventRegistration.objects.filter(
             player=self.player, status=EventRegistration.Status.CONFIRMED).count(), 1)
@@ -420,3 +426,143 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
         self.assertEqual(response.status_code, 400)
         registration.refresh_from_db()
         self.assertEqual(registration.status, EventRegistration.Status.CONFIRMED)
+
+    def test_my_events_registration_categories_are_exclusive_and_complete(self):
+        cases = (
+            ("active", "ACTIVE", "CONFIRMED", "ACTIVE"),
+            ("completed", "COMPLETED", "CONFIRMED", "COMPLETED"),
+            ("withdrawn", "ACTIVE", "CANCELLED", "CANCELED"),
+            ("withdrawn-completed", "COMPLETED", "CANCELLED", "CANCELED"),
+            ("event-canceled", "CANCELED", "CANCELLED", "CANCELED"),
+            ("canceled-confirmation", "CANCELED", "CONFIRMED", "CANCELED"),
+        )
+        expected = {"ACTIVE": set(), "COMPLETED": set(), "CANCELED": set()}
+        for name, event_status, registration_status, category in cases:
+            event = self.create_event(name)
+            Event.objects.filter(pk=event.pk).update(status=event_status)
+            EventRegistration.objects.create(event=event, player=self.player,
+                                             status=registration_status)
+            expected[category].add(event.pk)
+        unrelated = self.create_event("unrelated")
+        EventRegistration.objects.create(event=unrelated, player=self.other_player)
+        self.client.force_login(self.player)
+        found = set()
+        for status, ids in expected.items():
+            with self.subTest(status=status):
+                response = self.client.get(reverse("my_events:index"),
+                                           {"tab": "registered", "status": status})
+                rows = list(response.context["participating_page"])
+                self.assertEqual({row.pk for row in rows}, ids)
+                self.assertTrue(all(row.participation_status == status for row in rows))
+                self.assertFalse(found.intersection(ids))
+                found.update(ids)
+                self.assertEqual(response.context["participating_total"], len(cases))
+        response = self.client.get(reverse("my_events:index"), {"tab": "registered"})
+        self.assertEqual({row.pk for row in response.context["participating_page"]}, found)
+        self.assertContains(response, "Event canceled")
+        self.assertContains(response, "Event completed")
+        self.assertNotContains(response, "canceled by you")
+
+    def test_my_events_reregistration_uses_current_membership_without_duplicate_rows(self):
+        event = self.create_event("repeat-history", capacity=5)
+        for _ in range(3):
+            EventRegistration.objects.create(event=event, player=self.player,
+                                             status="CANCELLED")
+        EventRegistration.register(event=event, player=self.player)
+        EventRegistration.register(event=event, player=self.other_player)
+        self.client.force_login(self.player)
+        for status, count in (("", 1), ("ACTIVE", 1), ("CANCELED", 0)):
+            response = self.client.get(reverse("my_events:index"),
+                                       {"tab": "registered", "status": status})
+            page = response.context["participating_page"]
+            self.assertEqual(page.paginator.count, count)
+            if count:
+                self.assertEqual(page[0].participants_count, 2)
+                self.assertEqual(page[0].participation_status, "ACTIVE")
+                self.assertContains(response, "Cancel registration")
+
+    def test_my_events_event_cancellation_and_removal_preserve_history(self):
+        from apps.events.services import cancel_event, cancel_registration_for_actor
+        canceled = self.create_event("owner-cancels")
+        removed = self.create_event("owner-removes")
+        for event in (canceled, removed):
+            EventRegistration.register(event=event, player=self.player)
+        cancel_event(canceled)
+        registration = removed.registrations.get(player=self.player)
+        cancel_registration_for_actor(registration=registration, actor=self.owner)
+        self.client.force_login(self.player)
+        response = self.client.get(reverse("my_events:index"),
+                                   {"tab": "registered", "status": "CANCELED"})
+        self.assertEqual(response.context["participating_page"].paginator.count, 2)
+        self.assertContains(response, "Event canceled")
+        self.assertContains(response, "Registration canceled")
+        self.assertNotContains(response, "Cancel registration")
+        self.assertTrue(all(row.participants_count == 0
+                            for row in response.context["participating_page"]))
+
+    def test_my_events_organizing_filters_event_status_and_totals_ignore_search(self):
+        events = []
+        for status in Event.Status.values:
+            event = self.create_event(f"organizing-{status.lower()}")
+            Event.objects.filter(pk=event.pk).update(status=status)
+            events.append(event)
+        self.client.force_login(self.owner)
+        for status in Event.Status.values:
+            response = self.client.get(reverse("my_events:index"),
+                                       {"status": status, "q": status.lower()})
+            self.assertEqual(response.context["organizing_page"].paginator.count, 1)
+            self.assertEqual(response.context["organizing_total"], 3)
+            self.assertEqual(response.context["participating_total"], 0)
+        EventRegistration.register(event=events[0], player=self.owner)
+        response = self.client.get(reverse("my_events:index"))
+        self.assertEqual(response.context["participating_total"], 1)
+
+    def test_my_events_filter_and_pagination_links_preserve_search_text(self):
+        class Links(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.urls = []
+            def handle_starttag(self, tag, attrs):
+                if tag == "a":
+                    href = dict(attrs).get("href", "")
+                    if href.startswith("?tab="):
+                        self.urls.append(href)
+        for text in ("Audit & Dragons", "C++ #1", "Épée 東京"):
+            self.game.name = text
+            self.game.save(update_fields=["name"])
+            # Both title and game searches are supported; these rows match game.
+            for number in range(13):
+                event = self.create_event(f"encoded-{len(text)}-{number}")
+                EventRegistration.objects.create(event=event, player=self.owner)
+            self.client.force_login(self.owner)
+            for tab in ("organizing", "registered"):
+                response = self.client.get(reverse("my_events:index"), {"tab": tab, "q": text})
+                links = Links()
+                links.feed(response.content.decode())
+                search_links = [url for url in links.urls if "q=" in url]
+                self.assertTrue(search_links)
+                for url in search_links:
+                    params = parse_qs(urlsplit(unescape(url)).query)
+                    self.assertEqual(params["q"], [text])
+                next_url = next(url for url in search_links if "page=2" in url and f"tab={tab}" in url)
+                second = self.client.get(reverse("my_events:index") + next_url)
+                page_key = "organizing_page" if tab == "organizing" else "participating_page"
+                self.assertEqual(second.context[page_key].number, 2)
+                self.assertEqual(second.context["q"], text)
+                self.assertContains(response, 'href="?tab=organizing"')
+                self.assertContains(response, 'href="?tab=registered"')
+            EventRegistration.objects.all().delete()
+            Event.objects.all().delete()
+
+    def test_my_events_invalid_parameters_normalize_and_pages_remain_valid(self):
+        event = self.create_event("invalid-params")
+        EventRegistration.objects.create(event=event, player=self.player)
+        self.client.force_login(self.player)
+        response = self.client.get(reverse("my_events:index"),
+                                   {"tab": "unknown", "status": "UNKNOWN", "org_page": "broken"})
+        self.assertEqual(response.context["active_tab"], "organizing")
+        self.assertEqual(response.context["status"], "")
+        self.assertEqual(response.context["organizing_page"].number, 1)
+        response = self.client.get(reverse("my_events:index"),
+                                   {"tab": "registered", "part_page": "999"})
+        self.assertEqual(response.context["participating_page"].number, 1)
