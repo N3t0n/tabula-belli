@@ -108,9 +108,13 @@ Regular users manage only events owned by their account. The shared demo follows
 The dashboard separates:
 
 - **Organizing:** events owned by your account, including their history.
-- **Registered:** events where your registration remains confirmed.
+- **Registrations:** events you have registered for, including canceled registrations. Each event appears once, even if you cancel and later register again.
 
-Search by event title or game, filter by event status, and use pagination. An event canceled by its organizer cancels its confirmed registrations, so it does not remain in the Registered tab as an active booking.
+Both tabs offer **All**, **Active**, **Completed**, and **Canceled**. Organizing filters the event's status. Registrations filters your participation: Active and Completed require a confirmed registration in an active or completed event; Canceled includes withdrawn registrations, registrations removed by the organizer, and canceled events. The row distinguishes **Registration canceled** from **Event canceled** without claiming who canceled a registration. Completed describes the event's status, not proof of attendance.
+
+Canceling a registration keeps it in All and Canceled. If the event later completes, your withdrawn registration stays in Canceled. Registering again, when available, returns it to Active without duplicating the event.
+
+Search by event title or game and use pagination. Tab counts show the total events in each section; the table shows the filtered result count. Changing a filter or submitting a search starts at the first page. Switching tabs clears the search and returns to All. Canceling a registration preserves the current search and filter and adjusts the page if needed; canceling an organized event returns to Organizing/All.
 
 Event statuses are **Active**, **Completed**, and **Canceled**. Active does not necessarily mean registration is open. On the published application, a scheduled task marks ended active events as completed every five minutes; a short delay is possible. Local evaluation uses the maintenance command described in the installation guide.
 

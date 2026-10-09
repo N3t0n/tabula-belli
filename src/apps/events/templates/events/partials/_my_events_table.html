@@ -1,18 +1,18 @@
 {# Partial: events/partials/_my_events_table.html #}
-{# Parameters: page (Page object), role ('organizer'|'participant'), tab ('organizing'|'participating') #}
+{# Parameters: page (Page object), role ('organizer'|'participant'), tab ('organizing'|'registered') #}
 
 {% if page.object_list %}
     <div class="rounded-2xl border border-border bg-card shadow-sm">
-        
+
         <div class="flex items-center justify-between p-3">
             <div class="text-sm text-muted-foreground">
                 {{ page.start_index }}-{{ page.end_index }} of {{ page.paginator.count }} results
             </div>
         </div>
 
-        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="{% if role == "organizer" %}Organized events{% else %}Registered events{% endif %}">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="{% if role == "organizer" %}Organized events{% else %}Event registrations{% endif %}">
             <table class="min-w-full text-sm">
-                <caption class="sr-only">{% if role == "organizer" %}Organized events{% else %}Registered events{% endif %}</caption>
+                <caption class="sr-only">{% if role == "organizer" %}Organized events{% else %}Event registrations{% endif %}</caption>
                 <thead class="bg-muted text-muted-foreground">
                     <tr>
                         <th scope="col" class="text-left font-medium px-3 py-2">TYPE</th>
@@ -34,36 +34,43 @@
                                 <span class="text-xl" role="img" aria-label="Casual" title="Casual">🎲</span>
                             {% endif %}
                         </td>
-                        
+
                         <td class="px-3 py-2">
-                            <a href="{% url 'event_detail' event.slug %}" 
+                            <a href="{% url 'event_detail' event.slug %}"
                                class="font-medium text-foreground hover:text-primary-700 dark:hover:text-primary-300 hover:underline">
                                 {{ event.title }}
                             </a>
                             <div class="text-xs text-muted-foreground">
-                                {% if event.status == 'ACTIVE' %}
-                                    Active
-                                {% elif event.status == 'COMPLETED' %}
-                                    Completed
-                                {% elif event.status == 'CANCELED' %}
-                                    <span class="text-destructive dark:text-destructive">Canceled</span>
+                                {% if role == 'participant' and event.participation_status == 'CANCELED' %}
+                                    {% if event.status == 'CANCELED' %}
+                                        <span class="text-destructive">Event canceled</span>
+                                    {% else %}
+                                        <span class="text-destructive">Registration canceled</span>
+                                        · Event {{ event.get_status_display|lower }}
+                                    {% endif %}
+                                {% else %}
+                                    {% if event.status == 'CANCELED' %}
+                                        <span class="text-destructive">Canceled</span>
+                                    {% else %}
+                                        {{ event.get_status_display }}
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         </td>
-                        
+
                         <td class="px-3 py-2">
                             {% include 'partials/game_badge.html' with badge_game=event.game badge_size='sm' only %}
                         </td>
-                        
+
                         <td class="px-3 py-2">
                             {{ event.start_at|date:"M d, Y H:i" }}
                         </td>
-                        
+
                         <td class="px-3 py-2">
                             <div class="text-sm">{{ event.city.name }}</div>
                             <div class="text-xs text-muted-foreground">{{ event.country.name }}</div>
                         </td>
-                        
+
                         <td class="px-3 py-2 text-right">
                             {% if event.capacity is not None and event.capacity > 0 %}
                                 {{ event.participants_count }}/{{ event.capacity }}
@@ -71,7 +78,7 @@
                                 {{ event.participants_count }}/∞
                             {% endif %}
                         </td>
-                        
+
                         <td class="px-3 py-2 text-right">
                             {% if role == 'organizer' %}
                                 {% if event.is_editable %}
@@ -143,7 +150,7 @@
             </div>
             <div class="flex flex-wrap items-center justify-center gap-2">
                 {% if page.has_previous %}
-                    <a href="?tab={{ tab }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.previous_page_number }}{% else %}&part_page={{ page.previous_page_number }}{% endif %}" 
+                    <a href="?tab={{ tab }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.previous_page_number }}{% else %}&part_page={{ page.previous_page_number }}{% endif %}"
                        class="btn btn-secondary btn-compact">
                         Previous
                     </a>
@@ -152,9 +159,9 @@
                         Previous
                     </button>
                 {% endif %}
-                
+
                 {% if page.has_next %}
-                    <a href="?tab={{ tab }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.next_page_number }}{% else %}&part_page={{ page.next_page_number }}{% endif %}" 
+                    <a href="?tab={{ tab }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if tab == 'organizing' %}&org_page={{ page.next_page_number }}{% else %}&part_page={{ page.next_page_number }}{% endif %}"
                        class="btn btn-secondary btn-compact">
                         Next
                     </a>
@@ -177,7 +184,7 @@
             {% if role == 'organizer' %}
                 No organized events
             {% else %}
-                No events where you participate
+                No registrations yet
             {% endif %}
         </h3>
         <p class="mt-1 text-sm text-muted-foreground">
@@ -193,7 +200,7 @@
         </p>
         {% if role == 'organizer' and not q and not status %}
         <div class="mt-6">
-            <a href="{% url 'my_events:create' %}" 
+            <a href="{% url 'my_events:create' %}"
                class="btn btn-text-primary">
                 <svg focusable="false" aria-hidden="true" class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>

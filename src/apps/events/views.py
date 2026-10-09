@@ -1,6 +1,8 @@
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import CreateView, UpdateView
-from django.db.models import Q, Count, Subquery, OuterRef, Exists
+from django.db.models import (
+    Q, Count, Subquery, OuterRef, Exists, Case, When, Value, F, CharField,
+)
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -476,12 +478,12 @@ class MyEventsView(VerifiedUserRequiredMixin, ListView):
         return context
 
 
-def _filter_my_events(qs, q, status):
+def _filter_my_events(qs, q, status, *, status_field="status"):
     if q:
         qs = qs.filter(Q(title__icontains=q) | Q(game__name__icontains=q))
     if status in Event.Status.values:
-        qs = qs.filter(status=status)
-    return qs.order_by('-start_at')
+        qs = qs.filter(**{status_field: status})
+    return qs.order_by('-start_at', '-pk')
 
 
 def _my_events_context(request, params):
@@ -491,6 +493,8 @@ def _my_events_context(request, params):
 
     q = params.get('q', '').strip()
     status = params.get('status', '').strip()
+    if status not in Event.Status.values:
+        status = ''
 
     organizing_qs = Event.objects.filter(
         organizer=request.user
@@ -504,13 +508,14 @@ def _my_events_context(request, params):
         )
     )
 
-    # Membership is independent of the join used to count all participants.
-    confirmed_registration = EventRegistration.objects.filter(
+    # Own membership/history must not narrow the count of all participants.
+    own_registration = EventRegistration.objects.filter(
         event=OuterRef('pk'), player=request.user,
+    )
+    confirmed_registration = own_registration.filter(
         status=EventRegistration.Status.CONFIRMED,
     )
-
-    participating_qs = Event.objects.filter(Exists(confirmed_registration)).select_related(
+    participating_qs = Event.objects.filter(Exists(own_registration)).select_related(
         'game', 'city', 'country'
     ).annotate(
         participants_count=Count(
@@ -518,11 +523,30 @@ def _my_events_context(request, params):
             filter=Q(registrations__status=EventRegistration.Status.CONFIRMED),
             distinct=True
         ),
-        user_registration_status=Subquery(confirmed_registration.values('status')[:1])
-    ).distinct()
+        has_confirmed_registration=Exists(confirmed_registration),
+    ).annotate(
+        user_registration_status=Case(
+            When(has_confirmed_registration=True,
+                 then=Value(EventRegistration.Status.CONFIRMED)),
+            default=Value(EventRegistration.Status.CANCELLED),
+            output_field=CharField(),
+        ),
+        # A current confirmation wins over previous withdrawals. Event
+        # cancellation always belongs to Canceled, regardless of history.
+        participation_status=Case(
+            When(status=Event.Status.CANCELED, then=Value(Event.Status.CANCELED)),
+            When(has_confirmed_registration=False, then=Value(Event.Status.CANCELED)),
+            default=F('status'),
+            output_field=CharField(),
+        ),
+    )
 
+    organizing_total = organizing_qs.count()
+    participating_total = participating_qs.count()
     organizing_qs = _filter_my_events(organizing_qs, q, status)
-    participating_qs = _filter_my_events(participating_qs, q, status)
+    participating_qs = _filter_my_events(
+        participating_qs, q, status, status_field='participation_status',
+    )
 
     org_paginator = Paginator(organizing_qs, 12)
     org_page_number = params.get('org_page', 1)
@@ -533,6 +557,8 @@ def _my_events_context(request, params):
     participating_page = part_paginator.get_page(part_page_number)
 
     return {
+        'organizing_total': organizing_total,
+        'participating_total': participating_total,
         'organizing_page': organizing_page,
         'participating_page': participating_page,
         'active_tab': active_tab,
