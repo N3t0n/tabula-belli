@@ -145,8 +145,28 @@ class AccountFlowTest(TestCase):
         self.assertRedirects(response, next_url, fetch_redirect_response=False)
         self.assertFalse(get_user(client).is_authenticated)
 
+    def test_signup_without_terms_is_rejected_without_creating_account_or_email(self):
+        for value in (None, 'false'):
+            with self.subTest(terms=value):
+                data = {
+                    'username': 'terms-required', 'email': 'terms@accounts.test',
+                    'password1': self.password, 'password2': self.password,
+                }
+                if value is not None:
+                    data['terms'] = value
+                response = self.client.post(reverse('account_signup'), data)
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, 'You must accept the terms to create an account.')
+                self.assertFalse(Player.objects.filter(username='terms-required').exists())
+                self.assertEqual(len(mail.outbox), 0)
+                parser = FormMarkupParser()
+                parser.feed(response.content.decode())
+                self.assertEqual(parser.fields['terms']['aria-describedby'], 'terms_error')
+                self.assertEqual(parser.fields['username']['value'], 'terms-required')
+
     def test_signup_email_and_confirmation_require_post(self):
         response = self.client.post(reverse('account_signup'), {
+            'terms': 'on',
             'username': 'new-flow-user', 'email': 'new-flow@accounts.test',
             'password1': self.password, 'password2': self.password,
         }, follow=True)
@@ -237,6 +257,7 @@ class AccountFlowTest(TestCase):
 
     def test_invalid_signup_preserves_public_fields_and_links_password_error(self):
         response = self.client.post(reverse('account_signup'), {
+            'terms': 'on',
             'username': 'portfolio-reader', 'email': 'reader@accounts.test',
             'password1': self.password, 'password2': 'DifferentPassword456!',
         })
@@ -246,6 +267,7 @@ class AccountFlowTest(TestCase):
         self.assertEqual(parser.fields['username']['value'], 'portfolio-reader')
         self.assertEqual(parser.fields['email']['value'], 'reader@accounts.test')
         self.assertFalse(parser.duplicate_ids)
+        self.assertIn('checked', parser.fields['terms'])
         for name in ('password1', 'password2'):
             self.assertEqual(parser.fields[name]['id'], f'id_{name}')
             self.assertNotIn('value', parser.fields[name])

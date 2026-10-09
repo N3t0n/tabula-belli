@@ -263,6 +263,7 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CHANGE_EMAIL = True
 ACCOUNT_FORMS = {
+    'signup': 'apps.accounts.forms.TermsSignupForm',
     'add_email': 'apps.accounts.forms.StyledAddEmailForm',
     'change_password': 'apps.accounts.forms.StyledChangePasswordForm',
     'set_password': 'apps.accounts.forms.StyledSetPasswordForm',

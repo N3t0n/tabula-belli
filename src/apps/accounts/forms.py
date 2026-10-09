@@ -1,13 +1,20 @@
 from django import forms
 from allauth.account.forms import (
     AddEmailForm, ChangePasswordForm, ResetPasswordForm, ResetPasswordKeyForm, SetPasswordForm,
-    UserTokenForm,
+    SignupForm, UserTokenForm,
 )
 from allauth.account.adapter import get_adapter
 
 from apps.accounts.demo import is_public_demo_user
 from apps.players.models import Player
 from cities_light.models import Region, City, Country
+
+
+class TermsSignupForm(SignupForm):
+    terms = forms.BooleanField(
+        required=True,
+        error_messages={'required': 'You must accept the terms to create an account.'},
+    )
 
 
 class ProfileForm(forms.ModelForm):

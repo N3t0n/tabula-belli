@@ -25,6 +25,7 @@ class AuthenticationFlowTest(TestCase):
 
     def create_signup_user(self, *, verify=True):
         response = self.client.post(reverse('account_signup'), {
+            'terms': 'on',
             'username': self.signup_username,
             'email': self.signup_email,
             'password1': self.password,

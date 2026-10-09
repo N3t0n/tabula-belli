@@ -119,6 +119,7 @@ class AuthDemoTest(TestCase):
         self.assertEqual(settings.ACCOUNT_LOGIN_METHODS, {'username', 'email'})
 
         response = self.client.post(reverse('account_signup'), {
+            'terms': 'on',
             'username': 'verification-required',
             'email': 'verification-required@example.com',
             'password1': self.password,
