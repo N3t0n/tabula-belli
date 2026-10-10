@@ -566,3 +566,100 @@ class HtmxCodeFunctionalRegressionTest(TestCase):
         response = self.client.get(reverse("my_events:index"),
                                    {"tab": "registered", "part_page": "999"})
         self.assertEqual(response.context["participating_page"].number, 1)
+
+    def test_owner_registration_updates_private_panel_from_empty(self):
+        event = self.create_event('owner-register-empty')
+        self.client.force_login(self.owner)
+        detail = self.client.get(reverse('event_detail', kwargs={'slug': event.slug}))
+        self.assertContains(detail, 'id="participants-panel"')
+        self.assertNotContains(detail, 'Participants List')
+        response = self.client.post(reverse('event_register', kwargs={'slug': event.slug}),
+                                    HTTP_HX_REQUEST='true')
+        registration = event.registrations.get(player=self.owner, status='CONFIRMED')
+        self.assertContains(response, 'id="participants-panel" hx-swap-oob="innerHTML"')
+        self.assertContains(response, f'id="participant-{registration.pk}"')
+        self.assertContains(response, self.owner.email)
+        self.assertContains(response, '1/2')
+
+    def test_owner_registration_preserves_other_participants_in_updated_panel(self):
+        event = self.create_event('owner-register-existing')
+        other = EventRegistration.objects.create(event=event, player=self.player)
+        self.client.force_login(self.owner)
+        response = self.client.post(reverse('event_register', kwargs={'slug': event.slug}),
+                                    HTTP_HX_REQUEST='true')
+        own = event.registrations.get(player=self.owner, status='CONFIRMED')
+        self.assertContains(response, f'id="participant-{other.pk}"')
+        self.assertContains(response, f'id="participant-{own.pk}"')
+        self.assertContains(response, '2/2')
+        self.assertContains(response, 'Cancel Registration')
+
+    def test_owner_withdrawal_updates_private_panel_without_losing_other_players(self):
+        event = self.create_event('owner-withdraw-existing')
+        own = EventRegistration.objects.create(event=event, player=self.owner)
+        other = EventRegistration.objects.create(event=event, player=self.player)
+        self.client.force_login(self.owner)
+        response = self.client.post(reverse('event_cancel_registration', kwargs={'slug': event.slug}),
+                                    HTTP_HX_REQUEST='true')
+        self.assertContains(response, 'id="participants-panel" hx-swap-oob="innerHTML"')
+        self.assertNotContains(response, f'id="participant-{own.pk}"')
+        self.assertContains(response, f'id="participant-{other.pk}"')
+        self.assertContains(response, '1/2')
+        own.refresh_from_db()
+        self.assertEqual(own.status, 'CANCELLED')
+
+    def test_owner_last_withdrawal_clears_card_but_keeps_update_target(self):
+        event = self.create_event('owner-last-withdraw')
+        EventRegistration.objects.create(event=event, player=self.owner)
+        self.client.force_login(self.owner)
+        response = self.client.post(reverse('event_cancel_registration', kwargs={'slug': event.slug}),
+                                    HTTP_HX_REQUEST='true')
+        self.assertContains(response, 'id="participants-panel" hx-swap-oob="innerHTML"')
+        self.assertNotContains(response, 'Participants List')
+        self.assertContains(response, '0/2')
+        self.assertContains(response, 'Register for Event')
+
+    def test_participant_partial_responses_never_include_private_panel(self):
+        event = self.create_event('private-mutations')
+        EventRegistration.objects.create(event=event, player=self.owner)
+        self.client.force_login(self.player)
+        for url_name in ('event_register', 'event_cancel_registration'):
+            with self.subTest(action=url_name):
+                response = self.client.post(reverse(url_name, kwargs={'slug': event.slug}),
+                                            HTTP_HX_REQUEST='true')
+                self.assertEqual(response.status_code, 200)
+                self.assertNotContains(response, 'id="participants-panel"')
+                self.assertNotContains(response, self.owner.email)
+                self.assertNotContains(response, self.player.email)
+
+    def test_confirmed_player_can_withdraw_from_detail_after_registration_closes(self):
+        event = self.create_event('closed-registration-withdrawal')
+        registration = EventRegistration.objects.create(event=event, player=self.player)
+        event.registration_closes_at = timezone.now() - timedelta(minutes=1)
+        event.save(update_fields=['registration_closes_at'])
+        self.client.force_login(self.player)
+        detail = self.client.get(reverse('event_detail', kwargs={'slug': event.slug}))
+        self.assertContains(detail, 'Registration closed')
+        self.assertContains(detail, 'Cancel Registration', count=1)
+        response = self.client.post(reverse('event_cancel_registration', kwargs={'slug': event.slug}),
+                                    HTTP_HX_REQUEST='true')
+        self.assertContains(response, 'Registration closed')
+        self.assertNotContains(response, 'Cancel Registration')
+        registration.refresh_from_db()
+        self.assertEqual(registration.status, 'CANCELLED')
+
+    def test_detail_does_not_offer_withdrawal_for_started_or_final_events(self):
+        for state in ('started', 'COMPLETED', 'CANCELED'):
+            with self.subTest(state=state):
+                event = self.create_event('no-withdrawal-' + state)
+                EventRegistration.objects.create(event=event, player=self.player)
+                if state == 'started':
+                    event.start_at = timezone.now() - timedelta(minutes=1)
+                else:
+                    event.status = state
+                    if state == 'COMPLETED':
+                        event.start_at = timezone.now() - timedelta(hours=2)
+                        event.end_at = timezone.now() - timedelta(hours=1)
+                event.save()
+                self.client.force_login(self.player)
+                detail = self.client.get(reverse('event_detail', kwargs={'slug': event.slug}))
+                self.assertNotContains(detail, 'Cancel Registration')

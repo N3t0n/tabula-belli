@@ -93,5 +93,6 @@ test('every destructive HTMX form declares confirmation on the request element',
         }
     }
     inspect(root);
-    assert.equal(checked, 8);
+    // Full/open registration states now share one withdrawal form.
+    assert.equal(checked, 7);
 });
