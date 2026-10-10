@@ -4,7 +4,7 @@ The AGPL-3.0-only license applies to Tabula Belli's original source code and doc
 
 ## Browser assets
 
-`npm run build` preserves the full notices for the following components in `src/static/licenses/third-party.txt`. This generated file is served by the application and linked from its footer. Keep it with the generated JavaScript and CSS when distributing or deploying those assets.
+`npm run build` preserves the full notices for the following components in `src/static/licenses/third-party.txt`. This generated file is served by the application. Keep it with the generated JavaScript and CSS when distributing or deploying those assets.
 
 | Component | License | Notice source |
 | --- | --- | --- |
