@@ -232,6 +232,7 @@ src/static/css/output.css
 src/static/js/htmx.min.js
 src/static/js/alpine.min.js
 src/static/js/flowbite.min.js
+src/static/licenses/third-party.txt
 
 # Django collectstatic output
 /staticfiles/

@@ -31,6 +31,18 @@ const dependencies = [
     }
 ];
 
+// Preserve the original notices for browser assets, including bundled code.
+const licenseNotices = [
+    ['HTMX', 'node_modules/htmx.org/LICENSE'],
+    ['Alpine.js', 'licenses/frontend/alpine-MIT.txt'],
+    ['Vue reactivity', 'node_modules/@vue/reactivity/LICENSE'],
+    ['Vue shared', 'node_modules/@vue/shared/LICENSE'],
+    ['Flowbite', 'node_modules/flowbite/LICENSE.md'],
+    ['Popper', 'node_modules/@popperjs/core/LICENSE.md'],
+    ['Flowbite Datepicker', 'node_modules/flowbite-datepicker/LICENSE'],
+    ['Tailwind CSS', 'node_modules/tailwindcss/LICENSE'],
+];
+
 // Función principal
 function copyDependencies() {
     console.log('\nCopying frontend dependencies to static/...\n');
@@ -73,6 +85,19 @@ function copyDependencies() {
             errorCount++;
         }
     });
+
+    try {
+        const notices = licenseNotices.map(([name, file]) => (
+            `=== ${name} ===\n\n${fs.readFileSync(file, 'utf8')}\n`
+        )).join('\n');
+        const licenseDir = path.join('src', 'static', 'licenses');
+        fs.mkdirSync(licenseDir, { recursive: true });
+        fs.writeFileSync(path.join(licenseDir, 'third-party.txt'), notices);
+        console.log('Third-party license notices copied.');
+    } catch (error) {
+        console.error(`Could not preserve third-party notices: ${error.message}`);
+        errorCount++;
+    }
 
     // Resumen
     console.log(`\nSummary: ${successCount} copied, ${errorCount} failed`);
