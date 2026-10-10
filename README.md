@@ -143,3 +143,11 @@ The initial dataset combines real reference information with fictional activity:
 - **Players and organizers:** fictional demo profiles inspired by the Primarchs from Warhammer's Horus Heresy setting.
 
 On the published application, these initial records can coexist with test accounts, events, and registrations created by visitors. The periodic reset replaces this activity with a fresh demo dataset.
+
+## License
+
+Tabula Belli's original source code and documentation are licensed under the [GNU Affero General Public License v3.0 only](LICENSE). Copyright © 2026 n3t0n.
+
+You may use, modify, and share the software, including commercially, under that license. If you offer a modified version over a network, you must offer its corresponding source code to the users interacting with it, as required by AGPLv3. The software is provided without warranty.
+
+Third-party dependencies and geographic data retain their own licenses; see [third-party notices](THIRD_PARTY_NOTICES.md). The software license does not grant rights to third-party trademarks or fictional characters referenced by the demo.

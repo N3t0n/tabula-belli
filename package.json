@@ -19,7 +19,7 @@
     "board-games"
   ],
   "author": "N3t0n",
-  "license": "ISC",
+  "license": "AGPL-3.0-only",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/N3t0n/tabula-belli/issues"
