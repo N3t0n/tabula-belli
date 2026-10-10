@@ -1,4 +1,4 @@
-﻿{# Button shown in event detail - swaps between Register/Cancel based on user_registration #}
+{# Button shown in event detail - swaps between Register/Cancel based on user_registration #}
 
 {% if not registration_open %}
     {% if registration_status == 'FULL' %}
@@ -8,23 +8,6 @@
             </svg>
             Event is full ({{ confirmed_count }}/{{ event.capacity }})
         </div>
-        {% if user_registration %}
-            <form
-                hx-confirm="Are you sure you want to cancel your registration?"
-                method="post"
-                action="{% url 'event_cancel_registration' event.slug %}"
-                hx-post="{% url 'event_cancel_registration' event.slug %}"
-                hx-target="#registration-button-container"
-                hx-swap="innerHTML"
-                class="mt-3">
-                {% csrf_token %}
-                <button
-                    type="submit"
-                    class="btn btn-danger w-full">
-                    Cancel Registration
-                </button>
-            </form>
-        {% endif %}
     {% elif registration_status == 'NOT_OPEN' %}
         <div class="inline-flex w-full items-center justify-center rounded-lg bg-muted px-5 py-2.5 text-sm font-medium text-muted-foreground dark:bg-input dark:text-muted-foreground">
             <svg focusable="false" aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,26 +36,7 @@
     {% endif %}
 
 {% elif user.is_authenticated %}
-    {% if user_registration %}
-        <form
-            hx-confirm="Are you sure you want to cancel your registration?"
-            method="post"
-            action="{% url 'event_cancel_registration' event.slug %}"
-            hx-post="{% url 'event_cancel_registration' event.slug %}"
-            hx-target="#registration-button-container"
-            hx-swap="innerHTML">
-            {% csrf_token %}
-            <button 
-                type="submit"
-                class="btn btn-danger w-full"
-            >
-                <svg focusable="false" aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                Cancel Registration
-            </button>
-        </form>
-    {% else %}
+    {% if not user_registration %}
         <form
             method="post"
             action="{% url 'event_register' event.slug %}"
@@ -104,8 +68,31 @@
     </a>
 {% endif %}
 
+{% if can_cancel_registration %}
+    <form
+        hx-confirm="Are you sure you want to cancel your registration?"
+        method="post"
+        action="{% url 'event_cancel_registration' event.slug %}"
+        hx-post="{% url 'event_cancel_registration' event.slug %}"
+        hx-target="#registration-button-container"
+        hx-swap="innerHTML"
+        {% if not registration_open %}class="mt-3"{% endif %}>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-full">
+            <svg focusable="false" aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Cancel Registration
+        </button>
+    </form>
+{% endif %}
+
 {# Out-of-band swap to update participant counter #}
 {% if oob_update %}
 <span id="participants-badge-count" hx-swap-oob="true">{{ confirmed_count }}/{{ event.capacity }}</span>
 <span id="participants-detail-count" hx-swap-oob="true">{{ confirmed_count }}/{{ event.capacity }} players</span>
+{% endif %}
+
+{% if oob_update and can_manage_event %}
+<div id="participants-panel" hx-swap-oob="innerHTML">{% include 'events/partials/participants_list.html' %}</div>
 {% endif %}

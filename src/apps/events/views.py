@@ -25,7 +25,7 @@ def _is_htmx(request):
     return bool(request.headers.get('HX-Request'))
 
 
-def _registration_button_context(event, user_registration, *, oob_update=False):
+def _registration_button_context(event, user_registration, user, *, oob_update=False):
     confirmed_count = getattr(event, 'participants_count', None)
     if confirmed_count is None:
         confirmed_count = EventRegistration.objects.filter(
@@ -35,16 +35,34 @@ def _registration_button_context(event, user_registration, *, oob_update=False):
         event.participants_count = confirmed_count
 
     registration_status = event.get_registration_status()
-    return {
+    context = {
         'event': event,
         'user_registration': user_registration,
         'registration_status': registration_status,
         'registration_open': (
             registration_status == Event.RegistrationStatus.OPEN
         ),
+        'can_cancel_registration': bool(
+            user_registration and user_registration.can_be_cancelled_by(user)
+        ),
         'is_full': registration_status == Event.RegistrationStatus.FULL,
         'confirmed_count': confirmed_count,
         'oob_update': oob_update,
+    }
+    if oob_update:
+        context.update(_participants_context(event, user))
+    return context
+
+
+def _participants_context(event, user):
+    can_manage = can_manage_event(user, event)
+    return {
+        'can_manage_event': can_manage,
+        'confirmed_registrations': (
+            event.registrations.filter(status=EventRegistration.Status.CONFIRMED)
+            .select_related('player').order_by('-created_at')
+            if can_manage else []
+        ),
     }
 
 
@@ -345,8 +363,6 @@ class EventDetailView(DetailView):
             return_url = fallback_url
 
         user_registration = None
-        can_manage = can_manage_event(self.request.user, event)
-        confirmed_registrations = []
 
         if self.request.user.is_authenticated:
             user_registration = EventRegistration.objects.filter(
@@ -355,13 +371,8 @@ class EventDetailView(DetailView):
                 status=EventRegistration.Status.CONFIRMED
             ).first()
 
-            if can_manage:
-                confirmed_registrations = event.registrations.filter(
-                    status=EventRegistration.Status.CONFIRMED
-                ).select_related('player').order_by('-created_at')
-
         registration_context = _registration_button_context(
-            event, user_registration
+            event, user_registration, self.request.user
         )
         context.update({
             'is_past': is_past,
@@ -369,8 +380,7 @@ class EventDetailView(DetailView):
             'lat': lat,
             'lng': lng,
             'return_url': return_url,
-            'can_manage_event': can_manage,
-            'confirmed_registrations': confirmed_registrations,
+            **_participants_context(event, self.request.user),
             **registration_context,
         })
 
@@ -396,7 +406,7 @@ class RegistrationCreateView(VerifiedUserRequiredMixin, View):
                 request,
                 'events/partials/registration_button.html',
                 _registration_button_context(
-                    event, registration, oob_update=True
+                    event, registration, request.user, oob_update=True
                 ),
             )
         except ValidationError as e:
@@ -462,7 +472,7 @@ class RegistrationCancelView(VerifiedUserRequiredMixin, View):
             return redirect('event_detail', slug=event.slug)
         return render(
             request, 'events/partials/registration_button.html',
-            _registration_button_context(event, None, oob_update=True),
+            _registration_button_context(event, None, request.user, oob_update=True),
         )
 
 
